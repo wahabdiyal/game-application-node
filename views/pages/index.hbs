@@ -1,0 +1,32 @@
+{{#> main}}
+  {{#*inline "content"}}
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">{{message}}pageindex</h1>
+        <ul class="people_list">
+          <div style="background-color: red;">
+            {{people}}
+           {{!-- for teminal value show --}}
+            {{log person}}
+
+            {{ session.visits }}
+  
+            
+          </div>
+          {{!-- loop  --}}
+
+          {{#list nav}}
+           <a href="{{url}}">{{title}}</a>
+          {{/list}}
+
+        {{#each people}}
+          <li>{{this}}</li>
+        {{/each}}
+
+      </ul>
+      {{person.firstname}} {{person.lastname}}
+
+      </div>
+    </div>
+  {{/inline}}
+{{/main}}
