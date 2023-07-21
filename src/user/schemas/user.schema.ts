@@ -9,15 +9,16 @@ export enum UserType{
 export class User{
     @Prop()
     name:string;
-    @Prop()
+    @Prop({ required: true, unique: true })
     email:string;
     @Prop()
-    password:string;
+     password: string
+     @Prop({default: "User"})
     role:UserType;
+
     @Prop()
     phone:number;
-    // @Prop()
-    // simple:UserCallType<User>;
+ 
 }
 export const UserSchema = SchemaFactory.createForClass(User)
 

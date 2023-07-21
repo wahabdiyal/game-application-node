@@ -18,13 +18,14 @@ export class UserService {
             const res = await this.userModel.create(user);
             return res;
           }
-          async findById(id: string): Promise<User> {
-            const user = await this.userModel.findById(id);
+          async findById(email: string): Promise<User> {
+           
+            const user = await this.userModel.findOne({email: email});
         
             if (!user) {
               throw new NotFoundException('User not found.');
             }
-        
+    
             return user;
           }
 }
