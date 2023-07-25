@@ -5,8 +5,9 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
-import { CoinsModule } from './coins/coins.module';
 import { RewardModule } from './reward/reward.module';
+import { GoldsModule } from './golds/golds.module';
+import { SilversModule } from './silvers/silvers.module';
  
 @Module({
   imports: [
@@ -18,8 +19,12 @@ import { RewardModule } from './reward/reward.module';
     MongooseModule.forRoot(process.env.DB_CONNECTION),
     UserModule,
     AuthModule,
-    CoinsModule,
+   
     RewardModule,
+   
+    // GoldsModule,
+   
+    // SilversModule,
     
   ],
   controllers: [AppController],

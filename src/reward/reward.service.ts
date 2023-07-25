@@ -36,10 +36,15 @@ async findByUserId(id: any):Promise<Reward[]>{
     return reward;
 }
 
-  update(id: number, updateRewardDto: UpdateRewardDto) {
-    return `This action updates a #${id} reward`;
+async update(id: any, updateRewardDto: UpdateRewardDto) {
+  const reward = await this.rewardModel.findByIdAndUpdate(id,updateRewardDto);
+
+  if (!reward) {
+    throw new NotFoundException('Reward not found.');
   }
 
+  return {status: true,message: "Reward updated successfully"};
+} 
   async remove(id:any): Promise<Reward> {
 
     const deletedRecord = await this.rewardModel.findByIdAndDelete(id) ;

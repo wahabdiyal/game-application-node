@@ -1,4 +1,4 @@
-import { Injectable,NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable,NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
@@ -15,8 +15,11 @@ export class UserService {
             return user;
         }
         async create(user: User): Promise<User> {
-            const res = await this.userModel.create(user);
+          if(!user){
+             const res = await this.userModel.create(user);
             return res;
+          }
+           throw new BadRequestException('User already exists');
           }
           async findById(email: string): Promise<User> {
            
@@ -41,7 +44,7 @@ export class UserService {
 
          async remove(id: any)   {
             const userdel = await this.userModel.findOneAndDelete(id);
-            console.log(userdel,id);
+           
              return userdel;
           }
           async findwithUserId(id: any): Promise<User> {
