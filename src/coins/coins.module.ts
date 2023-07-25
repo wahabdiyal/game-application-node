@@ -6,9 +6,11 @@ import {  GoldCoinSchema } from './schemas/gold_coin.schema';
 import { SiliverCoinSchema } from './schemas/silver_coin.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Gold', schema: GoldCoinSchema }]),
-  MongooseModule.forFeature([{ name: 'Siliver', schema: SiliverCoinSchema }])],
-
+  imports: [
+    // MongooseModule.forFeature([{ name: 'Gold', schema: GoldCoinSchema }]),
+    MongooseModule.forFeature([{ name: 'Siliver', schema: SiliverCoinSchema },{ name: 'Gold', schema: GoldCoinSchema }])
+  ],
+  exports:[CoinsService],
   controllers: [CoinsController],
   providers: [CoinsService]
 })

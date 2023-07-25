@@ -1,8 +1,10 @@
-import { Controller, Get, Patch, Body, Param, Post, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Patch, Body, Param, Post, Delete, NotFoundException, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('user')
+@UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
 export class UserController {
     constructor(private userService: UserService,){}
 
@@ -18,7 +20,6 @@ export class UserController {
 
     @Patch(':id')
     update(@Param('id') id: any, @Body() updateRewardDto:any) {
-        console.log(updateRewardDto);
         return this.userService.update(id, updateRewardDto);
       }
 
