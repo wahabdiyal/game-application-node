@@ -39,9 +39,10 @@ export class UserService {
             return {status: true,message: "User updated successfully"};
           }
 
-         async remove(id: any): Promise<User>  {
-            const userdel = await this.userModel.findByIdAndDelete(id);
-               return userdel;
+         async remove(id: any)   {
+            const userdel = await this.userModel.findOneAndDelete(id);
+            console.log(userdel,id);
+             return userdel;
           }
           async findwithUserId(id: any): Promise<User> {
            
