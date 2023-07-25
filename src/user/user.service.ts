@@ -28,4 +28,29 @@ export class UserService {
     
             return user;
           }
+
+          async update(id: any, body:any) {
+            const user = await this.userModel.findByIdAndUpdate(id,body);
+        
+            if (!user) {
+              throw new NotFoundException('User not found.');
+            }
+    
+            return {status: true,message: "User updated successfully"};
+          }
+
+         async remove(id: any): Promise<User>  {
+            const userdel = await this.userModel.findByIdAndDelete(id);
+               return userdel;
+          }
+          async findwithUserId(id: any): Promise<User> {
+           
+            const user = await this.userModel.findOne(id);
+        
+            if (!user) {
+              throw new NotFoundException('User not found.');
+            }
+    
+            return user;
+          }
 }
