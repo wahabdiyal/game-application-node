@@ -21,6 +21,10 @@ async function bootstrap() {
       }
     }),
   );
+  app.enableCors({
+    origin: '*',
+    methods: 'GET, PUT, POST, DELETE',
+  });
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   hbs.registerPartials(join(__dirname, '..', 'views/partials'));
