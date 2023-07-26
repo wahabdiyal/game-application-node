@@ -1,35 +1,52 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSilverDto } from './dto/create-silver.dto';
 import { UpdateSilverDto } from './dto/update-silver.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { SiliverCoin } from 'src/coins/schemas/silver_coin.schema';
 import mongoose from 'mongoose';
 import { Silver } from './schemas/silver_coin.schema';
+import { promises } from 'dns';
 
 @Injectable()
 export class SilversService {
   constructor(
     @InjectModel(Silver.name)
-    private rewardModel: mongoose.Model<Silver>,
+    private silverModel: mongoose.Model<Silver>,
     ){}
  
-  create(createSilverDto: CreateSilverDto) {
-    return 'This action adds a new silver';
+    async  create(createCoinDto: CreateSilverDto): Promise<Silver>  {
+      var res = await this.silverModel.create(createCoinDto);
+       return res;
+      
+      }
+
+ async findAll(): Promise<Silver[]> {
+    const silvers = await this.silverModel.find();
+    return silvers;
   }
 
-  findAll() {
-    return `This action returns all silvers`;
+  async findOne(id:string): Promise<Silver>{
+        const silver = await this.silverModel.findById(id);
+        return silver;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} silver`;
+  async update(id: any, body:UpdateSilverDto) {
+    const user = await this.silverModel.findByIdAndUpdate(id,body);
+
+    if (!user) {
+      throw new NotFoundException('Silver Coin  not found.');
+    }
+
+    return {status: true,message: "Silver Coin updated successfully"};
   }
 
-  update(id: number, updateSilverDto: UpdateSilverDto) {
-    return `This action updates a #${id} silver`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} silver`;
+  async remove(id: any) {
+    const user = await this.silverModel.findByIdAndDelete(id);
+
+    if (!user) {
+      throw new NotFoundException('Silver Coin  not found.');
+    }
+
+    return {status: true,message: "Silver Coin Delete successfully"};
   }
 }

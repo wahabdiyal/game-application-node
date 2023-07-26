@@ -24,7 +24,7 @@ import { SilversModule } from './silvers/silvers.module';
    
     // GoldsModule,
    
-    // SilversModule,
+     SilversModule,
     
   ],
   controllers: [AppController],

@@ -15,7 +15,10 @@ export class UserService {
             return user;
         }
         async create(user: User): Promise<User> {
-          if(!user){
+       
+          let usercheck = await this.userModel.find().where('email', user.email).exec();
+           
+          if(!usercheck.length){
              const res = await this.userModel.create(user);
             return res;
           }
@@ -42,11 +45,17 @@ export class UserService {
             return {status: true,message: "User updated successfully"};
           }
 
-         async remove(id: any)   {
-            const userdel = await this.userModel.findOneAndDelete(id);
-           
-             return userdel;
+          async remove(id: any) {
+            const user = await this.userModel.findByIdAndDelete(id);
+        
+            if (!user) {
+              throw new NotFoundException('User not found.');
+            }
+        
+            return {status: true,message: "User Delete successfully"};
           }
+        
+
           async findwithUserId(id: any): Promise<User> {
            
             const user = await this.userModel.findOne(id);
