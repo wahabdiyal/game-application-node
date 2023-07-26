@@ -4,7 +4,7 @@ import { UpdateSilverDto } from './dto/update-silver.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Silver } from './schemas/silver_coin.schema';
-import { promises } from 'dns';
+ 
 
 @Injectable()
 export class SilversService {

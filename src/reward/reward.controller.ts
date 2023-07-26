@@ -35,10 +35,7 @@ export class RewardController {
   @Delete(':id')
     remove(@Param('id') id: string) {
       
-      const deletedRecord = this.rewardService.remove(id);
-    if (!deletedRecord) {
-      throw new NotFoundException(`Record with ID: ${id} not found`);
-    }
-    return { message: 'Record deleted successfully', deletedRecord };
+      return this.rewardService.remove(id);
+
   }
 }

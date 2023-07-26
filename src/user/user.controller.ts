@@ -14,7 +14,7 @@ export class UserController {
     }
 
     @Get(':id')
-    async singleUser(id:any): Promise<User>{
+    async singleUser(@Param('id') id:any): Promise<User>{
         return this.userService.findwithUserId(id);
     }
 

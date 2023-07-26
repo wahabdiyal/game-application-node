@@ -5,7 +5,7 @@ import { User } from "src/user/schemas/user.schema";
 @Schema({
         timestamps: true,
 })
-export class GoldCoin extends Document{
+export class Gold extends Document{
     @Prop()
     staus:string;
     @Prop()
@@ -19,6 +19,6 @@ export class GoldCoin extends Document{
 
     
 }
-export const GoldCoinSchema = SchemaFactory.createForClass(GoldCoin)
+export const GoldSchema = SchemaFactory.createForClass(Gold)
 
 
