@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { SilversService } from './silvers.service';
 import { SilversController } from './silvers.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Silver } from './schemas/silver_coin.schema';
+import { SilverSchema } from './schemas/silver_coin.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'silver', schema: Silver }])],
+  ///////important note schema class in string and name of variable in schema export class name here....
+  imports: [MongooseModule.forFeature([{ name: 'Silver', schema: SilverSchema }])],
   controllers: [SilversController],
   providers: [SilversService]
 })

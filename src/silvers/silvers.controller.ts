@@ -19,16 +19,16 @@ export class SilversController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.silversService.findOne(+id);
+    return this.silversService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSilverDto: UpdateSilverDto) {
-    return this.silversService.update(+id, updateSilverDto);
+  update(@Param('id') id: any, @Body() updateSilverDto: UpdateSilverDto) {
+    return this.silversService.update(id, updateSilverDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.silversService.remove(+id);
+  remove(@Param('id') id: any) {
+    return this.silversService.remove(id);
   }
 }

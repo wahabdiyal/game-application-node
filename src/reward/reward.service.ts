@@ -45,9 +45,13 @@ async update(id: any, updateRewardDto: UpdateRewardDto) {
 
   return {status: true,message: "Reward updated successfully"};
 } 
-  async remove(id:any): Promise<Reward> {
+  async remove(id: any) {
+    const reward = await this.rewardModel.findByIdAndDelete(id);
 
-    const deletedRecord = await this.rewardModel.findByIdAndDelete(id) ;
-    return deletedRecord;
+    if (!reward) {
+      throw new NotFoundException('Reward not found.');
+    }
+
+    return {status: true,message: "Reward Delete successfully"};
   }
 }
