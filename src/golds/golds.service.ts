@@ -32,7 +32,7 @@ async update(id: any, body:UpdateGoldDto) {
   const gold = await this.goldModel.findByIdAndUpdate(id,body);
 
   if (!gold) {
-    throw new NotFoundException('Gold Coin  not found.');
+    throw new NotFoundException('Gold Coin not found.');
   }
 
   return {status: true,message: "Gold Coin updated successfully"};
@@ -46,5 +46,14 @@ async update(id: any, body:UpdateGoldDto) {
     }
 
     return {status: true,message: "Gold Coin Delete successfully"};
+  }
+ 
+  async fetchAllCoinUserId(id: any) {
+    const gold = await this.goldModel.find({user_id: id});
+
+    if (!gold) {
+      throw new NotFoundException('Gold Coin not found.');
+    }
+    return {status: true,message: "Gold Coin User","coin":gold};
   }
 }

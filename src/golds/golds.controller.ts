@@ -32,4 +32,8 @@ export class GoldsController {
   remove(@Param('id') id: any) {
     return this.goldsService.remove(id);
   }
+  @Get('user/:id')
+  fetchAllCoinUserId(@Param('id') id: any) {
+    return this.goldsService.fetchAllCoinUserId(id);
+  }
 }
