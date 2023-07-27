@@ -31,4 +31,9 @@ export class SilversController {
   remove(@Param('id') id: any) {
     return this.silversService.remove(id);
   }
+
+  @Get('user/:id')
+  fetchAllCoinUserId(@Param('id') id: any) {
+    return this.silversService.fetchAllCoinUserId(id);
+  }
 }
