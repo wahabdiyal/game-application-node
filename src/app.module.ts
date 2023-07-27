@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { RewardModule } from './reward/reward.module';
 import { GoldsModule } from './golds/golds.module';
 import { SilversModule } from './silvers/silvers.module';
+import { UserService } from './user/user.service';
  
 @Module({
   imports: [
@@ -19,11 +20,8 @@ import { SilversModule } from './silvers/silvers.module';
     MongooseModule.forRoot(process.env.DB_CONNECTION),
     UserModule,
     AuthModule,
-   
     RewardModule,
-   
-    // GoldsModule,
-   
+     GoldsModule,
      SilversModule,
     
   ],

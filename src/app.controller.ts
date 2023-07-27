@@ -1,11 +1,15 @@
 import { Controller, Get, Render, Req, Session } from '@nestjs/common';
 import { AppService } from './app.service';
+import { Silver } from './silvers/schemas/silver_coin.schema';
+ 
  
  
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly appService: AppService,
+         
+    ) {}
 
   @Get()
    @Render('pages/index.hbs')

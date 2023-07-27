@@ -29,16 +29,22 @@ export class GoldsService {
 }
 
 async update(id: any, body:UpdateGoldDto) {
-  const user = await this.goldModel.findByIdAndUpdate(id,body);
+  const gold = await this.goldModel.findByIdAndUpdate(id,body);
 
-  if (!user) {
-    throw new NotFoundException('Silver Coin  not found.');
+  if (!gold) {
+    throw new NotFoundException('Gold Coin  not found.');
   }
 
-  return {status: true,message: "Silver Coin updated successfully"};
+  return {status: true,message: "Gold Coin updated successfully"};
 }
 
-  remove(id: number) {
-    return `This action removes a #${id} gold`;
+  async remove(id: any) {
+    const gold = await this.goldModel.findByIdAndDelete(id);
+
+    if (!gold) {
+      throw new NotFoundException('Gold Coin  not found.');
+    }
+
+    return {status: true,message: "Gold Coin Delete successfully"};
   }
 }

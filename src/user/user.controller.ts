@@ -1,4 +1,13 @@
-import { Controller, Get, Patch, Body, Param, Post, Delete, NotFoundException, UseGuards } from '@nestjs/common';
+import { Controller,
+     Get,
+      Patch,
+       Body,
+        Param,
+         Post,
+          Delete,
+           NotFoundException,
+            UseGuards
+         } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -6,7 +15,10 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @Controller('user')
 @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
 export class UserController {
-    constructor(private userService: UserService,){}
+    constructor(
+        private userService: UserService,
+        
+        ){}
 
     @Get('/')
     async getUser(): Promise<User[]>{
@@ -38,4 +50,10 @@ export class UserController {
         }
         return {status:true, message: 'User deleted successfully' };
   }
+
+  @Get('relation/:id')
+   getrelation(@Param('id') id:any) {
+    console.log(id);
+        return this.userService.getRelation(id);
+    }
 }

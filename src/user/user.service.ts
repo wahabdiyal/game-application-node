@@ -2,12 +2,17 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
+import { SilversService } from 'src/silvers/silvers.service';
+ 
 
 @Injectable()
 export class UserService {
 constructor(
         @InjectModel(User.name)
         private userModel: mongoose.Model<User>,
+      
+        // private silverService: SilversService,
+     
         ){}
         async findAll():Promise<User[]>{
             const user = await this.userModel.find();
@@ -65,4 +70,9 @@ constructor(
     
             return user;
           }
+
+          getRelation(id: any){
+              // const users =this.silverService.findUserValue(id) ;
+              //   return users;
+            }
 }

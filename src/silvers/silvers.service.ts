@@ -30,9 +30,9 @@ export class SilversService {
   }
 
   async update(id: any, body:UpdateSilverDto) {
-    const user = await this.silverModel.findByIdAndUpdate(id,body);
+    const silver = await this.silverModel.findByIdAndUpdate(id,body);
 
-    if (!user) {
+    if (!silver) {
       throw new NotFoundException('Silver Coin  not found.');
     }
 
@@ -41,12 +41,15 @@ export class SilversService {
 
 
   async remove(id: any) {
-    const user = await this.silverModel.findByIdAndDelete(id);
+    const silver = await this.silverModel.findByIdAndDelete(id);
 
-    if (!user) {
+    if (!silver) {
       throw new NotFoundException('Silver Coin  not found.');
     }
 
     return {status: true,message: "Silver Coin Delete successfully"};
   }
+      async findUserValue(id:any){
+        return  await this.silverModel.find(id);
+      }
 }

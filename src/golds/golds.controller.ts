@@ -18,17 +18,18 @@ export class GoldsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.goldsService.findOne(+id);
+  findOne(@Param('id') id: any) {
+    
+    return this.goldsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGoldDto: UpdateGoldDto) {
-    return this.goldsService.update(+id, updateGoldDto);
+  update(@Param('id') id: any, @Body() updateGoldDto: UpdateGoldDto) {
+    return this.goldsService.update(id, updateGoldDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.goldsService.remove(+id);
+  remove(@Param('id') id: any) {
+    return this.goldsService.remove(id);
   }
 }
