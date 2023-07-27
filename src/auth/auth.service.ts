@@ -15,7 +15,10 @@ export class AuthService {
    
     const user = await this.usersService.findById(username);
    
-    if (user?.password !== pass) {
+    if(user.status !== 'active'){
+      throw new Error("User is invalid, try to contact admin")
+    }
+    if (user?.password !== pass && user.role=="Client"  ) {
       throw new UnauthorizedException();
     }
     const payload = { name: user.full_name, email: user.email };

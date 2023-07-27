@@ -54,9 +54,9 @@ export class SilversService {
       }
 
       async fetchAllCoinUserId(id: any) {
-        const silver = await this.silverModel.find({user_id: id});
+        const silver = await this.silverModel.find({client_id: id});
     
-        if (!silver) {
+        if (silver.length==0) {
           throw new NotFoundException('Silver Coin not found.');
         }
         return {status: true,message: "silver Coin User","coin":silver};

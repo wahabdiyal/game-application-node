@@ -13,6 +13,8 @@ export class User extends Document{
     full_name:string;
     @Prop({required: true})
     country:string;
+    @Prop({default: 'active'})
+    status:string;
 
     @Prop({default: null,})
     created_by:string;
@@ -20,8 +22,8 @@ export class User extends Document{
     @Prop({default: null,})
     updated_by:string;
 
-    @Prop({ type: Types.ObjectId, ref: 'User',default: null})
-    user_id: User; 
+    // @Prop({ type: Types.ObjectId, ref: 'User',default: null})
+    // user_id: User; 
 
     @Prop({ required: true, unique: true })
     email:string;
