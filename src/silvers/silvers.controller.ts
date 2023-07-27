@@ -36,4 +36,8 @@ export class SilversController {
   fetchAllCoinUserId(@Param('id') id: any) {
     return this.silversService.fetchAllCoinUserId(id);
   }
+  @Get('getcoin/:id')
+  getuserbycoinId(@Param('id') id: any) {
+    return this.silversService.getuserbycoinId(id);
+  }
 }

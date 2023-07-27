@@ -1,3 +1,4 @@
+import { UserService } from 'src/user/user.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateSilverDto } from './dto/create-silver.dto';
 import { UpdateSilverDto } from './dto/update-silver.dto';
@@ -5,13 +6,21 @@ import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import { Silver } from './schemas/silver_coin.schema';
  
+ 
 
 @Injectable()
 export class SilversService {
   constructor(
     @InjectModel(Silver.name)
     private silverModel: mongoose.Model<Silver>,
+     private usersService: UserService,
+     
+     
     ){}
+
+    async getuserbycoinId(id:any){
+      return this.usersService.findwithUserId(id);
+    }
  
     async  create(createCoinDto: CreateSilverDto): Promise<Silver>  {
       var res = await this.silverModel.create(createCoinDto);
