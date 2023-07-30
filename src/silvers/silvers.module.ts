@@ -10,6 +10,7 @@ import { UserModule } from 'src/user/user.module';
   imports: [MongooseModule.forFeature([{ name: 'Silver', schema: SilverSchema }
 ]) , UserModule],
   controllers: [SilversController],
-  providers: [SilversService]
+  providers: [SilversService],
+  exports: [SilversService]
 })
 export class SilversModule {}

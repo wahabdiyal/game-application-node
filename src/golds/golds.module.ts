@@ -7,6 +7,7 @@ import { GoldSchema } from './schemas/gold_coin.schema';
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Gold', schema: GoldSchema }])],
   controllers: [GoldsController],
-  providers: [GoldsService]
+  providers: [GoldsService],
+  exports: [GoldsService],
 })
 export class GoldsModule {}

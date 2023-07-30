@@ -9,6 +9,7 @@ import { RewardModule } from './reward/reward.module';
 import { GoldsModule } from './golds/golds.module';
 import { SilversModule } from './silvers/silvers.module';
 import { UserService } from './user/user.service';
+import { CoinUserModule } from './coin_user/coin_user.module';
  
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { UserService } from './user/user.service';
     RewardModule,
      GoldsModule,
      SilversModule,
+     CoinUserModule,
     
   ],
   controllers: [AppController],
