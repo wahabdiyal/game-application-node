@@ -6,7 +6,10 @@ import { UpdateSilverDto } from './dto/update-silver.dto';
 @Controller('silvers')
 export class SilversController {
   constructor(private readonly silversService: SilversService) {}
-
+  @Get('/data')
+  fetchAllCoinCount() {
+   return this.silversService.fetchAllCoinCount();
+ }
   @Post()
   create(@Body() createSilverDto: CreateSilverDto) {
     return this.silversService.create(createSilverDto);

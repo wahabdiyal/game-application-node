@@ -70,4 +70,35 @@ export class SilversService {
         }
         return {status: true,message: "silver Coin User","coin":silver};
       }
+
+      async fetchAllCoinCount(){
+        let users = await this.usersService.getAllUser();
+        const coinCounts = [];
+        for (const user of users) {
+          // const coinCount = await this.goldModel.count({ client_id: user.id });
+          const silverCredit = await this.silverModel.find({ client_id: user.id}) ;
+          let sumcredit=0;
+          let sumdebit=0;
+          for (const creditType of silverCredit){
+              if(creditType.type == 'credit'){
+              sumcredit = sumcredit + parseInt(creditType.coins);
+            }else{
+              sumdebit = sumdebit + parseInt(creditType.coins);
+            }
+          }
+          const silvercoin = await this.silverModel.findOne({ client_id: user.id }, { sort: { createdAt: -1 } }).select(
+            "createdAt"
+        );
+          coinCounts.push({ user_id: user.id,
+            //  coinCount,
+             user_name : user.full_name,
+             country:user.country,
+             last_transation_date:silvercoin?.get('createdAt'),
+             credit:sumcredit,
+             debit:sumdebit
+    
+             });
+        }
+        return coinCounts;
+      }
 }
