@@ -6,7 +6,10 @@ import { UpdateGoldDto } from './dto/update-gold.dto';
 @Controller('golds')
 export class GoldsController {
   constructor(private readonly goldsService: GoldsService) {}
-
+  @Get('/data')
+   fetchAllCoinCount() {
+    return this.goldsService.fetchAllCoinCount();
+  }
   @Post()
   create(@Body() createGoldDto: CreateGoldDto) {
     return this.goldsService.create(createGoldDto);
@@ -36,4 +39,5 @@ export class GoldsController {
   fetchAllCoinUserId(@Param('id') id: any) {
     return this.goldsService.fetchAllCoinUserId(id);
   }
+
 }

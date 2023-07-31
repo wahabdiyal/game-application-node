@@ -1,3 +1,4 @@
+import { UserService } from './../user/user.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGoldDto } from './dto/create-gold.dto';
 import { UpdateGoldDto } from './dto/update-gold.dto';
@@ -10,6 +11,7 @@ export class GoldsService {
     constructor(
       @InjectModel(Gold.name)
       private goldModel: mongoose.Model<Gold>,
+      private  userService : UserService,
       ){}
 
   async create(createGoldDto: CreateGoldDto) :Promise<Gold>  {
@@ -55,5 +57,35 @@ async update(id: any, body:UpdateGoldDto) {
       throw new NotFoundException('Gold Coin not found.');
     }
     return {status: true,message: "Gold Coin User","coin":gold};
+  }
+    async fetchAllCoinCount(){
+    let users = await this.userService.getAllUser();
+    const coinCounts = [];
+    for (const user of users) {
+      // const coinCount = await this.goldModel.count({ client_id: user.id });
+      const goldCredit = await this.goldModel.find({ client_id: user.id}) ;
+      let sumcredit=0;
+      let sumdebit=0;
+      for (const creditType of goldCredit){
+          if(creditType.type == 'credit'){
+          sumcredit = sumcredit + parseInt(creditType.coins);
+        }else{
+          sumdebit = sumdebit + parseInt(creditType.coins);
+        }
+      }
+      const goldcoin = await this.goldModel.findOne({ client_id: user.id }, { sort: { createdAt: -1 } }).select(
+        "createdAt"
+    );
+      coinCounts.push({ user_id: user.id,
+        //  coinCount,
+         user_name : user.full_name,
+         country:user.country,
+         last_transation_date:goldcoin?.get('createdAt'),
+         credit:sumcredit,
+         debit:sumdebit
+
+         });
+    }
+    return coinCounts;
   }
 }

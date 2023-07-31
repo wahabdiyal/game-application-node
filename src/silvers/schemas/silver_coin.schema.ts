@@ -17,7 +17,7 @@ export enum Status{
 })
 export class Silver extends Document{
     @Prop({default:"pending"})
-    staus:Status;
+    status:Status;
     @Prop()
     coins:string;
     @Prop({default:null })

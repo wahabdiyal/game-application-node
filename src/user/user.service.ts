@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
@@ -69,6 +69,12 @@ constructor(
             }
     
             return user;
+          }
+          async getAllUser( ){
+            return await this.userModel.find().where({role:'User'}).select([
+              "full_name",
+              "country",
+          ]);
           }
 
           getRelation(id: any){
