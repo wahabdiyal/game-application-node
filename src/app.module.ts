@@ -10,6 +10,7 @@ import { GoldsModule } from './golds/golds.module';
 import { SilversModule } from './silvers/silvers.module';
 import { UserService } from './user/user.service';
 import { CoinUserModule } from './coin_user/coin_user.module';
+import { WithdrawModule } from './withdraw/withdraw.module';
  
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { CoinUserModule } from './coin_user/coin_user.module';
      GoldsModule,
      SilversModule,
      CoinUserModule,
+     WithdrawModule,
     
   ],
   controllers: [AppController],
