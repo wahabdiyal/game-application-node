@@ -63,16 +63,58 @@ async update(id: any, body:UpdateGoldDto) {
     const coinCounts = [];
     for (const user of users) {
       // const coinCount = await this.goldModel.count({ client_id: user.id });
-      const goldCredit = await this.goldModel.find({ client_id: user.id}) ;
-      let sumcredit=0;
-      let sumdebit=0;
-      for (const creditType of goldCredit){
-          if(creditType.type == 'credit'){
-          sumcredit = sumcredit + parseInt(creditType.coins);
-        }else{
-          sumdebit = sumdebit + parseInt(creditType.coins);
-        }
+      const goldCredit = await this.goldModel.aggregate([
+        {
+          $match: {
+            client_id: user.id,
+            type: { $in: ['credit', 'debit'] },
+          },
+        },
+        {
+          $group: {
+            _id: '$client_id',
+            creditSum: { $sum: { $cond: [{ $eq: ['$type', 'credit'] }, { $toInt: '$coins' }, 0] } },
+            debitSum: { $sum: { $cond: [{ $eq: ['$type', 'debit'] }, { $toInt: '$coins' }, 0] } },
+          },
+        },
+        
+      ]);
+    
+   let sumcredit=0; 
+   let sumdebit=0;
+      if (goldCredit.length > 0) {
+        sumcredit = goldCredit[0].creditSum;
+        sumdebit = goldCredit[0].debitSum;
+         
       }
+    //   const goldDebit = await this.goldModel.aggregate([
+    //     {
+    //       $match: {
+    //         client_id: user.id,
+    //         type: 'debit',
+    //       },
+    //     },
+    //     {
+    //       $group: {
+    //         _id: '$client_id',
+    //         totalDebit: { $sum: { $toInt: '$coins' } },
+    //       },
+    //     },
+        
+    //   ]);
+    //   console.log(goldDebit);
+     
+    //  if (goldDebit.length > 0) {
+    //   sumdebit = goldDebit[0].totalDebit;
+    // }
+     
+      // for (const creditType of goldCredit){
+      //     if(creditType.type == 'credit'){
+      //     sumcredit = sumcredit + parseInt(creditType.coins);
+      //   }else{
+      //     sumdebit = sumdebit + parseInt(creditType.coins);
+      //   }
+      // }
       const goldcoin = await this.goldModel.findOne({ client_id: user.id }, { sort: { createdAt: -1 } }).select(
         "createdAt"
     );
