@@ -71,7 +71,7 @@ constructor(
             return user;
           }
           async getAllUser( ){
-            return await this.userModel.find().where({role:'User'}).select([
+            return await this.userModel.find({ $or: [{ role: "User" }, { role: "user" }] }).select([
               "full_name",
               "country",
           ]);
