@@ -18,6 +18,8 @@ export class Withdraw extends Document{
     @Prop({default: null,})
     proved_date :string;
     @Prop({default: null,})
+    remarks :string;
+    @Prop({default: null,})
     proved_by :string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
     client_id: User; 
