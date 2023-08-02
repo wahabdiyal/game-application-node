@@ -12,6 +12,8 @@ export class Reward extends Document{
     remarks:string;
     @Prop({default: null})
     created_by:string;
+    @Prop({default: 0})
+    coins:string;
     @Prop({default: null})
     updated_by:string;
     @Prop({default: null})

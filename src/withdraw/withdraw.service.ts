@@ -17,7 +17,7 @@ export class WithdrawService {
   ){}
 
    async create(createWithdrawDto: CreateWithdrawDto): Promise<any>  {
-      const userCoin = await this.goldService.countOfUserCoin(createWithdrawDto['user_id']);
+      const userCoin = await this.goldService.countOfUserCoin(createWithdrawDto['client_id']);
       if(userCoin['total'] <= 0) {
         return {status:false,'message':'Request not processed because user not have enough coins.'};
       }

@@ -122,7 +122,7 @@ async update(id: any, body:UpdateGoldDto) {
       const goldcoin = await this.goldModel.findOne({ client_id: user.id }, { sort: { createdAt: -1 } }).select(
         "createdAt"
     );
-      coinCounts.push({ user_id: user.id,
+      coinCounts.push({ client_id: user.id,
         //  coinCount,
          user_name : user.full_name,
          country:user.country,
