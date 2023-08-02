@@ -103,17 +103,7 @@ export class SilversService {
             sumdebit = goldCredit[0].debitSum;
              
           }
-
-
-          // for (const creditType of silverCredit){
-          //     if(creditType.type == 'credit'){
-          //     sumcredit = sumcredit + parseInt(creditType.coins);
-          //   }else{
-          //     sumdebit = sumdebit + parseInt(creditType.coins);
-          //   }
-          // }
-
-
+ 
           const silvercoin = await this.silverModel.findOne({ client_id: user.id }, { sort: { createdAt: -1 } }).select(
             "createdAt"
         );

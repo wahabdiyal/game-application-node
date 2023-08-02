@@ -34,5 +34,12 @@ export class WithdrawController {
   remove(@Param('id') id: any) {
     return this.withdrawService.remove(id);
   }
-  
+  @Get('get/approve/request')
+  sumOfWithdraw(){
+    return this.withdrawService.sumOfWithdraw();
+  }
+  @Get('getbystatus/:status')
+  getRecordWithStatus(@Param('status') status){
+    return this.withdrawService.getRecordWithStatus(status);
+  }
 }
