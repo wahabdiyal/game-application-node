@@ -4,10 +4,11 @@ import { WithdrawService } from './withdraw.service';
 import { WithdrawController } from './withdraw.controller';
 import { WithdrawSchema } from './schmas/withdraw.schema';
 import { UserModule } from 'src/user/user.module';
+import { GoldsModule } from 'src/golds/golds.module';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Withdraw', schema:WithdrawSchema  }
-]) ,UserModule ],
+]) ,UserModule,GoldsModule ],
   controllers: [WithdrawController],
   providers: [WithdrawService],
   exports:[WithdrawService]

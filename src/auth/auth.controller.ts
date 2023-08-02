@@ -17,7 +17,7 @@ import { UserService } from 'src/user/user.service';
 @Controller('auth')
 export class AuthController {
     constructor(private userService: UserService,private authService: AuthService) { }
-
+    @UseGuards(AuthGuard)
     @Get('/login')
 
     async getUser(): Promise<User[]> {

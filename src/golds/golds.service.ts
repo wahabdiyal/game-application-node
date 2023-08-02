@@ -14,7 +14,11 @@ export class GoldsService {
       private  userService : UserService,
       ){}
 
-  async create(createGoldDto: CreateGoldDto) :Promise<Gold>  {
+  async create(createGoldDto: CreateGoldDto) :Promise<any>  {
+      
+      if(!await this.userService.findUserbyId(createGoldDto['client_id'])){
+          return {status: 'error', message:'User not found'};
+      }
     var res = await this.goldModel.create(createGoldDto);
      return res; 
   }
@@ -129,5 +133,31 @@ async update(id: any, body:UpdateGoldDto) {
          });
     }
     return coinCounts;
+  }
+  async countOfUserCoin(user_id:any){
+    const goldCredit = await this.goldModel.aggregate([
+      {
+        $match: {
+          client_id: user_id,
+          type: { $in: ['credit', 'debit'] },
+        },
+      },
+      {
+        $group: {
+          _id: '$client_id',
+          creditSum: { $sum: { $cond: [{ $eq: ['$type', 'credit'] }, { $toInt: '$coins' }, 0] } },
+          debitSum: { $sum: { $cond: [{ $eq: ['$type', 'debit'] }, { $toInt: '$coins' }, 0] } },
+        },
+      },
+      
+    ]);
+    let sumcredit:number=0; 
+    let sumdebit:number=0;
+       if (goldCredit.length > 0) {
+         sumcredit = goldCredit[0].creditSum;
+         sumdebit = goldCredit[0].debitSum;
+          
+       }
+       return {total:sumcredit-sumdebit}
   }
 }

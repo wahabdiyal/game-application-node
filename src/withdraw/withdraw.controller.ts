@@ -34,4 +34,5 @@ export class WithdrawController {
   remove(@Param('id') id: any) {
     return this.withdrawService.remove(id);
   }
+  
 }

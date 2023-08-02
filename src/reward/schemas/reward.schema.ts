@@ -18,7 +18,7 @@ export class Reward extends Document{
     type:string;
     
     @Prop({ type: Types.ObjectId, ref: 'User'})
-    user_id: User; 
+    client_id: User; 
 
     
 }

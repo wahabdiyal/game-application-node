@@ -51,9 +51,5 @@ export class UserController {
         return {status:true, message: 'User deleted successfully' };
   }
 
-  @Get('relation/:id')
-   getrelation(@Param('id') id:any) {
-    console.log(id);
-        return this.userService.getRelation(id);
-    }
+ 
 }

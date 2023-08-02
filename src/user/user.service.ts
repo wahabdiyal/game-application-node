@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, NotFoundException, Request } from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
-import { SilversService } from 'src/silvers/silvers.service';
+ 
  
 
 @Injectable()
@@ -77,8 +77,14 @@ constructor(
           ]);
           }
 
-          getRelation(id: any){
-              // const users =this.silverService.findUserValue(id) ;
-              //   return users;
+          async findUserbyId(id: string): Promise<boolean> {
+            try{
+                 new mongoose.Types.ObjectId(id);
+            }catch(e){
+            return false;
+            }
+           
+            const user = await this.userModel.exists({ _id: id});
+            return user !== null;
             }
 }
