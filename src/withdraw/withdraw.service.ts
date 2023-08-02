@@ -55,7 +55,7 @@ export class WithdrawService {
   }
 
   async userRequest(id: any){
-    const withdraw = await this.withDrawModel.find({user_id: id});
+    const withdraw = await this.withDrawModel.find({client_id: id});
 
     if (withdraw.length==0) {
       throw new NotFoundException('Withdraw not found.');
@@ -71,7 +71,7 @@ export class WithdrawService {
       {
         $match: {
             status:"approved",
-            user_id: user.id,
+            client_id: user.id,
             },
     },
     {

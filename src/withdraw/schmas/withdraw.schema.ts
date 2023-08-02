@@ -20,7 +20,7 @@ export class Withdraw extends Document{
     @Prop({default: null,})
     proved_by :string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
-    user_id: User; 
+    client_id: User; 
 }
 export const WithdrawSchema = SchemaFactory.createForClass(Withdraw)
 
