@@ -63,27 +63,33 @@ export class WithdrawService {
     return {status: true,message: "Withdraw User Request","Requests":withdraw};
   }
 
-  async sumOfWithdraw(status: any){
+  async sumOfWithdraw(){
+    const users  = await this.userService.findAll();
+    const coinCounts = [];
+    for (const user of users) {
     const withdraw = await this.withDrawModel.aggregate([
-      {
-        $match: {
-        status:"approved",
-        
+      {   $match: {
+            status:"approved",
+            user_id: user.id,
+            
       },
-      $group:{
-        
-                  _id: '$status',
+      $group:{  _id: '$status',
                   totalCoin: { $sum: { $toInt: '$coins' } },
                 },
-       
     },
     
     ]);
 
-    if (withdraw.length==0) {
-      throw new NotFoundException('Withdraw not found.');
-    }
-    return {status: true,message: "Withdraw User Request","Requests":withdraw};
+    coinCounts.push({ user_id: user.id,
+      //  coinCount,
+       user_name : user.full_name,
+       country:user.country,
+       
+       
+
+       });
+  }
+  return coinCounts;
   }
 
 }

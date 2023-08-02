@@ -29,7 +29,7 @@ export class RewardService {
 }
 
 async findByUserId(id: any):Promise<Reward[]>{
-  const reward = await this.rewardModel.find({user_id: id});
+  const reward = await this.rewardModel.find({client_id: id});
   if (!reward) {
     throw new NotFoundException('User not found.');
   }
