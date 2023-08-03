@@ -19,16 +19,16 @@ export class UserRightController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userRightService.findOne(+id);
+    return this.userRightService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserRightDto: UpdateUserRightDto) {
-    return this.userRightService.update(+id, updateUserRightDto);
+    return this.userRightService.update(id, updateUserRightDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.userRightService.remove(+id);
+    return this.userRightService.remove(id);
   }
 }

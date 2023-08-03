@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { UserRight } from './schemas/user_right.schema';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserRightDto } from './dto/create-user_right.dto';
 import { UpdateUserRightDto } from './dto/update-user_right.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UserRightService {
-  create(createUserRightDto: CreateUserRightDto) {
-    return 'This action adds a new userRight';
+  constructor(
+ @InjectModel(UserRight.name)
+  private userRigthModel: mongoose.Model<UserRight>,
+
+  ){}
+ 
+  async create(createUserRightDto: CreateUserRightDto) {
+     return await this.userRigthModel.create(createUserRightDto);
   }
 
-  findAll() {
-    return `This action returns all userRight`;
+  async findAll() {
+    return  await this.userRigthModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} userRight`;
+  async findOne(id: string) {
+    return await this.userRigthModel.findById(id);
   }
 
-  update(id: number, updateUserRightDto: UpdateUserRightDto) {
-    return `This action updates a #${id} userRight`;
+  async update(id: any, body:UpdateUserRightDto) {
+    const userright = await this.userRigthModel.findByIdAndUpdate(id,body);
+  
+    if (!userright) {
+      throw new NotFoundException('User-right not found.');
+    }
+  
+    return {status: true,message: "User-right updated successfully"};
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userRight`;
+  async remove(id: any) {
+    const userright = await this.userRigthModel.findByIdAndDelete(id);
+
+    if (!userright) {
+      throw new NotFoundException('user-right  not found.');
+    }
+
+    return {status: true,message: "user-right Delete successfully"};
   }
 }
