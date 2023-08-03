@@ -11,6 +11,7 @@ import { SilversModule } from './silvers/silvers.module';
 import { UserService } from './user/user.service';
 import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
+import { GameModule } from './game/game.module';
  
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WithdrawModule } from './withdraw/withdraw.module';
      SilversModule,
      CoinUserModule,
      WithdrawModule,
+     GameModule,
     
   ],
   controllers: [AppController],
