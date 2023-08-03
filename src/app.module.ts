@@ -12,6 +12,7 @@ import { UserService } from './user/user.service';
 import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
 import { GameModule } from './game/game.module';
+import { UserRightModule } from './user_right/user_right.module';
  
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { GameModule } from './game/game.module';
      CoinUserModule,
      WithdrawModule,
      GameModule,
+     UserRightModule,
     
   ],
   controllers: [AppController],

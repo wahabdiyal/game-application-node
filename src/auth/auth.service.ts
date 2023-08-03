@@ -18,7 +18,7 @@ export class AuthService {
     if(user.status !== 'active'){
       throw new NotAcceptableException("User is invalid, try to contact admin")
     }
-    if (user?.password !== pass && user.role=="Client"  ) {
+    if (user?.password !== pass && user.role=="user"  ) {
       throw new UnauthorizedException();
     }
     const payload = { id:user._id,name: user.full_name, email: user.email,status:user.status,role:user.role };

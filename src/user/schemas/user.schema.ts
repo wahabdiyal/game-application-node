@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from 'mongoose';
 export enum UserType{
-    Admin="Admin",
-    Client="Client",
-    Operator="Operator"
+    admin="admin",
+    manager="manager",
+    user="user"
 }
 @Schema({
         timestamps: true,
@@ -30,7 +30,7 @@ export class User extends Document{
     @Prop()
      password: string
      
-     @Prop({default: "Client"})
+     @Prop({default: "user"})
     role:UserType;
     @Prop()
     phone:number;

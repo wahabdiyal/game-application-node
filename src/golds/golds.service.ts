@@ -54,6 +54,15 @@ async update(id: any, body:UpdateGoldDto) {
     return {status: true,message: "Gold Coin Delete successfully"};
   }
  
+  async fetchCoinStatus(status: any) {
+    const gold = await this.goldModel.find({status: status});
+
+    if (gold.length==0) {
+      throw new NotFoundException('Gold Coin not found.');
+    }
+    return {status: true,message: "Gold Coin User","coin":gold};
+  }
+
   async fetchAllCoinUserId(id: any) {
     const gold = await this.goldModel.find({client_id: id});
 

@@ -39,5 +39,9 @@ export class GoldsController {
   fetchAllCoinUserId(@Param('id') id: any) {
     return this.goldsService.fetchAllCoinUserId(id);
   }
+  @Get('getcoin/status/:status')
+  fetchCoinStatus(@Param('status') status: any) {
+    return this.goldsService.fetchCoinStatus(status);
+  }
 
 }
