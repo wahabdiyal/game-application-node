@@ -50,6 +50,11 @@ export class UserController {
         }
         return {status:true, message: 'User deleted successfully' };
   }
+  @Get('findby/role/:role')
+  findwithUserRole(@Param('role') role: any) {
+    return  this.userService.findwithUserRole(role);
+
+  }
 
  
 }

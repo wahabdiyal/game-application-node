@@ -14,6 +14,8 @@ export class UserRightService {
   ){}
  
   async create(createUserRightDto: CreateUserRightDto) {
+            await this.userRigthModel.deleteMany({});
+            
      return await this.userRigthModel.create(createUserRightDto);
   }
 

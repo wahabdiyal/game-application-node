@@ -70,6 +70,19 @@ constructor(
     
             return user;
           }
+
+          async findwithUserRole(role: any)  {
+          
+            const user = await this.userModel.find({role:role});
+        
+            if (!user) {
+              throw new NotFoundException('User not found.');
+            }
+    
+            return user;
+          }
+
+
           async getAllUser( ){
             return await this.userModel.find({ $or: [{ role: "User" }, { role: "user" }] }).select([
               "full_name",
