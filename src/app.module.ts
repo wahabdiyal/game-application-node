@@ -13,6 +13,7 @@ import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
 import { GameModule } from './game/game.module';
 import { UserRightModule } from './user_right/user_right.module';
+import { ContactModule } from './contact/contact.module';
  
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { UserRightModule } from './user_right/user_right.module';
      WithdrawModule,
      GameModule,
      UserRightModule,
+     ContactModule,
     
   ],
   controllers: [AppController],
