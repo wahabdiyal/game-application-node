@@ -32,7 +32,7 @@ constructor(
             currentPage: page,
             totalPages,
             perPage,
-            total_page:totalCount,
+            total_count:totalCount,
           };
           
 
