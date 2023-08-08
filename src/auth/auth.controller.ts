@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards,Param
+  UseGuards,Param, Query
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -20,8 +20,8 @@ export class AuthController {
     @UseGuards(AuthGuard)
     @Get('/login')
 
-    async getUser(): Promise<User[]> {
-        return this.userService.findAll();
+    async getUser(@Query() {skip,limit}) {
+        return this.userService.findAll(skip, limit);
     }
 
     @Post('register')

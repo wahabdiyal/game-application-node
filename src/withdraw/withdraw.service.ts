@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Query } from '@nestjs/common';
 import { CreateWithdrawDto } from './dto/create-withdraw.dto';
 import { UpdateWithdrawDto } from './dto/update-withdraw.dto';
 import { Withdraw } from './schmas/withdraw.schema';
@@ -63,10 +63,11 @@ export class WithdrawService {
     return {status: true,message: "Withdraw User Request","Requests":withdraw};
   }
 
-  async sumOfWithdraw(){
-    const users  = await this.userService.findAll();
+  async sumOfWithdraw(skip=0,limit=20):Promise<any> {
+     const users = await this.userService.findAll(skip, limit);
+     
     const coinCounts = [];
-    for (const user of users) {
+    for (const user of users['data']) {
     const withdraw = await this.withDrawModel.aggregate([
       {
         $match: {
@@ -95,7 +96,7 @@ export class WithdrawService {
        
 
        });
-  }
+  }  
   return coinCounts;
   }
 

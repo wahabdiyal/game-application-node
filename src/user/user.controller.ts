@@ -6,7 +6,8 @@ import { Controller,
          Post,
           Delete,
            NotFoundException,
-            UseGuards
+            UseGuards,
+            Query
          } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
@@ -21,8 +22,8 @@ export class UserController {
         ){}
 
     @Get('/')
-    async getUser(): Promise<User[]>{
-        return this.userService.findAll();
+    async getUser(@Query() {skip,limit}) {
+      return this.userService.findAll(skip, limit);
     }
 
     @Get(':id')

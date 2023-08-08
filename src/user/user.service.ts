@@ -2,6 +2,7 @@ import { BadRequestException, Injectable, NotFoundException, Request } from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
+import { retry } from 'rxjs';
  
  
 
@@ -14,9 +15,23 @@ constructor(
         // private silverService: SilversService,
      
         ){}
-        async findAll():Promise<User[]>{
-            const user = await this.userModel.find();
-            return user;
+        async findAll(skip = 0, limit = 20,){
+          try{
+          const count = await this.userModel.countDocuments({}).exec();
+          const page_total = Math.floor((count - 1)/ limit) + 1;
+          const data =  await this.userModel.find().limit(limit).skip(skip).exec();
+          return {
+            data: data,
+            page_total: page_total,
+            status: 200,
+          }
+          }catch(e){
+              return  'error';
+          }
+          
+
+            // const user = await this.userModel.find();
+            // return user;
         }
         async create(user: User): Promise<User> {
        
@@ -84,7 +99,7 @@ constructor(
 
 
           async getAllUser( ){
-            return await this.userModel.find({ $or: [{ role: "User" }, { role: "user" }] }).select([
+            return await this.userModel.find({ $or: [{ role: "Player" }, { role: "player" }] }).select([
               "full_name",
               "country",
           ]);

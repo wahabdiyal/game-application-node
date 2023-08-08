@@ -7,7 +7,8 @@ import { Controller,
          Delete,
           NotFoundException,
            UseGuards,
-           Request
+           Request,
+           Query
         } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
@@ -22,8 +23,8 @@ export class UserApiController {
        ){}
 
    @Get('/')
-   async getUser(): Promise<User[]>{
-       return this.userService.findAll();
+   async getUser(@Query() {skip,limit}) {
+    return this.userService.findAll(skip, limit);
    }
 //    @Post('send/coin')
 //    @UseGuards(AuthGuard)
