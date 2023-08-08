@@ -14,6 +14,8 @@ import { WithdrawModule } from './withdraw/withdraw.module';
 import { GameModule } from './game/game.module';
 import { UserRightModule } from './user_right/user_right.module';
 import { ContactModule } from './contact/contact.module';
+import { User, UserSchema } from './user/schemas/user.schema';
+ 
  
 @Module({
   imports: [
@@ -21,7 +23,16 @@ import { ContactModule } from './contact/contact.module';
       envFilePath:'.env',
       isGlobal: true,
     }),
-     
+    MongooseModule.forFeatureAsync([
+      {
+        name: User.name,
+        useFactory: () => {
+          const schema = UserSchema;
+          schema.plugin(require('mongoose-autopopulate'));
+          return schema;
+        },
+      }, 
+    ]),
     MongooseModule.forRoot(process.env.DB_CONNECTION),
     UserModule,
     AuthModule,

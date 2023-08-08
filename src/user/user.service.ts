@@ -15,19 +15,25 @@ constructor(
         // private silverService: SilversService,
      
         ){}
-        async findAll(skip = 0, limit = 20,){
-          try{
-          const count = await this.userModel.countDocuments({}).exec();
-          const page_total = Math.floor((count - 1)/ limit) + 1;
-          const data =  await this.userModel.find().limit(limit).skip(skip).exec();
+        async findAll(page = 0, perPage = 20,){
+          const totalCount = await this.userModel.countDocuments().exec();
+          const totalPages = Math.ceil(totalCount / perPage);
+      
+          if (page < 1) {
+            page = 1;
+          } else if (page > totalPages) {
+            page = totalPages;
+          }
+      
+          const skip = (page - 1) * perPage;
+          const data = await this.userModel.find().skip(skip).limit(perPage).exec();
           return {
-            data: data,
-            page_total: page_total,
-            status: 200,
-          }
-          }catch(e){
-              return  'error';
-          }
+            data:data,
+            currentPage: page,
+            totalPages,
+            perPage,
+            total_page:totalCount,
+          };
           
 
             // const user = await this.userModel.find();

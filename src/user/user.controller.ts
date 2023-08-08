@@ -22,8 +22,8 @@ export class UserController {
         ){}
 
     @Get('/')
-    async getUser(@Query() {skip,limit}) {
-      return this.userService.findAll(skip, limit);
+    async getUser(@Query() {page,perpage}) {
+      return this.userService.findAll(page, perpage);
     }
 
     @Get(':id')
