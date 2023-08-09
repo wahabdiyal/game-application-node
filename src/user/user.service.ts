@@ -15,8 +15,55 @@ constructor(
         // private silverService: SilversService,
      
         ){}
-        async findAll(page = 0, perPage = 20,){
-          const totalCount = await this.userModel.countDocuments().exec();
+        /*
+        date for start and end date
+
+         async searchByDateRange(startDate: Date, endDate: Date): Promise<User[]> {
+    const users = await this.userModel.find({
+      created_at: { $gte: startDate, $lte: endDate },
+    }).exec();
+    return users;
+         }*/
+        async findAll(page = 0, perPage = 20,search=false,date = []){
+        let totalCount =0
+          if(search && date.length >0){
+            let parsedStartDate = new Date(date[0].start);
+            let parsedEndDate = new Date(date[0].end);
+            totalCount  = await this.userModel.find({
+              $or: [
+                { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                
+                // Add more fields here
+              ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            }).countDocuments().exec();
+          }else if(search){
+            totalCount  = await this.userModel.find({
+              $or: [
+                { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                // Add more fields here
+              ],
+            }).countDocuments().exec();
+          }else if(date.length > 0){
+           
+            const parsedStartDate = new Date(date[0].start);
+            const parsedEndDate = new Date(date[0].end);
+          
+            totalCount =  await this.userModel.find({
+              createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            }).countDocuments().exec();
+          }else{
+            totalCount = await this.userModel.countDocuments().exec();
+          }
+           
           const totalPages = Math.ceil(totalCount / perPage);
       
           if (page < 1) {
@@ -26,7 +73,45 @@ constructor(
           }
       
           const skip = (page - 1) * perPage;
-          const data = await this.userModel.find().skip(skip).limit(perPage).exec();
+          let data=[];
+          if(search && date.length >0){
+            let parsedStartDate = new Date(date[0].start);
+            let parsedEndDate = new Date(date[0].end);
+            data = await this.userModel.find({
+              $or: [
+                { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                // Add more fields here
+              ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            }).skip(skip).limit(perPage).exec();
+          }else if(search){
+            data = await this.userModel.find({
+              $or: [
+                { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
+                // Add more fields here
+              ],
+            }).skip(skip).limit(perPage).exec();
+
+          }else if(date.length > 0){
+            const parsedStartDate = new Date(date[0].start);
+            const parsedEndDate = new Date(date[0].end);
+            data = await this.userModel.find({
+              createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            }).skip(skip).limit(perPage).exec();
+
+          }else{
+            data = await this.userModel.find().skip(skip).limit(perPage).exec();
+          }
+         
           return {
             data:data,
             currentPage: page,
@@ -44,8 +129,9 @@ constructor(
           let usercheck = await this.userModel.find().where('email', user.email).exec();
            
           if(!usercheck.length){
-             const res = await this.userModel.create(user);
-            return res;
+             const res = new this.userModel(user);
+             return res.save();
+             
           }
            throw new BadRequestException('User already exists');
           }
@@ -111,14 +197,24 @@ constructor(
           ]);
           }
 
-          async findUserbyId(id: string): Promise<boolean> {
+          async findUserbyId(id: string)  {
             try{
                  new mongoose.Types.ObjectId(id);
             }catch(e){
             return false;
             }
            
-            const user = await this.userModel.exists({ _id: id});
-            return user !== null;
+            const user = await this.userModel.findOne({ _id: id});
+            return user ;
             }
+
+            async UpdateUser(user_id , data,type){
+              if(type =="silver"){
+                 return await this.userModel.updateOne({_id:user_id},{silver_balance:data});
+              }else{
+                return await this.userModel.updateOne({_id:user_id},{gold_balance:data});
+              }
+             
+            }
+          
 }

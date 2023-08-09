@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { SilversService } from './silvers.service';
 import { CreateSilverDto } from './dto/create-silver.dto';
 import { UpdateSilverDto } from './dto/update-silver.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('silvers')
+@UseGuards(AuthGuard)
 export class SilversController {
   constructor(private readonly silversService: SilversService) {}
   @Get('/data')

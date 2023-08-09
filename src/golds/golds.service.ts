@@ -16,11 +16,15 @@ export class GoldsService {
 
   async create(createGoldDto: CreateGoldDto) :Promise<any>  {
       
-      if(!await this.userService.findUserbyId(createGoldDto['client_id'])){
-          return {status: 'error', message:'User not found'};
-      }
-    var res = await this.goldModel.create(createGoldDto);
-     return res; 
+    const user = await this.userService.findUserbyId(createGoldDto['client_id']);
+    if(!user){
+      return {status: 'error', message:'User not found'};
+  }
+       const newBalance =(createGoldDto['type']=="credit")? parseInt(user['gold_balance']) + parseInt(createGoldDto['coins'], 10):parseInt(user['gold_balance']) - parseInt(createGoldDto['coins'], 10);
+  
+       this.userService.UpdateUser(createGoldDto['client_id'], newBalance,"gold");
+       var res = await this.goldModel.create(createGoldDto);
+       return res;
   }
 
   async findAll(): Promise<Gold[]> {

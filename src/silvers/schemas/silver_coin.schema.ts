@@ -27,7 +27,8 @@ export class Silver extends Document{
     @Prop({default: null,})
     entry_by:string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
-    client_id: User; 
+    client_id: User;
+
 }
 export const SilverSchema = SchemaFactory.createForClass(Silver)
 
