@@ -2,7 +2,8 @@ import { BadRequestException, Injectable, NotFoundException, Request } from '@ne
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
-import { retry } from 'rxjs';
+import { SignupRewardsService } from 'src/signup_rewards/signup_rewards.service';
+ 
  
  
 
@@ -11,9 +12,7 @@ export class UserService {
 constructor(
         @InjectModel(User.name)
         private userModel: mongoose.Model<User>,
-      
-        // private silverService: SilversService,
-     
+        private signuprewardService:SignupRewardsService
         ){}
         /*
         date for start and end date
@@ -207,14 +206,18 @@ constructor(
             // const user = await this.userModel.find();
             // return user;
         }
-        async create(user: User): Promise<User> {
+        async create( user: User): Promise<any> {
        
           let usercheck = await this.userModel.find().where('email', user.email).exec();
            
-          if(!usercheck.length){
-             const res = new this.userModel(user);
-             return res.save();
+          if(!usercheck.length){  
+            let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
+            ///////// debit in admin account 
+              return  this.userModel.create({...user,silver_balance:getCoinValue.silver_coin,
+                gold_balance:getCoinValue.gold_coin
+            });
              
+              
           }
            throw new BadRequestException('User already exists');
           }

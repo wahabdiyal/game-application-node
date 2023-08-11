@@ -5,10 +5,11 @@ import { UserSchema } from 'src/user/schemas/user.schema';
 import { AuthController } from './auth.controller';
 import { UserService } from 'src/user/user.service';
 import { JwtModule } from '@nestjs/jwt'; 
+import { SignupRewardsModule } from 'src/signup_rewards/signup_rewards.module';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: 'User', schema: UserSchema }],),SignupRewardsModule,
     JwtModule.register({
       global: true,
       secret: "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",

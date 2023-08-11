@@ -16,6 +16,7 @@ import { UserRightModule } from './user_right/user_right.module';
 import { ContactModule } from './contact/contact.module';
 import { User, UserSchema } from './user/schemas/user.schema';
 import { CountriesModule } from './countries/countries.module';
+import { SignupRewardsModule } from './signup_rewards/signup_rewards.module';
  
  
 @Module({
@@ -46,6 +47,7 @@ import { CountriesModule } from './countries/countries.module';
      UserRightModule,
      ContactModule,
      CountriesModule,
+     SignupRewardsModule,
     
   ],
   controllers: [AppController],
