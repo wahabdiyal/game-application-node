@@ -124,7 +124,7 @@ export class SilversService {
  
           const silvercoin = await this.silverModel.findOne({ client_id: user.id }, { sort: { createdAt: -1 } }).select(
             "createdAt"
-        );
+        ); 
           coinCounts.push({ user_id: user.id,
             //  coinCount,
              user_name : user.full_name,
@@ -139,23 +139,10 @@ export class SilversService {
       }
 
       async shareCoinUser( req , user){
-
+           
          let rece = await this.silverModel.findOne({ client_id: req.recevicer_id});
          let sendCoin = await this.silverModel.findOne({ client_id: user.id});
-         if(!sendCoin && !rece){
-          return false;
-         }
-         if(sendCoin.coins && Number(sendCoin.coins) > 0){
-          if(sendCoin.coins <= req.coin){
-            await this.silverModel.findByIdAndUpdate(sendCoin.id,{coins:Number(sendCoin.coins)-req.coin});
-            await this.silverModel.findByIdAndUpdate(sendCoin.id,{coins:Number(sendCoin.coins)-req.coin});
-             return true;
-          }
-           
-         }
-         return false;
-        //  await this.silverModel.update({ client_id: user.id},{coins:}
-         
-        //  return { rece,sendCoin}
+        
+        
       }
 }

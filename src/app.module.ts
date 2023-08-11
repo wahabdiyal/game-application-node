@@ -15,6 +15,7 @@ import { GameModule } from './game/game.module';
 import { UserRightModule } from './user_right/user_right.module';
 import { ContactModule } from './contact/contact.module';
 import { User, UserSchema } from './user/schemas/user.schema';
+import { CountriesModule } from './countries/countries.module';
  
  
 @Module({
@@ -44,6 +45,7 @@ import { User, UserSchema } from './user/schemas/user.schema';
      GameModule,
      UserRightModule,
      ContactModule,
+     CountriesModule,
     
   ],
   controllers: [AppController],
