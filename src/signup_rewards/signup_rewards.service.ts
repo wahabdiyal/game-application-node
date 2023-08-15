@@ -12,10 +12,27 @@ export class SignupRewardsService {
     private signuprewardModel: mongoose.Model<SignupReward>,
   ){}
  async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
-      const collection = await this.signuprewardModel.find().select('country');
-     //   return collection;
-     return createSignupRewardDto.country;
-    return await this.signuprewardModel.create(createSignupRewardDto);
+      const collection = await this.signuprewardModel.find().select(['country','start_time','end_time']);
+      // return [createSignupRewardDto.country,createSignupRewardDto.start_time,createSignupRewardDto.end_time];
+      function checkRecordExists(records, criteria) {
+        const [countries, startTime, endTime] = criteria;
+      
+        return records.some(record => {
+          const countryMatches = countries.every(country => record.country.includes(country));
+          const dateMatches = record.start_time === startTime && record.end_time === endTime;
+          return countryMatches && dateMatches;
+        });
+      }
+      const searchCriteria = [createSignupRewardDto.country,createSignupRewardDto.start_time,createSignupRewardDto.end_time];
+      const val  = checkRecordExists(collection,searchCriteria);
+    if(!val){
+       return await this.signuprewardModel.create(createSignupRewardDto);
+    }else{
+      return {"status": false,"message": "Please select unique country"}
+    }
+      
+
+   
   }
 
  async findAll() {
