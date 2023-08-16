@@ -5,6 +5,8 @@ import { UpdateGoldDto } from './dto/update-gold.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Gold } from './schemas/gold_coin.schema';
 import mongoose from 'mongoose';
+import { catchError } from 'rxjs';
+import { error } from 'console';
 
 @Injectable()
 export class GoldsService { 
@@ -16,32 +18,33 @@ export class GoldsService {
 
   async create(createGoldDto: CreateGoldDto) :Promise<any>  {
       
-    const user = await this.userService.findUserbyId(createGoldDto['client_id']);
-    if(!user){
-      return {status: 'error', message:'User not found'};
-  }
-       const newBalance =(createGoldDto['type']=="credit")? parseInt(user['gold_balance']) + parseInt(createGoldDto['coins'], 10):parseInt(user['gold_balance']) - parseInt(createGoldDto['coins'], 10);
+  //   const user = await this.userService.findUserbyId(createGoldDto['client_id']);
+  //   if(!user){
+  //     return {status: 'error', message:'User not found'};
+  // }
+  //      const newBalance =(createGoldDto['type']=="credit")? parseInt(user['gold_balance']) + parseInt(createGoldDto['coins'], 10):parseInt(user['gold_balance']) - parseInt(createGoldDto['coins'], 10);
   
-       this.userService.UpdateUser(createGoldDto['client_id'], newBalance,"gold");
+  //      this.userService.UpdateUser(createGoldDto['client_id'], newBalance,"gold");
        var res = await this.goldModel.create(createGoldDto);
        
-       const totalCount = await this.goldModel.find({
-        client_id:createGoldDto['client_id']
-       }).countDocuments();
-       console.log(totalCount)
-       if (totalCount > 20) {
+      //  const totalCount = await this.goldModel.find({
+      //   client_id:createGoldDto['client_id']
+      //  }).countDocuments();
+      //  console.log(totalCount)
+      //  if (totalCount > 20) {
 
-        const oldestRecords = await this.goldModel.find().sort({ createdAt: 1 }).limit(totalCount - 20);
+      //   const oldestRecords = await this.goldModel.find().sort({ createdAt: 1 }).limit(totalCount - 20);
          
-        for (const oldestRecord of oldestRecords) {
-          await this.goldModel.deleteOne({ _id: oldestRecord._id });
-        }
-       }
+      //   for (const oldestRecord of oldestRecords) {
+      //     await this.goldModel.deleteOne({ _id: oldestRecord._id });
+      //   }
+      //  }
 
        return res;
   }
 
   async findAll(): Promise<Gold[]> {
+    
     const golds = await this.goldModel.find();
     return golds;
   }
@@ -81,13 +84,61 @@ async update(id: any, body:UpdateGoldDto) {
     return {status: true,message: "Gold Coin User","coin":gold};
   }
 
-  async fetchAllCoinUserId(id: any) {
-    const gold = await this.goldModel.find({client_id: id});
+  async fetchAllCoinUserId(id: any,page = 0, perPage = 20,date = []) {
+    // const gold = await this.goldModel.find({client_id: id});
 
-    if (gold.length==0) {
-      throw new NotFoundException('Gold Coin not found.');
+    // if (gold.length==0) {
+    //   throw new NotFoundException('Gold Coin not found.');
+    // }
+    // return {status: true,message: "Gold Coin User","coin":gold};
+    
+    
+    let totalCount =0
+     if(date.length > 0){
+       
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+      
+        totalCount =  await this.goldModel.find({client_id: id}).find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).countDocuments().exec();
+      }else{
+        totalCount = await this.goldModel.find({client_id: id}).countDocuments().exec();
+      }
+       
+      const totalPages = Math.ceil(totalCount / perPage);
+      
+      if (page < 1) {
+        page = 1;
+      } else if (page > totalPages) {
+        page = totalPages;
+      }
+  
+      const skip = (page - 1) * perPage;
+
+      let data=[];
+      try{
+     
+         if(date.length > 0){
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.goldModel.find({client_id: id}).find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).skip(skip).limit(perPage).exec();
+
+      } else{
+        data = await this.goldModel.find({client_id: id}).skip(skip).limit(perPage).exec();
+      }
+    }catch(error){
+     date = [];
     }
-    return {status: true,message: "Gold Coin User","coin":gold};
+      return {
+        data:data,
+        currentPage: page,
+        totalPages,
+        perPage,
+        total_count:totalCount,
+      };
   }
     async fetchAllCoinCount(){
     let users = await this.userService.getAllUser();

@@ -83,20 +83,68 @@ export class SilversService {
         return  await this.silverModel.find(id);
       }
 
-      async fetchAllCoinUserId(id: any) {
-        const silver = await this.silverModel.find({client_id: id});
+      async fetchAllCoinUserId(id: any,page = 0, perPage = 20,date = []) {
+        // const gold = await this.silverModel.find({client_id: id});
     
-        if (silver.length==0) {
-          throw new NotFoundException('Silver Coin not found.');
+        // if (gold.length==0) {
+        //   throw new NotFoundException('Gold Coin not found.');
+        // }
+        // return {status: true,message: "Gold Coin User","coin":gold};
+        
+        
+        let totalCount =0
+         if(date.length > 0){
+           
+            const parsedStartDate = new Date(date[0].start);
+            const parsedEndDate = new Date(date[0].end);
+          
+            totalCount =  await this.silverModel.find({client_id: id}).find({
+              createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            }).countDocuments().exec();
+          }else{
+            totalCount = await this.silverModel.find({client_id: id}).countDocuments().exec();
+          }
+           
+          const totalPages = Math.ceil(totalCount / perPage);
+          
+          if (page < 1) {
+            page = 1;
+          } else if (page > totalPages) {
+            page = totalPages;
+          }
+      
+          const skip = (page - 1) * perPage;
+    
+          let data=[];
+          try{
+         
+             if(date.length > 0){
+            const parsedStartDate = new Date(date[0].start);
+            const parsedEndDate = new Date(date[0].end);
+            data = await this.silverModel.find({client_id: id}).find({
+              createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            }).skip(skip).limit(perPage).exec();
+    
+          } else{
+            data = await this.silverModel.find({client_id: id}).skip(skip).limit(perPage).exec();
+          }
+        }catch(error){
+         date = [];
         }
-        return {status: true,message: "silver Coin User","coin":silver};
+          return {
+            data:data,
+            currentPage: page,
+            totalPages,
+            perPage,
+            total_count:totalCount,
+          };
       }
 
       async fetchAllCoinCount(){
         let users = await this.usersService.getAllUser();
         const coinCounts = [];
         for (const user of users) {
-          // const coinCount = await this.goldModel.count({ client_id: user.id });
+          // const coinCount = await this.silverModel.count({ client_id: user.id });
           const goldCredit = await this.silverModel.aggregate([
             {
               $match: {

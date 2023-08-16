@@ -17,6 +17,7 @@ import { ContactModule } from './contact/contact.module';
 import { User, UserSchema } from './user/schemas/user.schema';
 import { CountriesModule } from './countries/countries.module';
 import { SignupRewardsModule } from './signup_rewards/signup_rewards.module';
+import { ReferralRewardsModule } from './referral_rewards/referral_rewards.module';
  
  
 @Module({
@@ -48,6 +49,7 @@ import { SignupRewardsModule } from './signup_rewards/signup_rewards.module';
      ContactModule,
      CountriesModule,
      SignupRewardsModule,
+     ReferralRewardsModule,
     
   ],
   controllers: [AppController],

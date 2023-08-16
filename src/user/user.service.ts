@@ -1,3 +1,4 @@
+import { error } from 'console';
 import { BadRequestException, Injectable, NotFoundException, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
@@ -115,6 +116,7 @@ constructor(
       
           const skip = (page - 1) * perPage;
           let data=[];
+          try{ 
           if(search && date.length >0 && role){
             let parsedStartDate = new Date(date[0].start);
             let parsedEndDate = new Date(date[0].end);
@@ -193,6 +195,9 @@ constructor(
           }else{
             data = await this.userModel.find().skip(skip).limit(perPage).exec();
           }
+        }catch(error){
+          data = [];
+        }
          
           return {
             data:data,

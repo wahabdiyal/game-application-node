@@ -35,7 +35,7 @@ export class User extends Document{
      
      @Prop({default: "player"})
     role:UserType;
-    @Prop()
+    @Prop({ required: true, unique: true })
     phone:number;
 
     @Prop({required: true,default:0})
