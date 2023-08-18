@@ -4,6 +4,7 @@ import { UpdateReferralRewardDto } from './dto/update-referral_reward.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { ReferralReward } from './schemas/referral_reward.schema';
 import mongoose from 'mongoose';
+ 
 
 @Injectable()
 export class ReferralRewardsService {
@@ -46,5 +47,16 @@ export class ReferralRewardsService {
     }
 
     return {status: true,message: "referral Coin Delete successfully"};
+  }
+  async getRefRewardByDate(){
+     
+    const res=  await this.referralModel.findOne({
+      end_date: {
+        $gte: new Date().toISOString()
+      }
+    });
+ 
+    return res;
+     
   }
 }

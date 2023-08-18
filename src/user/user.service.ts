@@ -4,7 +4,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import * as mongoose from 'mongoose';
 import { SignupRewardsService } from 'src/signup_rewards/signup_rewards.service';
- 
+import { ReferralCodesService } from 'src/referral_codes/referral_codes.service';
+import { ReferralRewardsService } from 'src/referral_rewards/referral_rewards.service';
+import * as moment from "moment";
  
  
 
@@ -13,7 +15,9 @@ export class UserService {
 constructor(
         @InjectModel(User.name)
         private userModel: mongoose.Model<User>,
-        private signuprewardService:SignupRewardsService
+        private signuprewardService:SignupRewardsService,
+        private refcodeService:ReferralCodesService,
+         private refrewardService:ReferralRewardsService,
         ){}
         /*
         date for start and end date
@@ -211,12 +215,35 @@ constructor(
             // const user = await this.userModel.find();
             // return user;
         }
-        async create( user: User): Promise<any> {
-       
+        async create( user: any): Promise<any> {
+         
+
+
           let usercheck = await this.userModel.find().where('email', user.email).exec();
            
           if(!usercheck.length){  
             let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
+              if(user.refereal_code){
+                const getRefDetail = await this.refcodeService.getRefWithCode(user.refereal_code);
+                //  return getRefDetail;
+                const userRef = await this.findwithUserId(getRefDetail.user_id);
+              //  return userRef;
+                const refRewardSetting = await this.refrewardService.getRefRewardByDate();
+               if(refRewardSetting && getRefDetail && userRef){
+               const daycount  = moment(this.getDate()).diff(moment(this.getDate(getRefDetail.use_date)), 'days')+1;
+                
+             
+                 if(Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)){
+                //////////////////////////////////////////// user gold transaction and silver transaction
+                  /////////////////user  coin and referral code update total_uss
+                  return true;
+
+                }
+
+               }
+                ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
+              }
+              return false;
             ///////// debit in admin account 
               return  this.userModel.create({...user,silver_balance:getCoinValue.silver_coin,
                 gold_balance:getCoinValue.gold_coin
@@ -306,6 +333,15 @@ constructor(
                 return await this.userModel.updateOne({_id:user_id},{gold_balance:data});
               }
              
+            }
+
+            getDate(value=null){
+              const date = new Date(value);
+              const day = date.getDate();
+              const month = date.getMonth() + 1; // Months are zero-indexed in JavaScript
+              const year = date.getFullYear();
+              console.log(new Date(`${year}-${month}-${day}`));
+              return new Date(`${year}-${month}-${day}`);
             }
           
 }

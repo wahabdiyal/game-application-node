@@ -18,6 +18,9 @@ import { User, UserSchema } from './user/schemas/user.schema';
 import { CountriesModule } from './countries/countries.module';
 import { SignupRewardsModule } from './signup_rewards/signup_rewards.module';
 import { ReferralRewardsModule } from './referral_rewards/referral_rewards.module';
+import { ReferralCodesModule } from './referral_codes/referral_codes.module';
+import { BannersModule } from './banners/banners.module';
+import { BannerCollectionsModule } from './banner_collections/banner_collections.module';
  
  
 @Module({
@@ -50,6 +53,9 @@ import { ReferralRewardsModule } from './referral_rewards/referral_rewards.modul
      CountriesModule,
      SignupRewardsModule,
      ReferralRewardsModule,
+     ReferralCodesModule,
+     BannersModule,
+     BannerCollectionsModule,
     
   ],
   controllers: [AppController],
