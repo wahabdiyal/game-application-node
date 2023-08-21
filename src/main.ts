@@ -9,7 +9,8 @@ async function bootstrap() {
     AppModule,
   );
 
-  // Enable session middleware
+  app.enableCors();
+
   app.use(
     session({
       secret: 'my-secret',
@@ -21,13 +22,11 @@ async function bootstrap() {
     }),
   );
 
-  // Enable CORS with specified configuration
   app.enableCors({
     origin: '*',
     methods: 'GET, PUT, POST, DELETE',
   });
 
-  // Set up static assets and view engine (assuming you're using Handlebars as the view engine)
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   hbs.registerPartials(join(__dirname, '..', 'views/partials'));
