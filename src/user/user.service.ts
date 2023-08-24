@@ -233,7 +233,7 @@ constructor(
               if(user.refereal_code){
                 const getRefDetail = await this.refcodeService.getRefWithCode(user.refereal_code);
                  //  return getRefDetail;
-                const userRef = await this.findwithUserId(getRefDetail.user_id);
+                const userRef = await this.findwithUserIdSelf(getRefDetail?.user_id);
               //  return userRef;
                 const refRewardSetting = await this.refrewardService.getRefRewardByDate();
             
@@ -297,7 +297,16 @@ constructor(
             return {status: true,message: "User Delete successfully"};
           }
         
-
+          async findwithUserIdSelf(id: any)  {
+          
+            const user = await this.userModel.findById(id);
+        
+            if (!user) {
+              return false;
+            }
+    
+            return user;
+          }
           async findwithUserId(id: any)  {
           
             const user = await this.userModel.findById(id);

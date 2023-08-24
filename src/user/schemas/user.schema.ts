@@ -24,9 +24,6 @@ export class User extends Document{
     @Prop({default: null,})
     updated_by:string;
 
-    // @Prop({ type: Types.ObjectId, ref: 'User',default: null})
-    // user_id: User; 
-
     @Prop({ required: true, unique: true })
     email:string;
     @Prop()
