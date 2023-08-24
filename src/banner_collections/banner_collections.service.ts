@@ -44,4 +44,7 @@ export class BannerCollectionsService {
 
     return {status: true,message: "banner Delete successfully"};
   }
+  async getAllBanners(){
+    return await this.bannerCollectionModel.find();
+  }
 }

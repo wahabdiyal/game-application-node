@@ -5,8 +5,7 @@ import { UpdateGoldDto } from './dto/update-gold.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Gold } from './schemas/gold_coin.schema';
 import mongoose from 'mongoose';
-import { catchError } from 'rxjs';
-import { error } from 'console';
+ 
 
 @Injectable()
 export class GoldsService { 
@@ -18,13 +17,13 @@ export class GoldsService {
 
   async create(createGoldDto: CreateGoldDto) :Promise<any>  {
       
-  //   const user = await this.userService.findUserbyId(createGoldDto['client_id']);
-  //   if(!user){
-  //     return {status: 'error', message:'User not found'};
-  // }
-  //      const newBalance =(createGoldDto['type']=="credit")? parseInt(user['gold_balance']) + parseInt(createGoldDto['coins'], 10):parseInt(user['gold_balance']) - parseInt(createGoldDto['coins'], 10);
+   const user = await this.userService.findUserbyId(createGoldDto['client_id']);
+    if(!user){
+      return {status: 'error', message:'User not found'};
+  }
+       const newBalance =(createGoldDto['type']=="credit")? parseInt(user['gold_balance']) + parseInt(createGoldDto['coins'], 10):parseInt(user['gold_balance']) - parseInt(createGoldDto['coins'], 10);
   
-  //      this.userService.UpdateUser(createGoldDto['client_id'], newBalance,"gold");
+       this.userService.UpdateUser(createGoldDto['client_id'], newBalance,"gold");
        var res = await this.goldModel.create(createGoldDto);
        
       //  const totalCount = await this.goldModel.find({

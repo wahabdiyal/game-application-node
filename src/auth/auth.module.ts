@@ -8,6 +8,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { SignupRewardsModule } from 'src/signup_rewards/signup_rewards.module';
 import { ReferralCodesModule } from 'src/referral_codes/referral_codes.module';
 import { ReferralRewardsModule } from 'src/referral_rewards/referral_rewards.module';
+import { CoinTrasModule } from 'src/coin_tras/coin_tras.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ReferralRewardsModule } from 'src/referral_rewards/referral_rewards.mod
     SignupRewardsModule,
     ReferralCodesModule,
     ReferralRewardsModule,
+    CoinTrasModule,
     JwtModule.register({
       global: true,
       secret: "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",

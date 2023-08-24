@@ -21,6 +21,7 @@ import { ReferralRewardsModule } from './referral_rewards/referral_rewards.modul
 import { ReferralCodesModule } from './referral_codes/referral_codes.module';
 import { BannersModule } from './banners/banners.module';
 import { BannerCollectionsModule } from './banner_collections/banner_collections.module';
+import { CoinTrasModule } from './coin_tras/coin_tras.module';
  
  
 @Module({
@@ -56,6 +57,7 @@ import { BannerCollectionsModule } from './banner_collections/banner_collections
      ReferralCodesModule,
      BannersModule,
      BannerCollectionsModule,
+     CoinTrasModule,
     
   ],
   controllers: [AppController],

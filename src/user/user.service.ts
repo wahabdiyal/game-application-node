@@ -1,3 +1,4 @@
+ 
 import { error } from 'console';
 import { BadRequestException, Injectable, NotFoundException, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,6 +8,8 @@ import { SignupRewardsService } from 'src/signup_rewards/signup_rewards.service'
 import { ReferralCodesService } from 'src/referral_codes/referral_codes.service';
 import { ReferralRewardsService } from 'src/referral_rewards/referral_rewards.service';
 import * as moment from "moment";
+import { GoldsService } from 'src/golds/golds.service';
+import { CoinTrasService } from 'src/coin_tras/coin_tras.service';
  
  
 
@@ -18,6 +21,8 @@ constructor(
         private signuprewardService:SignupRewardsService,
         private refcodeService:ReferralCodesService,
          private refrewardService:ReferralRewardsService,
+         private coinTraService:CoinTrasService,
+     
         ){}
         /*
         date for start and end date
@@ -223,31 +228,39 @@ constructor(
            
           if(!usercheck.length){  
             let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
+            
+
               if(user.refereal_code){
                 const getRefDetail = await this.refcodeService.getRefWithCode(user.refereal_code);
-                //  return getRefDetail;
+                 //  return getRefDetail;
                 const userRef = await this.findwithUserId(getRefDetail.user_id);
               //  return userRef;
                 const refRewardSetting = await this.refrewardService.getRefRewardByDate();
+            
                if(refRewardSetting && getRefDetail && userRef){
-               const daycount  = moment(this.getDate()).diff(moment(this.getDate(getRefDetail.use_date)), 'days')+1;
-                
-             
-                 if(Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)){
-                //////////////////////////////////////////// user gold transaction and silver transaction
-                  /////////////////user  coin and referral code update total_uss
-                  return true;
+               const daycount  = moment(this.getDate()).diff(moment(this.getDate(moment(getRefDetail.use_date)?getRefDetail.use_date:"2023-01-01 00:00:00")), 'days')+1;
 
+                 if(Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)){
+                   
+                  if(Number(refRewardSetting.silver_coin)>0){
+
+                     await this.UpdateUser(getRefDetail.user_id, Number(userRef.silver_balance)+Number(refRewardSetting.silver_coin),"silver");
+
+                  } if(Number(refRewardSetting.gold_coin)>0){
+                    await this.UpdateUser(getRefDetail.user_id, Number(userRef.gold_balance)+Number(refRewardSetting.gold_coin),"gold");
+                 } 
+              await this.refcodeService.update(getRefDetail.id,{total_use:Number(getRefDetail.total_use)+1,use_date:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')});
+                  
                 }
 
                }
                 ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
               }
-              return false;
-            ///////// debit in admin account 
-              return  this.userModel.create({...user,silver_balance:getCoinValue.silver_coin,
-                gold_balance:getCoinValue.gold_coin
+              return  this.userModel.create({...user,silver_balance:getCoinValue?.silver_coin,
+                gold_balance:getCoinValue?.gold_coin
             });
+            ///////// debit in admin account 
+             
              
               
           }

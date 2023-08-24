@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable,NotFoundException } from '@nestjs/common';
 import { CreateReferralCodeDto } from './dto/create-referral_code.dto';
 import { UpdateReferralCodeDto } from './dto/update-referral_code.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -20,15 +20,21 @@ export class ReferralCodesService {
     return `This action returns all referralCodes`;
   }
 
-  findOne(id: number) {
+  findOne(id: any) {
     return `This action returns a #${id} referralCode`;
   }
 
-  update(id: number, updateReferralCodeDto: UpdateReferralCodeDto) {
-    return `This action updates a #${id} referralCode`;
+ async update(id: any, updateReferralCodeDto: UpdateReferralCodeDto) {
+    const referral = await this.referralModel.findByIdAndUpdate(id,updateReferralCodeDto);
+
+    if (!referral) {
+      throw new NotFoundException('referral not found.');
+    }
+
+    return {status: true,message: "referral updated successfully"};
   }
 
-  remove(id: number) {
+  remove(id: any) {
     return `This action removes a #${id} referralCode`;
   }
   async user_share(user){

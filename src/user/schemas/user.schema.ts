@@ -10,8 +10,7 @@ export enum UserType{
         timestamps: true,
 })
 export class User extends Document{
-    @Prop({required:true, default: Date.now().toString(36)+(Math.random() + 2).toString(36).substring(8),unique:true})
-    user_key:string;
+    
     @Prop()
     full_name:string;
     @Prop({required: true})
