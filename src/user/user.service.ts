@@ -286,9 +286,19 @@ constructor(
           }
            throw new BadRequestException('User already exists');
           }
-          async findById(email: string): Promise<User> {
+          async findByEmail(email: string): Promise<User> {
            
             const user = await this.userModel.findOne({email: email});
+        
+            if (!user) {
+              throw new NotFoundException('User not found.');
+            }
+    
+            return user;
+          }
+          async findByPhone(phone: any): Promise<User> {
+           
+            const user = await this.userModel.findOne({phone: phone});
         
             if (!user) {
               throw new NotFoundException('User not found.');

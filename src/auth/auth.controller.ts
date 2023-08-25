@@ -38,20 +38,17 @@ export class AuthController {
    
       return this.authService.signIn(signInDto.email, signInDto.password);
     }
+    @HttpCode(HttpStatus.OK)
+    @Post('login/phone')
+    loginwithphone(@Body() signInDto: Record<string, any>) {
+   
+      return this.authService.loginwithphone(signInDto.phone, signInDto.password);
+    }
 
     @UseGuards(AuthGuard)
     @Get('profile')
     getProfile(@Request() req) {
-      return this.userService.findById(req.user.email);
+      return this.userService.findByEmail(req.user.email);
     }
-
-    @Get(':id')
-    async getBook(
-    @Param('id')
-    id: string,@Request() req ,
-     ): Promise<User> {
-    /////for get request query param req.query 
-    console.log(req);
-    return this.userService.findById(id);
-  }
+ 
 }
