@@ -12,13 +12,14 @@ export class AuthService {
   ) {}
 
   async signIn(username, pass) {
-   
+  
     const user = await this.usersService.findById(username);
-   
+  
     if(user.status !== 'active'){
       throw new NotAcceptableException("User is invalid, try to contact admin")
     }
-    if (user?.password !== pass && user.role=="player"  ) {
+    //&& user.role=="player" 
+    if (user?.password !== pass  ) {
       throw new UnauthorizedException();
     }
     const payload = { 
@@ -30,6 +31,8 @@ export class AuthService {
    
     };
     return {
+      status:true,
+      user:user,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

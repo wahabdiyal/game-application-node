@@ -1,5 +1,4 @@
- 
-import { error } from 'console';
+import { JwtService } from '@nestjs/jwt';
 import { BadRequestException, Injectable, NotFoundException, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
@@ -8,7 +7,6 @@ import { SignupRewardsService } from 'src/signup_rewards/signup_rewards.service'
 import { ReferralCodesService } from 'src/referral_codes/referral_codes.service';
 import { ReferralRewardsService } from 'src/referral_rewards/referral_rewards.service';
 import * as moment from "moment";
-import { GoldsService } from 'src/golds/golds.service';
 import { CoinTrasService } from 'src/coin_tras/coin_tras.service';
  
  
@@ -22,7 +20,7 @@ constructor(
         private refcodeService:ReferralCodesService,
          private refrewardService:ReferralRewardsService,
          private coinTraService:CoinTrasService,
-     
+         private jwtService: JwtService
         ){}
         /*
         date for start and end date
@@ -220,12 +218,20 @@ constructor(
             // const user = await this.userModel.find();
             // return user;
         }
-        async create( user: any): Promise<any> {
-         
+        async create( userobj: any): Promise<any> {
+         ///// user phone is unique fix remain 
+          const user = {
+            "full_name":userobj.full_name,
+            "email":userobj.email,
+            "password":userobj.password,
+            
+            "phone":userobj.phone,
+            "country":userobj.country,
+            "refereal_code":userobj?.refereal_code?userobj.refereal_code:null
+        }
 
-
-          let usercheck = await this.userModel.find().where('email', user.email).exec();
-           
+         let usercheck = await this.userModel.find({$or: [{email:user.email},{phone:user.phone}]}) ;
+          
           if(!usercheck.length){  
             let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
             
@@ -256,9 +262,23 @@ constructor(
                }
                 ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
               }
-              return  this.userModel.create({...user,silver_balance:getCoinValue?.silver_coin,
+             const userVal = await this.userModel.create({...user,silver_balance:getCoinValue?.silver_coin,
                 gold_balance:getCoinValue?.gold_coin
-            });
+            } );
+            const payload = { 
+              id:userVal._id,
+              name: userVal.full_name, 
+              email: userVal.email,
+              status:userVal.status,
+              role:userVal.role,
+           
+            };
+              return {
+                  status: true,
+                  user:userVal,
+                  access_token: await this.jwtService.signAsync(payload),
+
+              }
             ///////// debit in admin account 
              
              
@@ -362,7 +382,7 @@ constructor(
               const day = date.getDate();
               const month = date.getMonth() + 1; // Months are zero-indexed in JavaScript
               const year = date.getFullYear();
-              console.log(new Date(`${year}-${month}-${day}`));
+              // console.log(new Date(`${year}-${month}-${day}`));
               return new Date(`${year}-${month}-${day}`);
             }
           
