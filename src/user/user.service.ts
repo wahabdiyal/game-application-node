@@ -307,15 +307,22 @@ constructor(
             return user;
           }
 
-          async findByPhoneForOtp(phone: any)  {
+          async findByPhoneForOtp(phone: any): Promise<Boolean>  {
            
             const user = await this.userModel.findOne({phone: phone});
-        
             if (!user) {
              return false;
             }
     
             return true;
+          }
+          async findByEmailForOtp(email: string): Promise<Boolean> {
+             const user = await this.userModel.findOne({email: email});
+          if (!user) {
+              return false;
+             }
+     
+             return true;
           }
 
           async update(id: any, body:any) {

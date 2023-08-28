@@ -27,8 +27,12 @@ export class AuthController {
     @Post('phone/otp')
     async sendOtp(@Body() data){
       const user = await this.userService.findByPhoneForOtp(data.phone);
-      if(!user){
-        return {status:false,message:"User not found"};
+      if(user){
+        return {status:false,message:"User found try with an other number."};
+      }
+      const email = await this.userService.findByEmailForOtp(data.email);
+      if(email){
+        return {status:false,message:"User found try with an other email."};
       }
       const OTP_LENGTH = 4;
       const otp = Math.floor(Math.random() * 10000) + 1000;
