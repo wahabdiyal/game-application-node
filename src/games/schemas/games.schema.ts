@@ -4,16 +4,16 @@ import { Document } from 'mongoose';
 @Schema({
         timestamps: true,
 })
-export class Game extends Document{
+export class Games extends Document{
     @Prop()
     title:string;
     @Prop({default: "picture.png"})
-    picture:string;
+    file_url:string;
     @Prop({default: 'active'})
     status:string;
     @Prop({default: "null",})
     description:string;
 }
-export const GameSchema = SchemaFactory.createForClass(Game)
+export const GamesSchema = SchemaFactory.createForClass(Games)
 
 

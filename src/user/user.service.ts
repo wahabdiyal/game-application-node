@@ -307,6 +307,17 @@ constructor(
             return user;
           }
 
+          async findByPhoneForOtp(phone: any)  {
+           
+            const user = await this.userModel.findOne({phone: phone});
+        
+            if (!user) {
+             return false;
+            }
+    
+            return true;
+          }
+
           async update(id: any, body:any) {
             const user = await this.userModel.findByIdAndUpdate(id,body);
         

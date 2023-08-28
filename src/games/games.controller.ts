@@ -1,21 +1,32 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { GamesService } from './games.service';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { storage } from './../config/storage.config';
 
 @Controller('games')
 export class GamesController {
   constructor(private readonly gamesService: GamesService) {}
 
   @Post()
-  create(@Body() createGameDto: CreateGameDto) {
-    return this.gamesService.create(createGameDto);
+  // @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor(
+      "file", // name of the field being passed
+      { storage }
+    )
+  )
+  //////add  path file save and folder location/////
+  async create(@UploadedFile() file: Express.Multer.File,@Body() createGameDto: CreateGameDto) {
+      
+    return await this.gamesService.create({...createGameDto,file_url:file.path.replace("\\", "/")});
   }
 
   @Get()
   findAll() {
     return this.gamesService.findAll();
-  }
+  } 
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -23,9 +34,28 @@ export class GamesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGameDto: UpdateGameDto) {
-    return this.gamesService.update(id, updateGameDto);
-  }
+@UseInterceptors(
+  FileInterceptor(
+    "file", // name of the field being passed
+    { storage }
+  )
+)
+async update(
+  @Param('id') id: string,
+  @UploadedFile() file: Express.Multer.File,
+  @Body() updateGameDto: UpdateGameDto
+) {
+  // You can implement your logic here, e.g., finding the existing game by id and updating it
+  // Then, you can update the file_url property similar to how you did in the create method
+
+  const updatedGame = await this.gamesService.update(id, {
+    ...updateGameDto,
+    file_url: file ? file.path.replace("\\", "/") : undefined
+  });
+
+  return updatedGame;
+}
+
 
   @Delete(':id')
   remove(@Param('id') id: string) {

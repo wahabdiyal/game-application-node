@@ -1,26 +1,49 @@
-import { Injectable } from '@nestjs/common';
+import { Body, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateGameDto } from './dto/create-game.dto';
 import { UpdateGameDto } from './dto/update-game.dto';
+import { Games } from './schemas/games.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class GamesService {
-  create(createGameDto: CreateGameDto) {
-    return 'This action adds a new game';
+  
+  constructor(
+    @InjectModel(Games.name)
+        private gameModel: mongoose.Model<Games>,
+    
+    ) {}
+
+  async create(createGameDto: CreateGameDto) {
+    var res = await this.gameModel.create(createGameDto);
+    return res;
   }
 
-  findAll() {
-    return `This action returns all games`;
+ 
+
+  async findAll() {
+    return await this.gameModel.find();
   }
 
-  findOne(id: string) {
-    return `This action returns a #${id} game`;
+  async findOne(id: string) {
+    return await this.gameModel.findOne({_id : id});
   }
 
-  update(id: string, updateGameDto: UpdateGameDto) {
-    return `This action updates a #${id} game`;
+ async update(id: string, updateGameDto: UpdateGameDto) {
+  const game = await this.gameModel.findByIdAndUpdate(id,updateGameDto);
+  if (!game) {
+    throw new NotFoundException('game not found.');
+  }
+  return {status: true,message: "game updated successfully"};
   }
 
-  remove(id: string) {
-    return `This action removes a #${id} game`;
+  async remove(id: string) {
+    const game = await this.gameModel.findByIdAndDelete(id);
+
+    if (!game) {
+      throw new NotFoundException('game not found.');
+    }
+
+    return {status: true,message: "game Delete successfully"};
   }
 }

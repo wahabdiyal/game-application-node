@@ -26,6 +26,10 @@ export class AuthController {
 
     @Post('phone/otp')
     async sendOtp(@Body() data){
+      const user = await this.userService.findByPhoneForOtp(data.phone);
+      if(!user){
+        return {status:false,message:"User not found"};
+      }
       const OTP_LENGTH = 4;
       const otp = Math.floor(Math.random() * 10000) + 1000;
 
@@ -45,7 +49,7 @@ export class AuthController {
                     from: '+18777991953', // From a valid Twilio number
                   }) ;
 
-                  console.log(status);
+               
                     if(status.sid){
                      return  {
                       status:true,
@@ -75,7 +79,7 @@ export class AuthController {
       return this.authService.signIn(signInDto.email, signInDto.password);
     }
 
-    
+
     @HttpCode(HttpStatus.OK)
     @Post('login/phone')
     loginwithphone(@Body() signInDto: Record<string, any>) {
