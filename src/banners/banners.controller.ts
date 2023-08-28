@@ -37,11 +37,38 @@ export class BannersController {
     return this.bannersService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBannerDto: UpdateBannerDto) {
 
-    return this.bannersService.update(id, updateBannerDto);
-  }
+
+  @Patch(':id')
+@UseInterceptors(
+  FileInterceptor(
+    "file", // name of the field being passed
+    { storage }
+  )
+)
+async update(
+  @Param('id') id: string,
+  @UploadedFile() file: Express.Multer.File,
+  @Body() updateBannerDto: UpdateBannerDto
+) {
+  // You can implement your logic here, e.g., finding the existing game by id and updating it
+  // Then, you can update the file_url property similar to how you did in the create method
+
+  const updatedGame = await this.bannersService.update(id, {
+    ...updateBannerDto,
+    file_url: file ? file.path.replace("\\", "/") : undefined
+  });
+
+  return updatedGame;
+}
+
+
+
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateBannerDto: UpdateBannerDto) {
+
+  //   return this.bannersService.update(id, updateBannerDto);
+  // }
 
   @Delete(':id')
   remove(@Param('id') id: string) {

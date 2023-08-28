@@ -1,3 +1,4 @@
+import { HttpService } from '@nestjs/axios';
 import { JwtService } from '@nestjs/jwt';
 import { BadRequestException, Injectable, NotFoundException, Request } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -20,7 +21,9 @@ constructor(
         private refcodeService:ReferralCodesService,
          private refrewardService:ReferralRewardsService,
          private coinTraService:CoinTrasService,
-         private jwtService: JwtService
+         private jwtService: JwtService,
+         private readonly httpService: HttpService
+
         ){}
         /*
         date for start and end date
@@ -320,9 +323,7 @@ constructor(
              const user = await this.userModel.findOne({email: email});
           if (!user) {
               return false;
-             }
-     
-             return true;
+             } return true;
           }
 
           async update(id: any, body:any) {
@@ -403,6 +404,41 @@ constructor(
                 return await this.userModel.updateOne({_id:user_id},{gold_balance:data});
               }
              
+            }
+            async getToken(token:string){
+             
+              try {
+                const response = await this.httpService
+                  .get("https://www.googleapis.com/oauth2/v3/tokeninfo?access_token="+token)
+                  .toPromise();
+          
+                const googleProfile = response.data;
+                
+                if (googleProfile.email_verified) {
+                 
+                 if(this.findByEmailForOtp(googleProfile.email)){
+                 const userDetail = await this.findByEmail(googleProfile.email)
+                  const payload = { 
+                    id:userDetail._id,
+                    name: userDetail.full_name, 
+                    email: userDetail.email,
+                    status:userDetail.status,
+                    role:userDetail.role,
+                 
+                  };
+                    return {status:true, user:userDetail,access_token: await this.jwtService.signAsync(payload),}
+ 
+                 }else{
+                  return {status:false, message:"email not found"}
+                 }
+                } else {
+                  return {status:false,message:"Token is not valid."}; // Token is not valid
+                }
+              } catch (error) {
+                // If there's an error, the token is likely invalid
+                return {status:false,message:"Token is not valid."}; // Token is not valid
+
+              }
             }
 
             getDate(value=null){

@@ -11,7 +11,7 @@ import { SilversModule } from './silvers/silvers.module';
 import { UserService } from './user/user.service';
 import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
-import { GameModule } from './game/game.module';
+ 
 import { UserRightModule } from './user_right/user_right.module';
 import { ContactModule } from './contact/contact.module';
 import { User, UserSchema } from './user/schemas/user.schema';
@@ -49,7 +49,7 @@ import { GamesModule } from './games/games.module';
      SilversModule,
      CoinUserModule,
      WithdrawModule,
-     GameModule,
+  
      UserRightModule,
      ContactModule,
      CountriesModule,

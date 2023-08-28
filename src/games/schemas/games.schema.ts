@@ -4,7 +4,10 @@ import { Document } from 'mongoose';
 @Schema({
         timestamps: true,
 })
+
 export class Games extends Document{
+    @Prop({unique: true,required: true})
+    game_id:string;
     @Prop()
     title:string;
     @Prop({default: "picture.png"})

@@ -1,3 +1,4 @@
+ 
 import {
   Body,
   Controller,
@@ -12,12 +13,15 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { User } from 'src/user/schemas/user.schema';
 import { UserService } from 'src/user/user.service';
-import { Message } from 'twilio/lib/twiml/MessagingResponse';
  
 
 @Controller('auth')
 export class AuthController {
-    constructor(private userService: UserService,private authService: AuthService) { }
+    constructor(
+      private userService: UserService,
+      private authService: AuthService,
+     
+      ) { }
     @UseGuards(AuthGuard)
     @Get('/login')
    async getUser(@Query() {skip,limit}) {
@@ -65,6 +69,11 @@ export class AuthController {
                     }
                   
                   
+    }
+
+    @Post('/google/token')
+    async token(@Body() param) {
+    return await this.userService.getToken(param.token);
     }
 
     @HttpCode(HttpStatus.OK)
