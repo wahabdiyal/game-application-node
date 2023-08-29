@@ -21,7 +21,7 @@ export class GamesController {
   async create(@UploadedFile() file: Express.Multer.File,@Body() createGameDto: CreateGameDto) {
     let filecustom =   file.path.replace("public\\", "");
     const remove = filecustom.replace("\\", "/");
-    return await this.gamesService.create({...createGameDto,file_url:remove});
+    return await this.gamesService.create({...createGameDto,file_url:remove.replace("public/","")});
   }
 
   @Get()
