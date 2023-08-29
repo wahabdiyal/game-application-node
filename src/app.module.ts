@@ -49,7 +49,6 @@ import { GamesModule } from './games/games.module';
      SilversModule,
      CoinUserModule,
      WithdrawModule,
-  
      UserRightModule,
      ContactModule,
      CountriesModule,
@@ -60,7 +59,6 @@ import { GamesModule } from './games/games.module';
      BannerCollectionsModule,
      CoinTrasModule,
      GamesModule,
-    
   ],
   controllers: [AppController],
   providers: [AppService],

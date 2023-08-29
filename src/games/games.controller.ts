@@ -19,8 +19,9 @@ export class GamesController {
   )
   //////add  path file save and folder location/////
   async create(@UploadedFile() file: Express.Multer.File,@Body() createGameDto: CreateGameDto) {
-      
-    return await this.gamesService.create({...createGameDto,file_url:file.path.replace("\\", "/")});
+    let filecustom =   file.path.replace("public\\", "");
+    const remove = filecustom.replace("\\", "/");
+    return await this.gamesService.create({...createGameDto,file_url:remove});
   }
 
   @Get()
@@ -47,10 +48,10 @@ async update(
 ) {
   // You can implement your logic here, e.g., finding the existing game by id and updating it
   // Then, you can update the file_url property similar to how you did in the create method
-
+ 
   const updatedGame = await this.gamesService.update(id, {
     ...updateGameDto,
-    file_url: file ? file.path.replace("\\", "/") : undefined
+    file_url: file ? (file.path.replace("public\\", "")).replace("\\","/") : undefined
   });
 
   return updatedGame;

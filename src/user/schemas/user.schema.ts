@@ -38,7 +38,8 @@ export class User extends Document{
     silver_balance:string; 
     @Prop({required: true,default:0})
     gold_balance:string; 
-   
+   @Prop({default:"image.png"})
+   file_url:string;
 }
 
 

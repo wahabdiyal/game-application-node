@@ -38,30 +38,30 @@ export class AuthController {
       if(email){
         return {status:false,message:"User found try with an other email."};
       }
-      const OTP_LENGTH = 4;
-      const otp = Math.floor(Math.random() * 10000) + 1000;
+      // const OTP_LENGTH = 4;
+      // const otp = Math.floor(Math.random() * 10000) + 1000;
 
-      // Convert the number to a string and remove all characters except numbers.
-      let otpStr = otp.toString().replace(/[^\d]/g, '');
+      // // Convert the number to a string and remove all characters except numbers.
+      // let otpStr = otp.toString().replace(/[^\d]/g, '');
     
-      // If the resulting string is less than 4 digits long, pad it with zeros.
-      if (otpStr.length < OTP_LENGTH) {
-        otpStr = `0${otpStr}`;
-      }
-          const accountSid = 'ACf82707de3697a71e255440cd4be4427c';
-          const authToken = '8aa667a9bf75bec466f0866afbd1bfc9';
-         const client = require('twilio')(accountSid, authToken);
-                const status = await client.messages.create({
-                    body: otpStr,
-                    to: data.phone, // Text your number
-                    from: '+18777991953', // From a valid Twilio number
-                  }) ;
-
+      // // If the resulting string is less than 4 digits long, pad it with zeros.
+      // if (otpStr.length < OTP_LENGTH) {
+      //   otpStr = `0${otpStr}`;
+      // }
+      //     const accountSid = 'ACf82707de3697a71e255440cd4be4427c';
+      //     const authToken = '8aa667a9bf75bec466f0866afbd1bfc9';
+      //    const client = require('twilio')(accountSid, authToken);
+      //           const status = await client.messages.create({
+      //               body: otpStr,
+      //               to: data.phone, // Text your number
+      //               from: '+18777991953', // From a valid Twilio number
+      //             }) ;
+      // status.sid
                
-                    if(status.sid){
+                    if(true){
                      return  {
                       status:true,
-                      otp:otpStr
+                      otp:9999
                     } 
                     }else{
                      return {status:false,

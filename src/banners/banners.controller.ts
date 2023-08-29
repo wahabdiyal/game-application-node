@@ -24,7 +24,7 @@ export class BannersController {
   //////add  path file save and folder location/////
   async create(@UploadedFile() file: Express.Multer.File,@Body() createBannerDto: CreateBannerDto) {
      
-    return await this.bannersService.create({...createBannerDto,file_url:file.path});
+    return await this.bannersService.create({...createBannerDto,file_url:(file.path.replace("public\\", "")).replace("\\","/")});
   }
 
   @Get()
@@ -56,7 +56,7 @@ async update(
 
   const updatedGame = await this.bannersService.update(id, {
     ...updateBannerDto,
-    file_url: file ? file.path.replace("\\", "/") : undefined
+    file_url: file ? (file.path.replace("public\\", "")).replace("\\","/") : undefined
   });
 
   return updatedGame;

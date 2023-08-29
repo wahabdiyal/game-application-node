@@ -28,6 +28,7 @@ async function bootstrap() {
   });
 
   app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.useStaticAssets(join(__dirname, '..', 'uploads'));
   app.setBaseViewsDir(join(__dirname, '..', 'views'));
   hbs.registerPartials(join(__dirname, '..', 'views/partials'));
   hbs.registerPartials(join(__dirname, '..', 'views/layout'));
