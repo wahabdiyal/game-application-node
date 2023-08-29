@@ -221,29 +221,28 @@ constructor(
             // const user = await this.userModel.find();
             // return user;
         }
-        async create( userobj: any): Promise<any> {
+        async create( user : any): Promise<any> {
          ///// user phone is unique fix remain 
-          const user = {
-            "full_name":userobj.full_name,
-            "email":userobj.email,
-            "password":userobj.password,
+        //   const user = {
+        //     "full_name":userobj.full_name,
+        //     "email":userobj.email,
+        //     "password":userobj.password,
             
-            "phone":userobj.phone,
-            "country":userobj.country,
-            "refereal_code":userobj?.refereal_code?userobj.refereal_code:null
-        }
+        //     "phone":userobj.phone,
+        //     "country":userobj.country,
+        //     "refereal_code":userobj?.refereal_code?userobj.refereal_code:null
+        // }
+        // console.log(userobj?.refereal_code?userobj.refereal_code:null);
 
          let usercheck = await this.userModel.find({$or: [{email:user.email},{phone:user.phone}]}) ;
           
           if(!usercheck.length){  
             let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
-            
-
               if(user.refereal_code){
                 const getRefDetail = await this.refcodeService.getRefWithCode(user.refereal_code);
-                 //  return getRefDetail;
-                const userRef = await this.findwithUserIdSelf(getRefDetail?.user_id);
-              //  return userRef;
+               //   return getRefDetail;
+                const userRef = await this.findwithUserIdSelf(getRefDetail.user_id);
+              // return userRef;
                 const refRewardSetting = await this.refrewardService.getRefRewardByDate();
             
                if(refRewardSetting && getRefDetail && userRef){
@@ -253,10 +252,10 @@ constructor(
                    
                   if(Number(refRewardSetting.silver_coin)>0){
 
-                     await this.UpdateUser(getRefDetail.user_id, Number(userRef.silver_balance)+Number(refRewardSetting.silver_coin),"silver");
+                       await this.UpdateUser(getRefDetail.user_id, Number(userRef.silver_balance)+Number(refRewardSetting.silver_coin),"silver");
 
                   } if(Number(refRewardSetting.gold_coin)>0){
-                    await this.UpdateUser(getRefDetail.user_id, Number(userRef.gold_balance)+Number(refRewardSetting.gold_coin),"gold");
+                   await this.UpdateUser(getRefDetail.user_id, Number(userRef.gold_balance)+Number(refRewardSetting.gold_coin),"gold");
                  } 
               await this.refcodeService.update(getRefDetail.id,{total_use:Number(getRefDetail.total_use)+1,use_date:moment(new Date()).format('YYYY-MM-DD HH:mm:ss')});
                   
@@ -265,6 +264,7 @@ constructor(
                }
                 ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
               }
+              
              const userVal = await this.userModel.create({...user,silver_balance:getCoinValue?.silver_coin,
                 gold_balance:getCoinValue?.gold_coin
             } );
