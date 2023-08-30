@@ -271,6 +271,7 @@ constructor(
             const payload = { 
               id:userVal._id,
               name: userVal.full_name, 
+              country: user.country,
               email: userVal.email,
               status:userVal.status,
               role:userVal.role,
@@ -422,6 +423,8 @@ constructor(
                     id:userDetail._id,
                     name: userDetail.full_name, 
                     email: userDetail.email,
+                       country: userDetail.country,
+
                     status:userDetail.status,
                     role:userDetail.role,
                  

@@ -24,6 +24,7 @@ import { BannerCollectionsModule } from './banner_collections/banner_collections
 import { CoinTrasModule } from './coin_tras/coin_tras.module';
 import { GamesModule } from './games/games.module';
 import { DailyRewardsModule } from './daily_rewards/daily_rewards.module';
+import { DailyRewardCollectsModule } from './daily_reward_collects/daily_reward_collects.module';
  
  
 @Module({
@@ -61,6 +62,7 @@ import { DailyRewardsModule } from './daily_rewards/daily_rewards.module';
      CoinTrasModule,
      GamesModule,
      DailyRewardsModule,
+     DailyRewardCollectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

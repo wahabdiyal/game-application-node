@@ -47,10 +47,6 @@ export class UserController {
   update(@Param('id') id: any,  @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
     return this.userService.update(id, {...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\","/").replace("public/","") : undefined});
   }
-
-
-
-
   @Post('create')
   async createBook(
     @Body()
@@ -69,8 +65,5 @@ export class UserController {
   @Get('findby/role/:role')
   findwithUserRole(@Param('role') role: any) {
     return this.userService.findwithUserRole(role);
-
   }
-
-
 }

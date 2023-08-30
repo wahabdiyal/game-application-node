@@ -17,8 +17,15 @@ export class DailyRewardsService {
    return res;
   }
 
- async findAll() {
-    return await this.dailyReward.find();
+ async findAll(type) {
+ 
+  if(type =="silver"){
+    return await this.dailyReward.find( {silver_coin: {$ne: 0} } ).exec();
+  }if(type =="gold"){
+    return await this.dailyReward.find( {gold_coin:  {$ne: 0} } ).exec();
+  }
+  return [];
+    
   }
 
   async findOne(id: any) {

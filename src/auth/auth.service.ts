@@ -26,6 +26,7 @@ export class AuthService {
       id:user._id,
       name: user.full_name, 
       email: user.email,
+      country: user.country,
       status:user.status,
       role:user.role,
    
@@ -50,6 +51,7 @@ export class AuthService {
     const payload = { 
       id:user._id,
       name: user.full_name, 
+      country: user.country,
       email: user.email,
       status:user.status,
       role:user.role,
