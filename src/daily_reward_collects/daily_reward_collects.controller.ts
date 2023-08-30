@@ -10,8 +10,8 @@ export class DailyRewardCollectsController {
 
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createDailyRewardCollectDto: CreateDailyRewardCollectDto,@Request() req) {
-    return this.dailyRewardCollectsService.create(createDailyRewardCollectDto,req.user);
+  create(@Request() req) {
+    return this.dailyRewardCollectsService.create(req.user);
   }
 
   @Get()

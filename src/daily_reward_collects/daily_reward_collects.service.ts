@@ -8,7 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { DailyRewardsService } from 'src/daily_rewards/daily_rewards.service';
 import { SilversService } from 'src/silvers/silvers.service';
 import { GoldsService } from 'src/golds/golds.service';
-
+import * as moment from "moment";
 @Injectable()
 export class DailyRewardCollectsService {
   constructor(
@@ -20,9 +20,31 @@ export class DailyRewardCollectsService {
     private goldService:GoldsService  
     
   ){}
-  async create(createDailyRewardCollectDto: CreateDailyRewardCollectDto,user) {
-    // const rewardDetail = await this.dailyRewardService.findOne()
-    const rewardCollect = await this.dailyRewardCollectionModel.findOne({user_id:user.id});
+  async create(user) {
+ 
+      const rewardDetail = await this.dailyRewardService.findByCountry(user.country);
+
+      const today = moment();
+      const startDate = moment(rewardDetail.start_date);
+      const endDate = moment(rewardDetail.end_date);
+      if(!today.isBetween(startDate, endDate)){
+        return false;
+      }
+
+       let  silver:any = await this.silverService.latestFirst(user.id);
+        
+       if(silver) {
+        const date1 = moment('2023-08-30T12:19:02.127Z');
+        const date2 = moment('2023-08-31T12:19:02.127Z');
+        
+        const areDatesEqual = date1.isSame(date2);
+       }else{
+        silver = false;
+       }
+       const gold = await this.goldService.latestFirst(user.id);
+        
+      const rewardCollect = await this.dailyRewardCollectionModel.findOne({user_id:user.id});
+    
     if(!rewardCollect){
 
     }else{

@@ -13,6 +13,7 @@ export class DailyRewardsService {
     ){}
 
   async create(createDailyRewardDto: CreateDailyRewardDto) {
+    ////////country unique remain ////condition ///////////// 
     var res = await this.dailyReward.create(createDailyRewardDto);
    return res;
   }
@@ -49,5 +50,13 @@ export class DailyRewardsService {
     }
 
     return {status: true,message: "daily reward delete successfully"};
+  }
+
+  async findByCountry(country){
+    return await this.dailyReward.findOne({
+      country: {
+        $in: [country]
+      }
+    })
   }
 }
