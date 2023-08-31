@@ -9,6 +9,10 @@ import { DailyRewardsService } from 'src/daily_rewards/daily_rewards.service';
 import { SilversService } from 'src/silvers/silvers.service';
 import { GoldsService } from 'src/golds/golds.service';
 import * as moment from "moment";
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Cron,CronExpression } from '@nestjs/schedule/dist';
+ import { OnEvent } from '@nestjs/event-emitter/dist/decorators'; 
+import { DailyRewardCollect } from './daily_reward_collects.event';
 @Injectable()
 export class DailyRewardCollectsService {
   constructor(
@@ -17,63 +21,121 @@ export class DailyRewardCollectsService {
     private userService: UserService,
     private dailyRewardService:DailyRewardsService,
     private silverService:SilversService,
-    private goldService:GoldsService  
+    private goldService:GoldsService,
+    private readonly eventEmitter:EventEmitter2  
     
   ){}
   async create(user) {
  
       const rewardDetail = await this.dailyRewardService.findByCountry(user.country);
+      if(!rewardDetail){
+        return {status:false, message:"Country is not available for this user."};
+      }
+      const rewardCollect = await this.dailyRewardCollectionModel.findOne({user_id:user.id});
+      let gold:any = await this.goldService.latestFirst(user.id);
+      let  silver:any = await this.silverService.latestFirst(user.id);
 
-      const today = moment();
+
+    const today = moment();
       const startDate = moment(rewardDetail.start_date);
       const endDate = moment(rewardDetail.end_date);
       if(!today.isBetween(startDate, endDate)){
         return false;
       }
-
-       let  silver:any = await this.silverService.latestFirst(user.id);
-        
        if(silver) {
-        const date1 = moment('2023-08-30T12:19:02.127Z');
-        const date2 = moment('2023-08-31T12:19:02.127Z');
+        const date1 = moment(silver.createdAt);
+        const date2 = moment();
         
-        const areDatesEqual = date1.isSame(date2);
+         silver = date1.isSame(date2,"day");
        }else{
         silver = false;
        }
-       const gold = await this.goldService.latestFirst(user.id);
+       if(gold) {
+        const date1 = moment(gold.createdAt);
+        const date2 = moment();
         
-      const rewardCollect = await this.dailyRewardCollectionModel.findOne({user_id:user.id});
-    
+        gold = date1.isSame(date2,"day");
+       }else{
+        gold = false;
+       }
+        if( !gold &&  !silver) {
+          return {status:false,message:"User transaction not found today"};
+        }
     if(!rewardCollect){
-
+        if(rewardDetail.gold_coin != '0'){
+          await this.silverService.create({coins:rewardDetail.gold_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
+        }
+        if(rewardDetail.silver_coin != '0'){
+          await this.goldService.create({coins:rewardDetail.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
+        }
+      return  await this.dailyRewardCollectionModel.create({user_id:user.id,reward_count:1,date:moment(),country:user.country});
     }else{
-
+      if(rewardCollect.reward_count<rewardDetail.inactive_day){
+        return {status:false,message:"User Found in request."};
+      }
+     
     }
+ 
+  }
+
+  async checkCollectUser(user) : Promise<boolean>{
+      const value =  await this.dailyRewardCollectionModel.findOne({user_id:user.id});
+      return (value==null)?true:false;
+  }
+
+  
+  /////////Action Cron and Event///////////////
+
+  @Cron(CronExpression.EVERY_30_SECONDS,{name:"send-daily-rewards"})
+ async sendRequest(){
+    
+    this.eventEmitter.emit(
+      'daily.rewards',
+      new DailyRewardCollect(),
+    );
+      console.log("send request.....");
+  }
+  @OnEvent("daily.rewards")
+ async eventDailyReward(payload:DailyRewardCollect){
+    const userDailyReward:any = await this.getAllDailyRewardCollects();
+    
+    for (let c = 0; c < userDailyReward.length; c++) {
+         const rewardDetailAdmin = await this.dailyRewardService.findByCountry(userDailyReward[c].country);
+        //  current date match//
+        const today = moment();
+        const startDate = moment(rewardDetailAdmin.start_date);
+        const endDate = moment(rewardDetailAdmin.end_date);
+        if(!today.isBetween(startDate, endDate)){
+          console.log("continue........");
+
+          //// admin side can add field expired entry status then we jsut fetch active daily reward entries
+          continue;
+        }
+         if(Number(userDailyReward[c].reward_count) < Number(rewardDetailAdmin.inactive_day)){
+            ///////////////////////// update daily reward package update//////////////////
+            if(rewardDetailAdmin.gold_coin != '0'){
+              await this.silverService.create({coins:rewardDetailAdmin.gold_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:userDailyReward[c].user_id})
+            }
+            if(rewardDetailAdmin.silver_coin != '0'){
+              await this.goldService.create({coins:rewardDetailAdmin.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:userDailyReward[c].user_id})
+            }
+            console.log(userDailyReward[c].user_id,userDailyReward[c].country);
+
+             await this.dailyRewardCollectionModel.updateOne({user_id:userDailyReward[c].user_id},{reward_count:Number(userDailyReward[c].reward_count)+1,date:moment(),country:userDailyReward[c].country});
+         }else{
+          console.log("continue");
+          continue;
+         }
+          
       
-    return user;
-  }
-  
-  
-
-
-
-
-
-
-  findAll() {
-    return `This action returns all dailyRewardCollects`;
+    }
+       return payload.getUserDailyReward();
+        
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} dailyRewardCollect`;
+  async getAllDailyRewardCollects(): Promise<DailyRewardCollect[]>{
+   return await this.dailyRewardCollectionModel.find();
   }
 
-  update(id: number, updateDailyRewardCollectDto: UpdateDailyRewardCollectDto) {
-    return `This action updates a #${id} dailyRewardCollect`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} dailyRewardCollect`;
-  }
+ 
 }

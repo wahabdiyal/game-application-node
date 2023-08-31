@@ -25,6 +25,8 @@ import { CoinTrasModule } from './coin_tras/coin_tras.module';
 import { GamesModule } from './games/games.module';
 import { DailyRewardsModule } from './daily_rewards/daily_rewards.module';
 import { DailyRewardCollectsModule } from './daily_reward_collects/daily_reward_collects.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
  
  
 @Module({
@@ -44,6 +46,8 @@ import { DailyRewardCollectsModule } from './daily_reward_collects/daily_reward_
       }, 
     ]),
     MongooseModule.forRoot(process.env.DB_CONNECTION),
+    EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     UserModule,
     AuthModule,
     RewardModule,
