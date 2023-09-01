@@ -27,6 +27,7 @@ import { DailyRewardsModule } from './daily_rewards/daily_rewards.module';
 import { DailyRewardCollectsModule } from './daily_reward_collects/daily_reward_collects.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ContactsModule } from './contacts/contacts.module';
  
  
 @Module({
@@ -67,6 +68,7 @@ import { ScheduleModule } from '@nestjs/schedule';
      GamesModule,
      DailyRewardsModule,
      DailyRewardCollectsModule,
+     ContactsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
