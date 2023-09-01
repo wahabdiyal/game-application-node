@@ -45,4 +45,9 @@ export class BannersService {
 
     return {status: true,message: "banner Delete successfully"};
   }
+
+  async getBannerList(list:any){
+    const bannerList = await this.bannerModel.find({_id:list});
+    return bannerList;
+  }
 }
