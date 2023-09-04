@@ -28,6 +28,10 @@ import { DailyRewardCollectsModule } from './daily_reward_collects/daily_reward_
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ContactsModule } from './contacts/contacts.module';
+import { UserBanksModule } from './user_banks/user_banks.module';
+import { AdminBankModule } from './admin_bank/admin_bank.module';
+import { CryptoWalletsModule } from './crypto_wallets/crypto_wallets.module';
+import { CurrencyModule } from './currency/currency.module';
  
  
 @Module({
@@ -69,6 +73,10 @@ import { ContactsModule } from './contacts/contacts.module';
      DailyRewardsModule,
      DailyRewardCollectsModule,
      ContactsModule,
+     UserBanksModule,
+     AdminBankModule,
+     CryptoWalletsModule,
+     CurrencyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

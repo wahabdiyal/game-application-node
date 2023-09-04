@@ -24,6 +24,10 @@ export class BannerCollectionsService {
     return await this.bannerCollectionModel.find();
   }
 
+  async findBannerbyId(id:any) {
+    return await this.bannerCollectionModel.findOne({"_id":id});
+  }
+
  async findOne(country: any) {
   const collectionBanner =  await this.bannerCollectionModel.findOne({
     country: {

@@ -4,17 +4,15 @@ import { Document } from 'mongoose';
 @Schema({
         timestamps: true,
 })
-///////////////Whatsapp contact//////////////////
-export class Contacts  extends Document{
+export class AdminBank  extends Document{
     @Prop({default:"active", required:true})
     status:string;
     @Prop({required: true})
-    country:[string];
+    bank_detail:[string];
     @Prop({required: true})
-    phone:[string];
-    @Prop({required: true,})
-    remarks:string;
+    country:string;
+    
 }
-export const ContactsSchema = SchemaFactory.createForClass(Contacts)
+export const AdminBankSchema = SchemaFactory.createForClass(AdminBank)
 
 

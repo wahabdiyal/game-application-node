@@ -1,7 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Injectable } from '@nestjs/common';
-import { CreateDailyRewardCollectDto } from './dto/create-daily_reward_collect.dto';
-import { UpdateDailyRewardCollectDto } from './dto/update-daily_reward_collect.dto';
 import mongoose from 'mongoose';
 import { DailyRewardCollects } from './schemas/daily_reward_collects.schema';
 import { UserService } from 'src/user/user.service';
@@ -86,7 +84,7 @@ export class DailyRewardCollectsService {
   
   /////////Action Cron and Event///////////////
 
-  @Cron(CronExpression.EVERY_30_SECONDS,{name:"send-daily-rewards"})
+  @Cron(CronExpression.EVERY_DAY_AT_1AM,{name:"send-daily-rewards"})
  async sendRequest(){
     
     this.eventEmitter.emit(

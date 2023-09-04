@@ -17,6 +17,11 @@ export class BannerCollectionsController {
     return this.bannerCollectionsService.find();
   }
 
+  @Get('/getbannerwithid/:id')
+  async findOneBannerwithid(@Param('id') id: string) {
+    return await this.bannerCollectionsService.findBannerbyId(id);
+  }
+
   @Get(':country')
   findOne(@Param('country') country: string) {
     return this.bannerCollectionsService.findOne(country);

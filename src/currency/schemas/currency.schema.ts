@@ -4,17 +4,15 @@ import { Document } from 'mongoose';
 @Schema({
         timestamps: true,
 })
-///////////////Whatsapp contact//////////////////
-export class Contacts  extends Document{
+export class Currency  extends Document{
     @Prop({default:"active", required:true})
     status:string;
     @Prop({required: true})
-    country:[string];
+    data:[string];
     @Prop({required: true})
-    phone:[string];
-    @Prop({required: true,})
-    remarks:string;
+    meta:[string];
+    
 }
-export const ContactsSchema = SchemaFactory.createForClass(Contacts)
+export const CurrencySchema = SchemaFactory.createForClass(Currency)
 
 
