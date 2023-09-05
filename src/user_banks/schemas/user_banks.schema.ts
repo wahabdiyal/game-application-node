@@ -8,7 +8,7 @@ export class UserBank  extends Document{
     @Prop({default:"active", required:true})
     status:string;
     @Prop({required: true})
-    card:[string];
+    bank_detail:[string];
     @Prop({required: true})
     user_id:string;
     @Prop({default: "",})
