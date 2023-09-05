@@ -85,12 +85,15 @@ export class BannerCollectionsService {
 
  async update(id: any, updateBannerCollectionDto: UpdateBannerCollectionDto) {
     const banner = await this.bannerCollectionModel.findByIdAndUpdate(id,updateBannerCollectionDto);
-
+  
     if (!banner) {
       throw new NotFoundException('banner collection not found.');
     }
 
-    return {status: true,message: "banner collection updated successfully"};
+       const bannerList = await this.bannerService.getBannerList(banner.banner_id);
+    return {...banner.toObject(),
+      banner_list: bannerList
+    };
   }
 
  async remove(id: any) {
