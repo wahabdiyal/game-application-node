@@ -17,7 +17,11 @@ export class BannerCollectionsService {
 
   async create(createBannerCollectionDto: CreateBannerCollectionDto) {
     var res = await this.bannerCollectionModel.create(createBannerCollectionDto);
-    return res;
+    const bannerList = await this.bannerService.getBannerList(res.banner_id);
+    return {...res.toObject(),
+      banner_list: bannerList
+    };
+    
   }
 
   async findAll() {
@@ -37,6 +41,7 @@ export class BannerCollectionsService {
   if(collectionBanner!==null){
 
      const bannerList =  await this.bannerService.getBannerList(collectionBanner.banner_id);
+
      const newCollectionBanner = {...collectionBanner.toObject(),
        banner_list: bannerList
      };

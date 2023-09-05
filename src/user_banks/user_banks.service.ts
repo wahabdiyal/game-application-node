@@ -17,6 +17,10 @@ export class UserBanksService {
     return res;
   }
 
+  async findByCountry(user_id , country){
+
+  }
+
   async findAll() {
     return await this.userBankService.find();
   }

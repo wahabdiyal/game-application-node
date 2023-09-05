@@ -5,8 +5,7 @@ import { Document } from 'mongoose';
         timestamps: true,
 })
 export class UserBank  extends Document{
-    @Prop({default:"active", required:true})
-    status:string;
+     
     @Prop({required: true})
     bank_detail:[string];
     @Prop({required: true})

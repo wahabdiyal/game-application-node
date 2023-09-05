@@ -32,6 +32,10 @@ import { UserBanksModule } from './user_banks/user_banks.module';
 import { AdminBankModule } from './admin_bank/admin_bank.module';
 import { CryptoWalletsModule } from './crypto_wallets/crypto_wallets.module';
 import { CurrencyModule } from './currency/currency.module';
+import { UserCryptoWalletsModule } from './user_crypto_wallets/user_crypto_wallets.module';
+import { AdminAccountsModule } from './admin_accounts/admin_accounts.module';
+import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
+ 
  
  
 @Module({
@@ -77,6 +81,10 @@ import { CurrencyModule } from './currency/currency.module';
      AdminBankModule,
      CryptoWalletsModule,
      CurrencyModule,
+     UserCryptoWalletsModule,
+     AdminAccountsModule,
+     BankCryptoModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],

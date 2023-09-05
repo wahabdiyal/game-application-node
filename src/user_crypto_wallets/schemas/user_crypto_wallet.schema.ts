@@ -4,14 +4,14 @@ import { Document } from 'mongoose';
 @Schema({
         timestamps: true,
 })
-export class CryptoWallet  extends Document{
+export class UserCryptoWallet  extends Document{
      
     @Prop({required: true})
     wallet_detail:[string];
     @Prop({required: true})
-    country:string;
+    user_id:string;
     
 }
-export const CryptoWalletSchema = SchemaFactory.createForClass(CryptoWallet)
+export const UserCryptoWalletSchema = SchemaFactory.createForClass(UserCryptoWallet)
 
 
