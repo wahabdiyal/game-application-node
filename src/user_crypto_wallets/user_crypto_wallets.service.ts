@@ -16,7 +16,26 @@ export class UserCryptoWalletsService {
     var res = await this.userCryptoWalletService.create(createUserCryptoWalletDto);
     return res;
   }
-  async findByCountry(user_id , country){
+  async findByUser(user_id){
+    return await this.userCryptoWalletService.aggregate([
+      {
+        $match: {
+          user_id: user_id, // Replace with the user_id you're looking for
+        },
+      },
+      {
+        $addFields: {
+          hasSelectedBank: {
+            $in: ["selected", "$wallet_detail.status"],
+          },
+        },
+      },
+      {
+        $match: {
+          hasSelectedBank: true,
+        },
+      },
+    ]);
 
   }
  async findAll() {

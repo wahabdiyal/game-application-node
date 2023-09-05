@@ -16,6 +16,9 @@ export class AdminBankService {
     var res = await this.adminBankService.create(createAdminBankDto);
     return res;
   }
+  async findByCountry(country:string){
+    return await this.adminBankService.find({ country: country});
+  }
 
   async findAll() {
     return await this.adminBankService.find();

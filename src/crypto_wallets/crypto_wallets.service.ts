@@ -16,6 +16,10 @@ export class CryptoWalletsService {
     return res;
   }
 
+  async findByCountry(country:string){
+    return await this.cryptoWalletService.find({ country: country});
+  }
+
   async findAll() {
     return await this.cryptoWalletService.find();
   }

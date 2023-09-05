@@ -17,7 +17,26 @@ export class UserBanksService {
     return res;
   }
 
-  async findByCountry(user_id , country){
+  async findByUser(user_id){
+    return await this.userBankService.aggregate([
+      {
+        $match: {
+          user_id: user_id, // Replace with the user_id you're looking for
+        },
+      },
+      {
+        $addFields: {
+          hasSelectedBank: {
+            $in: ["selected", "$bank_detail.status"],
+          },
+        },
+      },
+      {
+        $match: {
+          hasSelectedBank: true,
+        },
+      },
+    ]);
 
   }
 

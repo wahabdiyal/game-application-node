@@ -8,5 +8,6 @@ import { CryptoWalletSchema } from './schemas/crypto_wallets.schema';
   imports: [MongooseModule.forFeature([{ name: 'CryptoWallet', schema: CryptoWalletSchema }]) ],
   controllers: [CryptoWalletsController],
   providers: [CryptoWalletsService],
+  exports: [CryptoWalletsService],
 })
 export class CryptoWalletsModule {}

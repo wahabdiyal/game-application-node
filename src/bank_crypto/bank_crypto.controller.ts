@@ -5,13 +5,16 @@ import { BankCryptoService } from './bank_crypto.service';
 @Controller('bank-crypto')
 export class BankCryptoController {
   constructor(private readonly bankCryptoService: BankCryptoService) {}
-  @Get()
-  findAll() {
-    return this.bankCryptoService.findAll();
+  @Get("admin/:country")
+  findAll(@Param('country') country: string) {
+    return this.bankCryptoService.findAll(country);
   }
 
-  @Get(':country')
-  findOne(@Param('country') country: string) {
-    return this.bankCryptoService.findOne('',country);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+  
+    return this.bankCryptoService.findOne(id);
   }
+
+  
 }
