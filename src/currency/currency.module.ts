@@ -9,5 +9,6 @@ import { HttpModule } from '@nestjs/axios';
   imports:[MongooseModule.forFeature([{name:"Currency",schema:CurrencySchema}]),HttpModule],
   controllers: [CurrencyController],
   providers: [CurrencyService],
+  exports: [CurrencyService],
 })
 export class CurrencyModule {}

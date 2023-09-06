@@ -25,6 +25,10 @@ export class CountriesService {
     const country = await this.countryModel.findById(id);
     return country;
   }
+  async findOneByCountry(country:string){
+    const countryvalue = await this.countryModel.findOne({country: country});
+    return countryvalue;
+  }
 
   async update(id: any, updateCountryDto: UpdateCountryDto) {
     const country = await this.countryModel.findByIdAndUpdate(id,updateCountryDto);
