@@ -35,6 +35,7 @@ import { CurrencyModule } from './currency/currency.module';
 import { UserCryptoWalletsModule } from './user_crypto_wallets/user_crypto_wallets.module';
 import { AdminAccountsModule } from './admin_accounts/admin_accounts.module';
 import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
+import { WithdrawLimitsModule } from './withdraw_limits/withdraw_limits.module';
  
  
  
@@ -84,6 +85,7 @@ import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
      UserCryptoWalletsModule,
      AdminAccountsModule,
      BankCryptoModule,
+     WithdrawLimitsModule,
     
   ],
   controllers: [AppController],
