@@ -11,7 +11,7 @@ import { SilversModule } from './silvers/silvers.module';
 import { UserService } from './user/user.service';
 import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
-import { GameModule } from './game/game.module';
+ 
 import { UserRightModule } from './user_right/user_right.module';
 import { ContactModule } from './contact/contact.module';
 import { User, UserSchema } from './user/schemas/user.schema';
@@ -22,6 +22,23 @@ import { ReferralCodesModule } from './referral_codes/referral_codes.module';
 import { BannersModule } from './banners/banners.module';
 import { BannerCollectionsModule } from './banner_collections/banner_collections.module';
 import { CoinTrasModule } from './coin_tras/coin_tras.module';
+import { GamesModule } from './games/games.module';
+import { DailyRewardsModule } from './daily_rewards/daily_rewards.module';
+import { DailyRewardCollectsModule } from './daily_reward_collects/daily_reward_collects.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ContactsModule } from './contacts/contacts.module';
+import { UserBanksModule } from './user_banks/user_banks.module';
+import { AdminBankModule } from './admin_bank/admin_bank.module';
+import { CryptoWalletsModule } from './crypto_wallets/crypto_wallets.module';
+import { CurrencyModule } from './currency/currency.module';
+import { UserCryptoWalletsModule } from './user_crypto_wallets/user_crypto_wallets.module';
+import { AdminAccountsModule } from './admin_accounts/admin_accounts.module';
+import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
+import { WithdrawLimitsModule } from './withdraw_limits/withdraw_limits.module';
+import { PackagesModule } from './packages/packages.module';
+
+ 
  
  
 @Module({
@@ -41,6 +58,8 @@ import { CoinTrasModule } from './coin_tras/coin_tras.module';
       }, 
     ]),
     MongooseModule.forRoot(process.env.DB_CONNECTION),
+    EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     UserModule,
     AuthModule,
     RewardModule,
@@ -48,7 +67,6 @@ import { CoinTrasModule } from './coin_tras/coin_tras.module';
      SilversModule,
      CoinUserModule,
      WithdrawModule,
-     GameModule,
      UserRightModule,
      ContactModule,
      CountriesModule,
@@ -58,6 +76,22 @@ import { CoinTrasModule } from './coin_tras/coin_tras.module';
      BannersModule,
      BannerCollectionsModule,
      CoinTrasModule,
+     GamesModule,
+     DailyRewardsModule,
+     DailyRewardCollectsModule,
+     ContactsModule,
+     UserBanksModule,
+     AdminBankModule,
+     CryptoWalletsModule,
+     CurrencyModule,
+     UserCryptoWalletsModule,
+     AdminAccountsModule,
+     BankCryptoModule,
+
+     WithdrawLimitsModule,
+
+     PackagesModule,
+
     
   ],
   controllers: [AppController],

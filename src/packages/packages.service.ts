@@ -1,0 +1,84 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreatePackageDto } from './dto/create-package.dto';
+import { UpdatePackageDto } from './dto/update-package.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
+import { Package } from './schemas/package.schema';
+import { CurrencyService } from 'src/currency/currency.service';
+import { CountriesService } from 'src/countries/countries.service';
+
+@Injectable()
+export class PackagesService {
+  constructor(
+    @InjectModel(Package.name)
+    private packagesModel:mongoose.Model<Package>,
+    private currencyService:CurrencyService,
+    private countryService:CountriesService,
+  ){}
+  async create(createPackageDto: CreatePackageDto) {
+    var res = await this.packagesModel.create(createPackageDto);
+    return res;
+  }
+
+  async findAll() {
+    return await this.packagesModel.find();
+  }
+
+  async findOne(id: any) {
+    return await this.packagesModel.findOne({_id : id});
+  }
+ 
+  async findbyCountry(country: any) {
+    let packageValue = await this.packagesModel.find();
+    const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
+  
+    if (getcountry) {
+      let countryCurrency = await this.currencyService.findAll(getcountry.currency);
+      const exchangeRate = countryCurrency[0].data.INR.value;
+   
+      const updatedPackageValue = [];
+   
+      for (const item of packageValue) {
+      
+        const newAmount = parseFloat(item.amount_pkr) * exchangeRate;
+         
+        const updatedItem = {
+          ...item.toObject(),
+          amount: newAmount,
+          user_country:country
+        };
+   
+        delete updatedItem.amount_pkr;
+        delete updatedItem.country;
+  
+        updatedPackageValue.push(updatedItem);
+      }
+  return updatedPackageValue;
+     
+    } else {
+      return 0;
+    }
+  }
+  
+  
+
+  async update(id: string, updatePackageDto: UpdatePackageDto) {
+    const pakcage = await this.packagesModel.findByIdAndUpdate(id,updatePackageDto);
+
+    if (!pakcage) {
+      throw new NotFoundException('Package not found.');
+    }
+  
+    return {status: true,message: "Package updated successfully"};
+  }
+
+  async remove(id: string) {
+    const pack = await this.packagesModel.findByIdAndDelete(id);
+
+    if (!pack) {
+      throw new NotFoundException('Package not found.');
+    }
+  
+    return {status: true,message: "Package Delete successfully"};
+  }
+}

@@ -24,9 +24,6 @@ export class User extends Document{
     @Prop({default: null,})
     updated_by:string;
 
-    // @Prop({ type: Types.ObjectId, ref: 'User',default: null})
-    // user_id: User; 
-
     @Prop({ required: true, unique: true })
     email:string;
     @Prop()
@@ -41,6 +38,8 @@ export class User extends Document{
     silver_balance:string; 
     @Prop({required: true,default:0})
     gold_balance:string; 
+   @Prop({default:"image.png"})
+   file_url:string;
 }
 
 

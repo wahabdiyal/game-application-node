@@ -11,25 +11,55 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signIn(username, pass) {
-   
-    const user = await this.usersService.findById(username);
-   
+  async signIn(email, pass) {
+  
+    const user = await this.usersService.findByEmail(email);
+  
     if(user.status !== 'active'){
       throw new NotAcceptableException("User is invalid, try to contact admin")
     }
-    if (user?.password !== pass && user.role=="player"  ) {
+    //&& user.role=="player" 
+    if (user?.password !== pass  ) {
       throw new UnauthorizedException();
     }
     const payload = { 
       id:user._id,
       name: user.full_name, 
       email: user.email,
+      country: user.country,
       status:user.status,
       role:user.role,
    
     };
     return {
+      status:true,
+      user:user,
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+  async loginwithphone(phone, pass) {
+  
+    const user = await this.usersService.findByPhone(phone);
+  
+    if(user.status !== 'active'){
+      throw new NotAcceptableException("User is invalid, try to contact admin")
+    }
+    //&& user.role=="player" 
+    if (user?.password !== pass  ) {
+      throw new UnauthorizedException();
+    }
+    const payload = { 
+      id:user._id,
+      name: user.full_name, 
+      country: user.country,
+      email: user.email,
+      status:user.status,
+      role:user.role,
+   
+    };
+    return {
+      status:true,
+      user:user,
       access_token: await this.jwtService.signAsync(payload),
     };
   }

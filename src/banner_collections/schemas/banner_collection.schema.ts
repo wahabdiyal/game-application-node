@@ -9,6 +9,8 @@ export class BannerCollection  extends Document{
     
     @Prop({default:"active", required:true})
     status:string;
+    @Prop({default:"", required:true})
+    collection_name:string;
     @Prop({required: true})
     country:[string];
     @Prop({required: true,})

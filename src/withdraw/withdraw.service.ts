@@ -17,11 +17,12 @@ export class WithdrawService {
   ){}
 
    async create(createWithdrawDto: CreateWithdrawDto): Promise<any>  {
-      const userCoin = await this.goldService.countOfUserCoin(createWithdrawDto['client_id']);
-      if(userCoin['total'] <= 0) {
+      const userCoin = await this.userService.findUserbyId(createWithdrawDto['user_id']);
+     
+      if(Number(userCoin['gold_balance']) <= 0) {
         return {status:false,'message':'Request not processed because user not have enough coins.'};
       }
-      console.log(userCoin);
+      
     var res = await this.withDrawModel.create(createWithdrawDto);
      return res;
   }
