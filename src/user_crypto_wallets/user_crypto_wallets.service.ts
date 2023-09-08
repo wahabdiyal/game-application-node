@@ -47,7 +47,7 @@ export class UserCryptoWalletsService {
   }
   async findOneUser(user_id: any) {
   
-    return await this.userCryptoWalletService.findOne({user_id : user_id});
+    return await this.userCryptoWalletService.find({user_id : user_id});
   } 
 
  async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
