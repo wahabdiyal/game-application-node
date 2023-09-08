@@ -5,7 +5,7 @@ import { UpdateAllowedIpDto } from './dto/update-allowed_ip.dto';
 
 @Controller('allowed-ips')
 export class AllowedIpsController {
-  constructor(private readonly allowedIpsService: AllowedIpsService) { }
+  constructor(private readonly allowedIpsService: AllowedIpsService) {}
 
   @Post()
   create(@Body() createAllowedIpDto: CreateAllowedIpDto) {
@@ -22,10 +22,7 @@ export class AllowedIpsController {
     return this.allowedIpsService.findOne(id);
   }
 
-  @Get('/country/:country')
-  findOneCountry(@Param('country') country: string) {
-    return this.allowedIpsService.findOneCountry(country);
-  }
+  
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateAllowedIpDto: UpdateAllowedIpDto) {

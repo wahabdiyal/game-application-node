@@ -4,7 +4,7 @@ import { Document } from 'mongoose';
 @Schema({
     timestamps: true,
 })
-export class Allowed_IPs extends Document {
+export class AllowedIP extends Document {
     @Prop({ default: "active", required: true })
     status: string;
     @Prop({ required: true })
@@ -13,6 +13,6 @@ export class Allowed_IPs extends Document {
     ip_address: string;
 
 }
-export const Allowed_IPsSchema = SchemaFactory.createForClass(Allowed_IPs)
+export const AllowedIPSchema = SchemaFactory.createForClass(AllowedIP)
 
 
