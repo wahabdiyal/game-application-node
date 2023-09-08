@@ -37,6 +37,7 @@ import { AdminAccountsModule } from './admin_accounts/admin_accounts.module';
 import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
 import { WithdrawLimitsModule } from './withdraw_limits/withdraw_limits.module';
 import { PackagesModule } from './packages/packages.module';
+import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
 
  
  
@@ -91,6 +92,8 @@ import { PackagesModule } from './packages/packages.module';
      WithdrawLimitsModule,
 
      PackagesModule,
+
+     AllowedIpsModule,
 
     
   ],
