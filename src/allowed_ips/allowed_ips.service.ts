@@ -14,13 +14,13 @@ export class AllowedIpsService {
 
   async create(createAllowedIpDto: CreateAllowedIpDto) {
     var res = await this.allowedIPService.create(createAllowedIpDto);
-    return res;
+    return await this.allowedIPService.findOne({ _id: res._id }).populate('operator').exec();
   }
   async findByCountry(country: string) {
     return await this.allowedIPService.find({ country: country });
   }
   async findAll() {
-    return await this.allowedIPService.find();
+    return await this.allowedIPService.find().populate('operator').exec();
   }
   async findOne(id: any) {
     return await this.allowedIPService.findOne({ _id: id });
@@ -31,7 +31,7 @@ export class AllowedIpsService {
     if (!admin_bank) {
       throw new NotFoundException('not found.');
     }
-    const data = await this.allowedIPService.findOne({ _id: id });
+    const data = await this.allowedIPService.findOne({ _id: id }).populate('operator').exec();
 
     return { status: true, data: data, message: "updated" };
   }
