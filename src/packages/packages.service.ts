@@ -34,7 +34,9 @@ export class PackagesService {
   
     if (getcountry) {
       let countryCurrency = await this.currencyService.findAll(getcountry.currency);
-      const exchangeRate = countryCurrency[0].data.INR.value;
+      const crnc = getcountry.currency;
+     
+      const exchangeRate = countryCurrency[0].data[crnc].value;
    
       const updatedPackageValue = [];
    
@@ -45,7 +47,8 @@ export class PackagesService {
         const updatedItem = {
           ...item.toObject(),
           amount: newAmount,
-          user_country:country
+          user_country:country,
+          currency:crnc,
         };
    
         delete updatedItem.amount_pkr;
@@ -59,6 +62,7 @@ export class PackagesService {
       return 0;
     }
   }
+  
   
   
 
