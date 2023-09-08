@@ -237,4 +237,10 @@ async update(id: any, body:UpdateGoldDto) {
        }
        return {total:sumcredit-sumdebit}
   }
+
+  async latestFirst(user_id: string){
+    const silve = await this.goldModel.findOne({client_id:user_id}).sort({created_at: -1}).exec();
+      return silve;
+  }
+
 }

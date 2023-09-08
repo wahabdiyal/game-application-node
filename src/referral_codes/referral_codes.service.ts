@@ -38,6 +38,7 @@ export class ReferralCodesService {
     return `This action removes a #${id} referralCode`;
   }
   async user_share(user){
+    
       const checkUser = await this.referralModel.findOne({user_id: user.id});
       if(!checkUser){
          const res = await this.referralModel.create({user_id:user.id});

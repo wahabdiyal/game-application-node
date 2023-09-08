@@ -5,6 +5,8 @@ import { User } from "src/user/schemas/user.schema";
 export enum Status{
     approved="approved",
     pending="pending",
+    inprocessed="inprocessed",
+    cancel="cancel"
   
 }
 @Schema({

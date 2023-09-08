@@ -8,6 +8,8 @@ export class Country extends Document{
     @Prop({required: true,unique: true})
     code:string;
     @Prop({required: true,unique: true})
+    currency:string;
+    @Prop({required: true,unique: true})
     country:string;
     @Prop({default:"true"})
     status:string;
