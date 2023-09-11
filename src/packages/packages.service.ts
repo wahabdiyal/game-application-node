@@ -62,10 +62,6 @@ export class PackagesService {
       return 0;
     }
   }
-  
-  
-  
-
   async update(id: string, updatePackageDto: UpdatePackageDto) {
     const pakcage = await this.packagesModel.findByIdAndUpdate(id,updatePackageDto);
 

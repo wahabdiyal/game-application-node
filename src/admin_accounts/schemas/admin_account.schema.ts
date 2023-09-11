@@ -14,6 +14,8 @@ export class AdminAccount  extends Document{
     credit:string;
     @Prop({required: true,default:"0"})
     gold_coin_balance:string;
+    @Prop()
+    client_id:string;
     
 }
 export const AdminAccountSchema = SchemaFactory.createForClass(AdminAccount)

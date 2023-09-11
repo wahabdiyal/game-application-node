@@ -97,7 +97,7 @@ export class AuthController {
     loginadmin(@Body() signInDto: Record<string, any>, @Ip() ip) {
 
        
-      return this.authService.loginAdmin(signInDto.phone, signInDto.password,ip);
+      return this.authService.loginAdmin(signInDto.email, signInDto.password,ip);
     }
 
     @HttpCode(HttpStatus.OK)
