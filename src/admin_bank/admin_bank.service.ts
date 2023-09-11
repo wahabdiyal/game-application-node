@@ -19,18 +19,15 @@ export class AdminBankService {
   async findByCountry(country:string){
     return await this.adminBankService.find({ country: country});
   }
-
   async findAll() {
     return await this.adminBankService.find();
   }
-
  async findOne(id: any) {
     return await this.adminBankService.findOne({_id : id});
   }
   async findOneCountry(country: any) {
     return await this.adminBankService.findOne({country : country});
   }
-
  async update(id: any, updateAdminBankDto: UpdateAdminBankDto) {
   const admin_bank = await this.adminBankService.findByIdAndUpdate(id,updateAdminBankDto);
 
