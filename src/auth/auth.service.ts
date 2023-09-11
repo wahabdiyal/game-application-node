@@ -29,7 +29,6 @@ export class AuthService {
       country: user.country,
       status:user.status,
       role:user.role,
-   
     };
     return {
       status:true,
@@ -64,12 +63,15 @@ export class AuthService {
     };
   }
 
-  async loginAdmin(phone, pass,ip) {
+  async loginAdmin(email, pass,ip) {
+    
+    const user = await this.usersService.findByEmail(email);
   
-    const user = await this.usersService.findByPhone(phone);
-  
-    if(user.status !== 'active',user.user_ip!=ip){
+    if(user.status !== 'active'&&(user.user_ip!=ip||user.user_ip==null)){
       throw new NotAcceptableException("User is invalid, try to contact admin")
+    }
+    if(user.user_ip==null){
+      await this.usersService.update({_id:user.id},{user_ip:ip});
     }
     
     if (user?.password !== pass && user.role=="player"  ) {
@@ -82,8 +84,7 @@ export class AuthService {
       email: user.email,
       status:user.status,
       role:user.role,
-   
-    };
+     };
     return {
       status:true,
       user:user,

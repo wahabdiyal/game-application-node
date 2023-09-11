@@ -11,12 +11,14 @@ import {
   UseGuards,
   Query,
   UseInterceptors,
-  UploadedFile
+  UploadedFile,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtService  } from '@nestjs/jwt';
 
 @Controller('user')
 @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
@@ -65,5 +67,10 @@ export class UserController {
   @Get('findby/role/:role')
   findwithUserRole(@Param('role') role: any) {
     return this.userService.findwithUserRole(role);
+  }
+  @Post('/destroy')
+  deleteToken(@Request() req){
+    
+      return req.header('Authorization');
   }
 }
