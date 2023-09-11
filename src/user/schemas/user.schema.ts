@@ -13,6 +13,14 @@ export class User extends Document{
     
     @Prop()
     full_name:string;
+    @Prop()
+    first_name:string;
+    @Prop({default:null})
+    user_ip:string;
+    @Prop({default:0})
+    block:string;
+    @Prop()
+    last_name:string;
     @Prop({required: true})
     country:string;
     @Prop({default: 'active'})

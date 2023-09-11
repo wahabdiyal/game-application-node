@@ -24,7 +24,7 @@ export class AuthService {
     }
     const payload = { 
       id:user._id,
-      name: user.full_name, 
+      name: user.first_name+user.last_name, 
       email: user.email,
       country: user.country,
       status:user.status,
@@ -50,7 +50,34 @@ export class AuthService {
     }
     const payload = { 
       id:user._id,
-      name: user.full_name, 
+      name: user.first_name+user.last_name, 
+      country: user.country,
+      email: user.email,
+      status:user.status,
+      role:user.role,
+   
+    };
+    return {
+      status:true,
+      user:user,
+      access_token: await this.jwtService.signAsync(payload),
+    };
+  }
+
+  async loginAdmin(phone, pass,ip) {
+  
+    const user = await this.usersService.findByPhone(phone);
+  
+    if(user.status !== 'active',user.user_ip!=ip){
+      throw new NotAcceptableException("User is invalid, try to contact admin")
+    }
+    
+    if (user?.password !== pass && user.role=="player"  ) {
+      throw new UnauthorizedException();
+    }
+    const payload = { 
+      id:user._id,
+      name: user.first_name+user.last_name, 
       country: user.country,
       email: user.email,
       status:user.status,
