@@ -91,10 +91,8 @@ import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
     BankCryptoModule,
     WithdrawLimitsModule,
     PackagesModule,
-    AllowedIpsModule
-
- 
-     ChallengesModule,
+    AllowedIpsModule,
+    ChallengesModule,
  
   ],
   controllers: [AppController],
