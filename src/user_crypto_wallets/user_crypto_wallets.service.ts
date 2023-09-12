@@ -51,9 +51,6 @@ export class UserCryptoWalletsService {
   } 
  
 
-    return await this.userCryptoWalletService.find({ user_id: user_id });
-  }
-
   async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
     const crypto = await this.userCryptoWalletService.findByIdAndUpdate(id, updateUserCryptoWalletDto);
 
