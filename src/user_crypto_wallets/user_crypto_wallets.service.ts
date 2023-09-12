@@ -9,14 +9,14 @@ import mongoose from 'mongoose';
 export class UserCryptoWalletsService {
   constructor(
     @InjectModel(UserCryptoWallet.name)
-    private  userCryptoWalletService:mongoose.Model<UserCryptoWallet>
-  ){}
+    private userCryptoWalletService: mongoose.Model<UserCryptoWallet>
+  ) { }
 
   async create(createUserCryptoWalletDto: CreateUserCryptoWalletDto) {
     var res = await this.userCryptoWalletService.create(createUserCryptoWalletDto);
     return res;
   }
-  async findByUser(user_id){
+  async findByUser(user_id) {
     return await this.userCryptoWalletService.aggregate([
       {
         $match: {
@@ -38,35 +38,40 @@ export class UserCryptoWalletsService {
     ]);
 
   }
- async findAll() {
-  return await this.userCryptoWalletService.find();
+  async findAll() {
+    return await this.userCryptoWalletService.find();
   }
 
   async findOne(id: any) {
-    return await this.userCryptoWalletService.findOne({_id : id});
+    return await this.userCryptoWalletService.findOne({ _id: id });
   }
   async findOneUser(user_id: any) {
-  
+ 
     return await this.userCryptoWalletService.find({user_id : user_id});
   } 
+ 
 
- async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
-  const crypto = await this.userCryptoWalletService.findByIdAndUpdate(id,updateUserCryptoWalletDto);
-
-  if (!crypto) {
-    throw new NotFoundException('Wallet not found.');
+    return await this.userCryptoWalletService.find({ user_id: user_id });
   }
 
-  return {status: true,message: "Wallet updated successfully"};
+  async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
+    const crypto = await this.userCryptoWalletService.findByIdAndUpdate(id, updateUserCryptoWalletDto);
+
+    if (!crypto) {
+      throw new NotFoundException('Wallet not found.');
+    }
+    const wallet = await this.userCryptoWalletService.findOne({ _id: id });
+
+    return { status: true, wallet: wallet, message: "updated" };
   }
 
   async remove(id: any) {
     const crypto = await this.userCryptoWalletService.findByIdAndDelete(id);
 
-    if (!crypto){
+    if (!crypto) {
       throw new NotFoundException('Wallet not found.');
     }
-  
-    return {status: true,message: "Wallet Delete successfully"};
+
+    return { status: true, message: "removed" };
   }
 }

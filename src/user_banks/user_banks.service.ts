@@ -10,14 +10,14 @@ export class UserBanksService {
   constructor(
     @InjectModel(UserBank.name)
     private userBankService: mongoose.Model<UserBank>,
-    ){}
+  ) { }
 
- async create(createUserBankDto: CreateUserBankDto) {
+  async create(createUserBankDto: CreateUserBankDto) {
     var res = await this.userBankService.create(createUserBankDto);
     return res;
   }
 
-  async findByUser(user_id){
+  async findByUser(user_id) {
     return await this.userBankService.aggregate([
       {
         $match: {
@@ -45,32 +45,35 @@ export class UserBanksService {
   }
 
   async findOne(id: any) {
-    return await this.userBankService.findOne({_id : id});
+    return await this.userBankService.findOne({ _id: id });
   }
 
   async findOneUser(user_id: any) {
+ 
     return await this.userBankService.find({user_id : user_id});
+ 
   }
 
   async update(id: any, updateUserBankDto: UpdateUserBankDto) {
-    const user_bank = await this.userBankService.findByIdAndUpdate(id,updateUserBankDto);
+    const user_bank = await this.userBankService.findByIdAndUpdate(id, updateUserBankDto);
 
     if (!user_bank) {
-      throw new NotFoundException('user bank not found.');
+      throw new NotFoundException('not found');
     }
-  
-    return {status: true,message: "user bank updated successfully"};
+    const bank = await this.userBankService.findOne({ _id: id })
+
+    return { status: true, bank: bank, message: "updated" };
   }
 
- async remove(id: any) {
-  const user_bank = await this.userBankService.findByIdAndDelete(id);
+  async remove(id: any) {
+    const user_bank = await this.userBankService.findByIdAndDelete(id);
 
-  if (!user_bank) {
-    throw new NotFoundException('user bank not found.');
+    if (!user_bank) {
+      throw new NotFoundException('not found');
+    }
+
+    return { status: true, message: "removed" };
+
   }
 
-  return {status: true,message: "user bank Delete successfully"};
-   
-  }
-  
 }
