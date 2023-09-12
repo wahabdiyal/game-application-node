@@ -10,6 +10,8 @@ import { ReferralCodesModule } from 'src/referral_codes/referral_codes.module';
 import { ReferralRewardsModule } from 'src/referral_rewards/referral_rewards.module';
 import { CoinTrasModule } from 'src/coin_tras/coin_tras.module';
 import { HttpModule } from '@nestjs/axios/dist';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './jwt.strategy';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
@@ -17,7 +19,12 @@ import { HttpModule } from '@nestjs/axios/dist';
     ReferralCodesModule,
     ReferralRewardsModule,
     CoinTrasModule,
-    HttpModule,
+    HttpModule, 
+    PassportModule.register({
+      defaultStrategy: 'jwt',
+      property: 'user',
+      session: false,
+  }),
     JwtModule.register({
       global: true,
       secret: "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",
@@ -25,7 +32,9 @@ import { HttpModule } from '@nestjs/axios/dist';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService,UserService],
+  providers: [AuthService,UserService,JwtStrategy],
+  exports: [PassportModule,JwtModule],
+
 })
 export class AuthModule {
   
