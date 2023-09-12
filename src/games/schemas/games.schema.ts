@@ -1,21 +1,31 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
-  
+
 @Schema({
-        timestamps: true,
+    timestamps: true,
 })
 
-export class Games extends Document{
-    @Prop({unique: true,required: true})
-    game_id:string;
+export class Games extends Document {
+    @Prop({ unique: true, required: true })
+    game_id: string;
+
     @Prop()
-    title:string;
-    @Prop({default: "picture.png"})
-    file_url:string;
-    @Prop({default: 'active'})
-    status:string;
-    @Prop({default: "null",})
-    description:string;
+    title: string;
+
+    @Prop({ default: "picture.png" })
+    file_url: string;
+
+    @Prop({ default: 'active' })
+    status: string;
+
+    @Prop({ default: '0' })
+    challenge_time_minutes: string; //in minutes
+
+    @Prop({ default: '0' })
+    maximum_challenges: string; 
+
+    @Prop({ default: "null", })
+    description: string;
 }
 export const GamesSchema = SchemaFactory.createForClass(Games)
 

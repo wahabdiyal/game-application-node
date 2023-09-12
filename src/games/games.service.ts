@@ -7,34 +7,40 @@ import mongoose from 'mongoose';
 
 @Injectable()
 export class GamesService {
-  
+
   constructor(
     @InjectModel(Games.name)
-        private gameModel: mongoose.Model<Games>,
-    
-    ) {}
+    private gameModel: mongoose.Model<Games>,
+
+  ) { }
 
   async create(createGameDto: CreateGameDto) {
-    var res = await this.gameModel.create(createGameDto);
-    return res;
+    try {
+      return await this.gameModel.create(createGameDto);
+    } catch (error) {
+      if (error.code === 11000 || error.code === 11001) {
+        return 'Duplicate entry'; // Return a custom error message
+      }
+      throw error;
+    }
   }
 
- 
+
 
   async findAll() {
     return await this.gameModel.find();
   }
 
   async findOne(id: string) {
-    return await this.gameModel.findOne({_id : id});
+    return await this.gameModel.findOne({ _id: id });
   }
 
- async update(id: string, updateGameDto: UpdateGameDto) {
-  const game = await this.gameModel.findByIdAndUpdate(id,updateGameDto);
-  if (!game) {
-    throw new NotFoundException('game not found.');
-  }
-  return {status: true,message: "game updated successfully"};
+  async update(id: string, updateGameDto: UpdateGameDto) {
+    const game = await this.gameModel.findByIdAndUpdate(id, updateGameDto);
+    if (!game) {
+      throw new NotFoundException('game not found.');
+    }
+    return { status: true, message: "game updated successfully" };
   }
 
   async remove(id: string) {
@@ -44,6 +50,6 @@ export class GamesService {
       throw new NotFoundException('game not found.');
     }
 
-    return {status: true,message: "game Delete successfully"};
+    return { status: true, message: "game Delete successfully" };
   }
 }
