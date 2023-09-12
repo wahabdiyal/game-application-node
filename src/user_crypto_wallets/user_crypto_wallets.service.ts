@@ -46,6 +46,10 @@ export class UserCryptoWalletsService {
     return await this.userCryptoWalletService.findOne({ _id: id });
   }
   async findOneUser(user_id: any) {
+ 
+    return await this.userCryptoWalletService.find({user_id : user_id});
+  } 
+ 
 
     return await this.userCryptoWalletService.find({ user_id: user_id });
   }

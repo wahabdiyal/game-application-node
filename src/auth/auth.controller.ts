@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards,Param, Query
+  UseGuards,Ip, Query
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -92,6 +92,13 @@ export class AuthController {
       return this.authService.signIn(signInDto.email, signInDto.password);
     }
 
+    @HttpCode(HttpStatus.OK)
+    @Post('login/admin')
+    loginadmin(@Body() signInDto: Record<string, any>, @Ip() ip) {
+
+       
+      return this.authService.loginAdmin(signInDto.email, signInDto.password,ip);
+    }
 
     @HttpCode(HttpStatus.OK)
     @Post('login/phone')

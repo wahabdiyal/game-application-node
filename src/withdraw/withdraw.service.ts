@@ -5,7 +5,8 @@ import { Withdraw } from './schmas/withdraw.schema';
 import mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserService } from 'src/user/user.service';
-import { GoldsService } from 'src/golds/golds.service';
+import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
+ 
 
 @Injectable()
 export class WithdrawService {
@@ -13,22 +14,105 @@ export class WithdrawService {
     @InjectModel(Withdraw.name)
     private withDrawModel: mongoose.Model<Withdraw>,
     private userService: UserService,
-    private goldService: GoldsService,
+    private adminAccount:AdminAccountsService,
+ 
   ){}
 
    async create(createWithdrawDto: CreateWithdrawDto): Promise<any>  {
-      const userCoin = await this.userService.findUserbyId(createWithdrawDto['user_id']);
-     
+      const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
+      if(userCoin == null){
+        return new NotFoundException("User not found");
+      }
+     ///////condition add here check for balance 
       if(Number(userCoin['gold_balance']) <= 0) {
         return {status:false,'message':'Request not processed because user not have enough coins.'};
       }
       
+      await this.userService.update({ _id:userCoin['id']},{gold_balance:Number(userCoin['gold_balance'])- Number(createWithdrawDto['coins'])});
+
+      if(createWithdrawDto['status']=="approved"){
+        const latestAdminBal = await this.adminAccount.getLatestEntry(); 
+        
+          await this.adminAccount.create({ remarks:"Added gold balance from withdrawal",credit:Number(createWithdrawDto['coins']),client_id:createWithdrawDto['client_id'],gold_coin_balance:(Number(latestAdminBal?.gold_coin_balance)?Number(latestAdminBal?.gold_coin_balance):0)+Number(createWithdrawDto['coins'])});
+   }
     var res = await this.withDrawModel.create(createWithdrawDto);
      return res;
   }
+ 
+  async findAll( page = 0, perPage = 20,date = [],status=false) {
+    let totalCount =0
+    if(date.length > 0 && status ){
+      const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+      
+        totalCount =  await this.withDrawModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          status:status
+        }).countDocuments().exec();
+    }
+     else if(date.length > 0){
+       
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+      
+        totalCount =  await this.withDrawModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).countDocuments().exec();
+      }else if(status ){
+        totalCount =  await this.withDrawModel.find({
+          status: status,
+        }).countDocuments().exec();
+      }
+      else{
+        totalCount = await this.withDrawModel.find().countDocuments().exec();
+      }
+       
+      const totalPages = Math.ceil(totalCount / perPage);
+      
+      if (page < 1) {
+        page = 1;
+      } else if (page > totalPages) {
+        page = totalPages;
+      }
+  
+      const skip = (page - 1) * perPage;
 
-  async findAll():Promise<Withdraw[]> {
-    return await this.withDrawModel.find();
+      let data=[];
+      try{
+        
+        if(date.length > 0 && status){
+          const parsedStartDate = new Date(date[0].start);
+          const parsedEndDate = new Date(date[0].end);
+        
+          data =  await this.withDrawModel.find({
+            createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            status:status
+          }).skip(skip).limit(perPage).exec();
+        }else if (status){
+          data =  await this.withDrawModel.find({
+            status:status
+          }).skip(skip).limit(perPage).exec();
+        }
+         else if(date.length > 0){
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.withDrawModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).skip(skip).limit(perPage).exec();
+
+      } else{
+        data = await this.withDrawModel.find().skip(skip).limit(perPage).exec();
+      }
+    }catch(error){
+     date = [];
+    }
+      return {
+        data:data,
+        currentPage: page,
+        totalPages,
+        perPage,
+        total_count:totalCount,
+      };
   }
 
   async findOne(id: any): Promise<Withdraw> {
@@ -56,7 +140,7 @@ export class WithdrawService {
   }
 
   async userRequest(id: any){
-    const withdraw = await this.withDrawModel.find({client_id: id});
+    const withdraw = await this.withDrawModel.find();
 
     if (withdraw.length==0) {
       throw new NotFoundException('Withdraw not found.');

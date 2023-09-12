@@ -44,5 +44,16 @@ export class AdminAccountsService {
   
     return {status: true,message: "account Delete successfully"};
   }
+  async getLatestEntry(): Promise<any> {
+    try {
+      const latestRecord = await this.accountService
+        .findOne()
+        .sort({ createdAt: -1 }) 
+        .exec();
+      return latestRecord;
+    } catch (error) {
+      throw new Error(`Error finding the latest record: ${error.message}`);
+    }
+  }
 
 }
