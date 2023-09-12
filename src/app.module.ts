@@ -41,6 +41,7 @@ import { PackagesModule } from './packages/packages.module';
 import { ChallengesModule } from './challenges/challenges.module';
  
 import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
+import { BorrowModule } from './borrow/borrow.module';
  
 
 @Module({
@@ -93,6 +94,7 @@ import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
     PackagesModule,
     AllowedIpsModule,
     ChallengesModule,
+    BorrowModule,
  
   ],
   controllers: [AppController],
