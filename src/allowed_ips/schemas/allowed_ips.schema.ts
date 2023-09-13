@@ -8,16 +8,12 @@ import { User } from "src/user/schemas/user.schema";
 export class AllowedIP extends Document {
     @Prop({ default: "active", required: true })
     status: string;
-    @Prop({ required: true })
+    @Prop()
     remarks: string;
     @Prop({ required: true })
     ip_address: string;
-
-    // @Prop({ required: true })
-    // operator: string;
-
     @Prop({ type: Types.ObjectId, ref: 'User' }) // Reference the Operator schema
-    operator: User;
+    user_id: User;
 
 }
 export const AllowedIPSchema = SchemaFactory.createForClass(AllowedIP)

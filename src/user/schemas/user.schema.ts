@@ -49,6 +49,8 @@ export class User extends Document {
     gold_balance: string;
     @Prop({ default: "image.png" })
     file_url: string;
+    @Prop()
+    user_login_token:string;
 }
 
 

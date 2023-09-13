@@ -12,6 +12,7 @@ import { CoinTrasModule } from 'src/coin_tras/coin_tras.module';
 import { HttpModule } from '@nestjs/axios/dist';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
+import { AllowedIpsModule } from 'src/allowed_ips/allowed_ips.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
@@ -30,6 +31,7 @@ import { JwtStrategy } from './jwt.strategy';
       secret: "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",
       signOptions: { expiresIn: '7d' },
     }),
+    AllowedIpsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService,UserService,JwtStrategy],
