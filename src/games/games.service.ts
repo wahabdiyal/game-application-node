@@ -4,18 +4,26 @@ import { UpdateGameDto } from './dto/update-game.dto';
 import { Games } from './schemas/games.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-
+import * as admin from 'firebase-admin';
+import firebase from 'firebase/app'
 @Injectable()
 export class GamesService {
-
+  private firestore: FirebaseFirestore.Firestore;
   constructor(
     @InjectModel(Games.name)
     private gameModel: mongoose.Model<Games>,
 
-  ) { }
+  ) {
+    this.firestore = admin.firestore();
+  }
 
   async create(createGameDto: CreateGameDto) {
     try {
+
+      await this.firestore.collection('notifications').add({
+        _id: '12sssdddEHSHJJJ',
+        coins: 20
+      })
       return await this.gameModel.create(createGameDto);
     } catch (error) {
       if (error.code === 11000 || error.code === 11001) {

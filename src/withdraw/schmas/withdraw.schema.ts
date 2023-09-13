@@ -25,6 +25,13 @@ export class Withdraw extends Document{
     proved_by :string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
     client_id: User; 
+
+    @Prop({default: 0,})
+    total_amount :string;
+    @Prop({default: 0,})
+    admin_commission :string;
+    @Prop({default: 0,})
+    withdraw_amount :string;
 }
 export const WithdrawSchema = SchemaFactory.createForClass(Withdraw)
 

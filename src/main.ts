@@ -4,13 +4,32 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import * as hbs from 'hbs';
 import * as session from 'express-session';
+
+
+
+// Import firebase-admin
+import * as admin from 'firebase-admin';
+import { ServiceAccount } from "firebase-admin";
+import { ConfigService } from '@nestjs/config';
+
+
+const adminConfig: ServiceAccount = {
+  "projectId": process.env.FIREBASE_PROJECT_ID,
+  "privateKey": process.env.FIREBASE_PRIVATE_KEY
+    .replace(/\\n/g, '\n'),
+  "clientEmail": process.env.FIREBASE_CLIENT_EMAIL,
+};
+// Initialize the firebase admin app
+admin.initializeApp({
+  credential: admin.credential.cert(adminConfig),
+  databaseURL: "https://bettingapp-2581d-default-rtdb.firebaseio.com/", 
+});
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
     AppModule,
   );
 
   app.enableCors();
-
   app.use(
     session({
       secret: 'my-secret',
@@ -45,7 +64,9 @@ async function bootstrap() {
     return ret + "</ul>";
   });
 
-  // Start listening on port 3000
+
+  // const configService: ConfigService = app.get(ConfigService);
+
   await app.listen(3000);
 }
 bootstrap();
