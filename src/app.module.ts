@@ -39,6 +39,7 @@ import { WithdrawLimitsModule } from './withdraw_limits/withdraw_limits.module';
 import { PackagesModule } from './packages/packages.module'; 
 import { ChallengesModule } from './challenges/challenges.module'; 
 import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
+import { BorrowModule } from './borrow/borrow.module';
  
 
 @Module({
@@ -90,7 +91,13 @@ import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
     WithdrawLimitsModule,
     PackagesModule,
     AllowedIpsModule,
+<<<<<<< HEAD
     ChallengesModule 
+=======
+    ChallengesModule,
+    BorrowModule,
+ 
+>>>>>>> 168c7f5b552a2ab3d2a487e00c4ef65730aa8ca4
   ],
   controllers: [AppController],
   providers: [AppService],

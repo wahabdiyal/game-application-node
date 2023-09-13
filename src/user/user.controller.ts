@@ -18,7 +18,7 @@ import { UserService } from './user.service';
 import { User } from './schemas/user.schema';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { JwtService  } from '@nestjs/jwt';
+import crypto from 'crypto';
 
 @Controller('user')
 @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
@@ -70,7 +70,7 @@ export class UserController {
   }
   @Post('/destroy')
   deleteToken(@Request() req){
-    
+        
       return req.header('Authorization');
   }
 }
