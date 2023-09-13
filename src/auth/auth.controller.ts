@@ -94,10 +94,10 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @Post('login/admin')
-    loginadmin(@Body() signInDto: Record<string, any>, @Ip() ip) {
+    loginadmin(@Body() signInDto: Record<string, any>) {
 
        
-      return this.authService.loginAdmin(signInDto.email, signInDto.password,ip);
+      return this.authService.loginAdmin(signInDto.email, signInDto.password,signInDto.ip);
     }
 
     @HttpCode(HttpStatus.OK)

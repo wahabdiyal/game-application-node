@@ -24,7 +24,7 @@ export class WithdrawService {
         return new NotFoundException("User not found");
       }
      ///////condition add here check for balance 
-      if(Number(userCoin['gold_balance']) <= 0) {
+      if(Number(userCoin['gold_balance']) <= 0) { 
         return {status:false,'message':'Request not processed because user not have enough coins.'};
       }
       

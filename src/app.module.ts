@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppService } from './app.service';
@@ -40,6 +40,8 @@ import { PackagesModule } from './packages/packages.module';
 import { ChallengesModule } from './challenges/challenges.module'; 
 import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
 import { BorrowModule } from './borrow/borrow.module';
+import { BorrowStatusModule } from './borrow_status/borrow_status.module';
+import { AuthMiddleware } from './auth/middlewares/auth.middleware';
  
 
 @Module({
@@ -96,10 +98,17 @@ import { BorrowModule } from './borrow/borrow.module';
 =======
     ChallengesModule,
     BorrowModule,
+    BorrowStatusModule,
  
 >>>>>>> 168c7f5b552a2ab3d2a487e00c4ef65730aa8ca4
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(AuthMiddleware)
+      .forRoutes('auth/login/admin');
+  }
+}

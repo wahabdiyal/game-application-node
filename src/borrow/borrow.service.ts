@@ -30,6 +30,7 @@ export class BorrowService {
     await this.silverService.create({client_id:createborrowDto['receiver'],entry_by:"admin",remarks:"borrow reqeust",type:"credit",status:"success",coins:createborrowDto["silver_coin"]});
 
     }
+    
     var res = await this.borrowModel.create(createborrowDto);
     return res;
   }
@@ -39,7 +40,8 @@ export class BorrowService {
   }
 
   async findOne(id: any) {
-    return await this.borrowModel.findOne({ _id: id });
+ 
+    return await this.borrowModel.findById(id);
   }
 
   async update(id: any, updateborrowDto: UpdateBorrowDto) {
@@ -76,18 +78,28 @@ export class BorrowService {
     return { status: true, message: "borrow Delete successfully" };
   }
 
-  async getborrowList(list: any) {
-    const borrowList = await this.borrowModel.find({ _id: list });
+  async borrowReqeustBySender(user_id: any) {
+    const borrowList = await this.borrowModel.find({ sender: user_id });
+    return borrowList;
+  }
+  async borrowReqeustByReceive(user_id: any) {
+    const borrowList = await this.borrowModel.find({ receiver: user_id });
     return borrowList;
   }
   async reverseBorrow(borrow_id: string){
     const borrow = await this.borrowModel.findOne({ _id: borrow_id });
-    //// borrow collection need some param for manage that return or not request by admin///////////
-    if(borrow ){
+    
+    if(borrow){
         if(borrow.status=="pending"){
           return {
-            status:"error",
+            status:false,
             message:"Request in pending"
+          }
+        }
+        if(borrow.is_reverse){
+          return {
+            status:false,
+            message:"Request is already in reversed"
           }
         }
           await this.goldService.create({client_id:borrow.sender,entry_by:"admin",remarks:"borrow reqeust reverser",type:"credit",status:"success",coins:borrow.gold_coin});
@@ -97,18 +109,22 @@ export class BorrowService {
           await this.silverService.create({client_id:borrow.sender,entry_by:"admin",remarks:"borrow reqeust reverser",type:"credit",status:"success",coins:borrow.silver_coin});
 
           await this.silverService.create({client_id:borrow.receiver,entry_by:"admin",remarks:"borrow reqeust reverser",type:"debit",status:"success",coins:borrow.silver_coin});
+            await this.borrowModel.findByIdAndUpdate(borrow_id,{is_reverse:true});
           return {
             status: "success",
             message : "borrow reqeust reverse progress",
           }
     }else{
       return {
-        status: "error",
+        status: false,
         message:"Borrow request not found",
       }
     }
 
   }
+
+  
+
 }
  
   

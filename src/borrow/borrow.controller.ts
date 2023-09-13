@@ -18,8 +18,8 @@ export class BorrowController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.borrowService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.borrowService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,4 +35,15 @@ export class BorrowController {
   reverseBorrowByAdmin(@Param('id') id: string) {
         return this.borrowService.reverseBorrow(id);
   }
+
+  @Get("/sender/:id")
+  borrowReqeustBySender(@Param('id') id: string) {
+        return this.borrowService.borrowReqeustBySender(id);
+  }
+
+  @Get("/receiver/:id")
+  borrowReqeustByReceive(@Param('id') id: string) {
+        return this.borrowService.borrowReqeustByReceive(id);
+  }
+
 }
