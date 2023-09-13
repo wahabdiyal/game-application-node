@@ -36,10 +36,8 @@ import { UserCryptoWalletsModule } from './user_crypto_wallets/user_crypto_walle
 import { AdminAccountsModule } from './admin_accounts/admin_accounts.module';
 import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
 import { WithdrawLimitsModule } from './withdraw_limits/withdraw_limits.module';
-import { PackagesModule } from './packages/packages.module';
- 
-import { ChallengesModule } from './challenges/challenges.module';
- 
+import { PackagesModule } from './packages/packages.module'; 
+import { ChallengesModule } from './challenges/challenges.module'; 
 import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
 import { BorrowModule } from './borrow/borrow.module';
 import { BorrowStatusModule } from './borrow_status/borrow_status.module';
@@ -95,10 +93,14 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
     WithdrawLimitsModule,
     PackagesModule,
     AllowedIpsModule,
+<<<<<<< HEAD
+    ChallengesModule 
+=======
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
  
+>>>>>>> 168c7f5b552a2ab3d2a487e00c4ef65730aa8ca4
   ],
   controllers: [AppController],
   providers: [AppService],

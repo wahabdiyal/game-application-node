@@ -49,8 +49,18 @@ export class User extends Document {
     gold_balance: string;
     @Prop({ default: "image.png" })
     file_url: string;
+ 
+
+    @Prop({ required: true, default: true })
+    allow_to_game: boolean;
+    @Prop({ required: true, default: '' })
+    game_restrict_at: string;
+    @Prop({ required: true, default: '' })
+    restriction_end_at: string; ///minutes
+ 
     @Prop()
     user_login_token:string;
+ 
 }
 
 

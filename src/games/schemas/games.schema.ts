@@ -22,7 +22,13 @@ export class Games extends Document {
     challenge_time_minutes: string; //in minutes
 
     @Prop({ default: '0' })
-    maximum_challenges: string; 
+    maximum_challenges: string;
+
+    @Prop({ default: '0' })
+    commission: string;
+
+    @Prop({ default: '0' })
+    time_restrictions: string;; //in minutes
 
     @Prop({ default: "null", })
     description: string;
