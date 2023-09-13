@@ -93,14 +93,12 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
     WithdrawLimitsModule,
     PackagesModule,
     AllowedIpsModule,
-<<<<<<< HEAD
-    ChallengesModule 
-=======
+  
+ 
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
  
->>>>>>> 168c7f5b552a2ab3d2a487e00c4ef65730aa8ca4
   ],
   controllers: [AppController],
   providers: [AppService],
