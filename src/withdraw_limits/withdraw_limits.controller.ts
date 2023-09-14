@@ -31,4 +31,8 @@ export class WithdrawLimitsController {
   remove(@Param('id') id: string) {
     return this.withdrawLimitsService.remove(id);
   }
+  @Get('country/:id')
+  findOneByCountry(@Param('id') id: string) {
+    return this.withdrawLimitsService.findOneByCountry(id);
+  }
 }
