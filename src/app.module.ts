@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MongooseModule, getConnectionToken } from '@nestjs/mongoose';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
@@ -8,7 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { RewardModule } from './reward/reward.module';
 import { GoldsModule } from './golds/golds.module';
 import { SilversModule } from './silvers/silvers.module';
-import { UserService } from './user/user.service';
+// import { UserService } from './user/user.service';
 import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
 
@@ -42,7 +42,8 @@ import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
 import { BorrowModule } from './borrow/borrow.module';
 import { BorrowStatusModule } from './borrow_status/borrow_status.module';
 import { AuthMiddleware } from './auth/middlewares/auth.middleware';
- 
+// import * as AutoIncrementFactory from 'mongoose-sequence';
+// import { Connection } from 'mongoose';
 
 @Module({
   imports: [
@@ -50,17 +51,27 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    MongooseModule.forFeatureAsync([
-      {
-        name: User.name,
-        useFactory: () => {
-          const schema = UserSchema;
-          schema.plugin(require('mongoose-autopopulate'));
-          return schema;
-        },
-      },
-    ]),
-    MongooseModule.forRoot(process.env.DB_CONNECTION),
+    
+
+    MongooseModule.forRoot(process.env.DB_CONNECTION, {
+      // connectionFactory: (connection) => {
+      //   connection.plugin(require('mongoose-autopopulate'));
+      //   return connection;
+      // }
+
+    }),
+    // MongooseModule.forFeatureAsync([
+    //   {
+    //     name: User.name,
+    //     useFactory: async (connection: Connection) => {
+    //       const schema = UserSchema;
+    //       const AutoIncrement = AutoIncrementFactory(connection);
+    //       schema.plugin(AutoIncrement, {inc_field: 'userId'});
+    //       return schema;
+    //     },
+    //      inject: [getConnectionToken()],
+    //   },
+    // ]),
     EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     UserModule,
@@ -96,15 +107,23 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
- 
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
+  
+  ///////middleware which proccess without token /////////////
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .forRoutes('auth/login/admin');
+      .exclude(
+        'auth/login',
+        'auth/phone/otp',
+        'auth/google/token',
+        'auth/login/admin',
+        'auth/login/phone'
+      )
+      .forRoutes('*');
   }
 }

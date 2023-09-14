@@ -3,8 +3,7 @@ import { Injectable, UnauthorizedException, NotAcceptableException } from '@nest
 import { UserService as UsersService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { AllowedIpsService } from 'src/allowed_ips/allowed_ips.service';
-import { randomUUID } from 'crypto';
-
+ 
 @Injectable()
 export class AuthService {
   constructor(
@@ -52,8 +51,10 @@ export class AuthService {
       throw new NotAcceptableException("User is invalid, try to contact admin")
     }
     //&& user.role=="player" 
-    if (user?.password !== pass) {
-      throw new UnauthorizedException();
+ 
+    if (user?.password !== pass  ) {
+      throw new NotAcceptableException("password is not valid");
+ 
     }
     const payload = {
       id: user._id,
@@ -74,19 +75,21 @@ export class AuthService {
   async loginAdmin(email, pass, ip) {
 
     const user = await this.usersService.findByEmail(email);
+ 
 
     /////handle attempts increments
     if (!user) await this.usersService.update({ _id: user.id }, { $inc: { attempts: 1 } });
     /////block user
     if (user.attempts > 5) await this.usersService.update({ _id: user.id }, { status: 'blocked' });
-
-    if (user.status !== 'active') {
-      throw new NotAcceptableException("User is invalid, try to contact admin")
+ 
+    if(user.status !== 'active' ){
+      throw new NotAcceptableException("User Blocked, Not Allowed Access")
+ 
     }
     const getIp = await this.listIpService.findUserIp(ip, user.id);
 
     if (getIp['status'] == false) {
-      throw new NotAcceptableException("User is Ip, try to contact admin")
+      throw new NotAcceptableException("Not Allowed Access")
     }
     if (user?.password !== pass && user.role == "player") {
       throw new UnauthorizedException();

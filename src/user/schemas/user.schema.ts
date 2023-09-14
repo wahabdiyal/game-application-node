@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
-
+import { sequence } from 'mongoose-sequence'; 
 export enum UserType {
     admin = "admin",
     manager = "operator",
@@ -10,7 +10,8 @@ export enum UserType {
     timestamps: true,
 })
 export class User extends Document {
-
+    @Prop({unique: true})
+    userId: number;
     @Prop()
     full_name: string;
     @Prop()

@@ -9,10 +9,12 @@ import {
   Request,
   UseGuards,Ip, Query
 } from '@nestjs/common';
+import { UploadedFile, UseInterceptors } from '@nestjs/common/decorators';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { User } from 'src/user/schemas/user.schema';
 import { UserService } from 'src/user/user.service';
+import { FileInterceptor } from '@nestjs/platform-express';
  
 
 @Controller('auth')
@@ -102,8 +104,9 @@ export class AuthController {
 
     @HttpCode(HttpStatus.OK)
     @Post('login/phone')
-    loginwithphone(@Body() signInDto: Record<string, any>) {
-   
+    @UseInterceptors(FileInterceptor(''))
+    signup(@UploadedFile() file , @Body() signInDto ) {
+       
       return this.authService.loginwithphone(signInDto.phone, signInDto.password);
     }
 
