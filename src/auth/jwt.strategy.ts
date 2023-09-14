@@ -3,6 +3,8 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from './auth.service';
 import { HttpException } from '@nestjs/common/exceptions';
+///////////////////not use any where//////////////////////
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) { 
     constructor(private readonly authService: AuthService) {

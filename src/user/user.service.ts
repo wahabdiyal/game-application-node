@@ -264,10 +264,12 @@ return users;
         }
         ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
       }
-
+    const  lastRecords = await this.userModel.find().sort({createdAt:-1}).limit(1);
+       
       const userVal = await this.userModel.create({
         ...user, silver_balance: getCoinValue?.silver_coin,
-        gold_balance: getCoinValue?.gold_coin
+        gold_balance: getCoinValue?.gold_coin,
+        "userId":lastRecords[0]  ?Number(lastRecords[0]['userId']) + 1 : 1,
       });
       const payload = {
         id: userVal._id,

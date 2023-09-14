@@ -3,8 +3,7 @@ import { Injectable, UnauthorizedException ,NotAcceptableException} from '@nestj
 import { UserService as UsersService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { AllowedIpsService } from 'src/allowed_ips/allowed_ips.service';
-import { randomUUID } from 'crypto';
-
+ 
 @Injectable()
 export class AuthService {
   constructor(
@@ -53,7 +52,7 @@ async validateUser(user_id){
     }
     //&& user.role=="player" 
     if (user?.password !== pass  ) {
-      throw new UnauthorizedException();
+      throw new NotAcceptableException("password is not valid");
     }
     const payload = { 
       id:user._id,
@@ -76,12 +75,12 @@ async validateUser(user_id){
     const user = await this.usersService.findByEmail(email);
    
     if(user.status !== 'active' ){
-      throw new NotAcceptableException("User is invalid, try to contact admin")
+      throw new NotAcceptableException("User Blocked, Not Allowed Access")
     }
     const getIp  = await this.listIpService.findUserIp(ip,user.id);
   
     if (getIp['status'] == false) {
-      throw new NotAcceptableException("User is Ip, try to contact admin")
+      throw new NotAcceptableException("Not Allowed Access")
     }
     // if(user.user_ip==null){
     //   await this.usersService.update({_id:user.id},{user_ip:ip});
