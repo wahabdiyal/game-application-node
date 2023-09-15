@@ -4,6 +4,7 @@ import { UserService as UsersService } from 'src/user/user.service';
 import * as jwt from 'jsonwebtoken';
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
+ 
   constructor(
     private usersService: UsersService,
   ){}
@@ -32,5 +33,6 @@ export class AuthMiddleware implements NestMiddleware {
     console.log("Token not valid")
 //////////// token condtion for every request of token//////////////////////////
     next();
+ 
   }
 }
