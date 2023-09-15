@@ -23,23 +23,27 @@ export class WithdrawLimitsService {
   async findOne(id: string) {
     return await this.Withdraw_limitsModel.findOne({ _id: id });
   }
+  async findOneByCountry(country: string) {
+    return await this.Withdraw_limitsModel.findOne({ countries: { $in: [country] } });
+  }
+
 
   async update(id: string, updateWithdrawLimitDto: UpdateWithdrawLimitDto) {
     const withdraw = await this.Withdraw_limitsModel.findByIdAndUpdate(id, updateWithdrawLimitDto);
     if (!withdraw) {
-      throw new NotFoundException('Withdraw not found.');
+      throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "Withdraw updated successfully" };
+    return { status: true, message: "updated" };
   }
 
   async remove(id: string) {
     const withdraw = await this.Withdraw_limitsModel.findByIdAndDelete(id);
 
     if (!withdraw) {
-      throw new NotFoundException('Withdraw not found.');
+      throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "Withdraw Delete successfully" };
+    return { status: true, message: "removed" };
   }
 }
