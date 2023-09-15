@@ -20,6 +20,12 @@ export class BorrowService {
 
   async create(createborrowDto: CreateBorrowDto) {
 
+    const user = await this.userService.findUserbyId(createborrowDto['sender']);
+const u =  user && (Number(user.silver_balance) >= Number(createborrowDto['silver_coin']) ) && (Number(user.gold_balance) >= Number(createborrowDto['gold_coin']));
+
+     if(!u){
+        return {status:false,message:"Coin are not match with request"};
+      }
     if(createborrowDto['status']!='pending'){
     await this.goldService.create({client_id:createborrowDto['sender'],entry_by:"admin",remarks:"borrow reqeust",type:"debit",status:"success",coins:createborrowDto['gold_coin']});
 
@@ -30,7 +36,7 @@ export class BorrowService {
     await this.silverService.create({client_id:createborrowDto['receiver'],entry_by:"admin",remarks:"borrow reqeust",type:"credit",status:"success",coins:createborrowDto["silver_coin"]});
 
     }
-    
+  
     var res = await this.borrowModel.create(createborrowDto);
     return res;
   }
