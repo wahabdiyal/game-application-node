@@ -59,11 +59,12 @@ export class CurrencyService {
     return `This action removes a #${id} currency`;
   }
   ///////Crow Job ///////////////////
-  @Cron('0 0 * * * *')
-  async handleCron() {
-   const del =  await this.currencyService.deleteMany({}).exec();
+//   @Cron('*/30 * * * * *')
+//   async handleCron() {
+//     console.log('cron of currency');
+//       await this.currencyService.deleteMany({}).exec();
    
-     const reqeust = await this.httpService.axiosRef.get('https://api.currencyapi.com/v3/latest?apikey=cur_live_kgCR3KsRY5KhognBym9AagVsJ97R57CrHG1cnWw1&base_currency=PKR');
-     return this.currencyService.create(reqeust.data);
+//      const reqeust = await this.httpService.axiosRef.get('https://api.currencyapi.com/v3/latest?apikey=cur_live_kgCR3KsRY5KhognBym9AagVsJ97R57CrHG1cnWw1&base_currency=USD');
+//      return this.currencyService.create(reqeust.data);
+//   }
   }
-}

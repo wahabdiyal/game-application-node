@@ -11,12 +11,12 @@ export class Package  extends Document{
     file_url:string;
     @Prop({required: true,default:""})
     title:string;
-    @Prop({required: true,default:""})
+    @Prop({required: true,default:0})
     silver_coin:string;
-    @Prop({required: true,default:""})
+    @Prop({required: true,default:0})
     gold_coin:string;
-    @Prop({required: true,default:""})
-    amount_pkr:string;
+    @Prop({required: true,default:0})
+    amount_usd:string;
     @Prop({required: true,default:""})
     country:string;
     
