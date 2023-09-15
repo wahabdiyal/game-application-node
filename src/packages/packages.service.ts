@@ -29,38 +29,39 @@ export class PackagesService {
   }
 
   async findbyCountry(country: any) {
-    let packageValue = await this.packagesModel.find();
-    const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
+    let packageValue = await this.packagesModel.find({country: country});
+    // const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
 
-    if (getcountry) {
-      let countryCurrency = await this.currencyService.findAll(getcountry.currency);
-      const crnc = getcountry.currency;
+    // if (getcountry) {
+    //   let countryCurrency = await this.currencyService.findAll(getcountry.currency);
+    //   const crnc = getcountry.currency;
 
-      const exchangeRate = countryCurrency[0].data[crnc].value;
+    //   const exchangeRate = countryCurrency[0].data[crnc].value;
 
-      const updatedPackageValue = [];
+    //   const updatedPackageValue = [];
 
-      for (const item of packageValue) {
+    //   for (const item of packageValue) {
 
-        const newAmount = parseFloat(item.amount_pkr) * exchangeRate;
+    //     const newAmount = parseFloat(item.amount_pkr) * exchangeRate;
 
-        const updatedItem = {
-          ...item.toObject(),
-          amount: newAmount,
-          user_country: country,
-          currency: crnc,
-        };
+    //     const updatedItem = {
+    //       ...item.toObject(),
+    //       amount: newAmount,
+    //       user_country: country,
+    //       currency: crnc,
+    //     };
 
-        delete updatedItem.amount_pkr;
-        delete updatedItem.country;
+    //     delete updatedItem.amount_pkr;
+    //     delete updatedItem.country;
 
-        updatedPackageValue.push(updatedItem);
-      }
-      return updatedPackageValue;
+    //     updatedPackageValue.push(updatedItem);
+    //   }
+    //   return updatedPackageValue;
+    return packageValue
 
-    } else {
-      return 0;
-    }
+    // } else {
+    //   return 0;
+    // }
   }
   async update(id: string, updatePackageDto: UpdatePackageDto) {
     const pakcage = await this.packagesModel.findByIdAndUpdate(id, updatePackageDto);

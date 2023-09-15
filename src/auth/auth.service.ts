@@ -77,11 +77,11 @@ async validateUser(user_id){
     if(user.status !== 'active' ){
       throw new NotAcceptableException("User Blocked, Not Allowed Access")
     }
-    const getIp  = await this.listIpService.findUserIp(ip,user.id);
+    // const getIp  = await this.listIpService.findUserIp(ip,user.id);
   
-    if (getIp['status'] == false) {
-      throw new NotAcceptableException("Not Allowed Access")
-    }
+    // if (getIp['status'] == false) {
+    //   throw new NotAcceptableException("Not Allowed Access")
+    // }
     // if(user.user_ip==null){
     //   await this.usersService.update({_id:user.id},{user_ip:ip});
     // }

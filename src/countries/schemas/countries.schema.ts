@@ -7,7 +7,7 @@ import { Document } from 'mongoose';
 export class Country extends Document{
     @Prop({required: true,unique: true})
     code:string;
-    @Prop({required: true,unique: true})
+    @Prop()
     currency:string;
     @Prop({required: true,unique: true})
     country:string;

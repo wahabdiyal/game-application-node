@@ -240,6 +240,8 @@ return users;
       let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
       if (user.refereal_code) {
         const getRefDetail = await this.refcodeService.getRefWithCode(user.refereal_code);
+          if(getRefDetail ){
+
         //   return getRefDetail;
         const userRef = await this.findwithUserIdSelf(getRefDetail.user_id);
         // return userRef;
@@ -264,6 +266,7 @@ return users;
         }
         ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
       }
+    }
     const  lastRecords = await this.userModel.find().sort({createdAt:-1}).limit(1);
        
       const userVal = await this.userModel.create({
