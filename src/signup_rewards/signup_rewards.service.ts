@@ -13,7 +13,11 @@ export class SignupRewardsService {
     private signuprewardModel: mongoose.Model<SignupReward>,
   ){}
  async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
-      const collection = await this.signuprewardModel.find().select(['country','start_time','end_time']);
+      const collection = await this.signuprewardModel.find({
+        start_time: { $gte:createSignupRewardDto.start_time},
+        end_time: { $lte:createSignupRewardDto.end_time},
+      }).select(['country','start_time','end_time']);
+  
       // const collection = await this.signuprewardModel.aggregate([{
       //   $match: {
       //     start_time: {
@@ -24,7 +28,7 @@ export class SignupRewardsService {
       //     },
       //   },
       // }]) ;
-       let a=[];
+      //  let a=[];
       function checkRecordExists(records, criteria) {
         
 //         const [countries, startTime, endTime] = criteria;
@@ -50,7 +54,7 @@ export class SignupRewardsService {
         const [countries, startTime, endTime] = criteria;
        
         const isInRange = function(date, start, end) {
-          a.push([{exp:date.isBetween(start, end ,undefined, '[')},{date: date, start: start, end: end}]);
+          // a.push([{exp:date.isBetween(start, end ,undefined, '[')},{date: date, start: start, end: end}]);
           return date.isBetween(start, end ,undefined, '[');
         };
       for (let x = 0; x < records.length; x++){
@@ -65,22 +69,22 @@ export class SignupRewardsService {
               const element =countries[usrcty];
               if(element==ctry){
               //  a.push({usrcty:[record.start_time,record.end_time,startTime,endTime]})
-                const start = moment(new Date(record.start_time));
-                const end = moment(new Date(record.end_time));
+                // const start = moment(new Date(record.start_time));
+                // const end = moment(new Date(record.end_time));
                 
-                const start2 = moment(new Date(startTime));
-                const end2 = moment(new Date(endTime));
+                // const start2 = moment(new Date(startTime));
+                // const end2 = moment(new Date(endTime));
         
                 
-                const startdate =isInRange(start2,start,end);
+                // const startdate =isInRange(start2,start,end);
               
-                const enddate =isInRange(end2,start,end);
+                // const enddate =isInRange(end2,start,end);
         
-                const dateMatches = startdate && enddate;
-                if(dateMatches){
+                // const dateMatches = startdate && enddate;
+                // if(dateMatches){
                   
                   return true;
-                }
+                // }
                 
               // }
 
@@ -146,8 +150,8 @@ export class SignupRewardsService {
       
       const searchCriteria = [uniqueLowerCaseArray,createSignupRewardDto.start_time,createSignupRewardDto.end_time];
       const val  = checkRecordExists(collection,searchCriteria);
-         return a;
-         // return val;
+        //  return a;
+          // return val;
     if(!val){
          
           
