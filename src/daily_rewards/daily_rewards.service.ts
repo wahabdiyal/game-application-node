@@ -13,9 +13,43 @@ export class DailyRewardsService {
     ){}
 
   async create(createDailyRewardDto: CreateDailyRewardDto) {
-    ////////country unique remain ////condition ///////////// 
-    var res = await this.dailyReward.create(createDailyRewardDto);
+ 
+    const collection = await this.dailyReward.find({
+      start_date: { $gte:new Date(createDailyRewardDto['start_date'])},
+      end_date: { $lte:new Date(createDailyRewardDto['end_date'])},
+    });
+ 
+    function checkRecordExists(records, criteria) {
+      const [countries, startTime, endTime] = criteria;
+      const isInRange = function(date, start, end) {
+        return date.isBetween(start, end ,undefined, '[');
+      };
+    for (let x = 0; x < records.length; x++){
+      const record = records[x];
+      for (let m = 0; m < record.country.length; m++) {
+        const ctry = record.country[m];
+          for (let usrcty = 0; usrcty <countries.length; usrcty++) {
+            const element =countries[usrcty];
+            if(element==ctry){
+                return true;
+            }
+          }
+        }
+      }
+      return false;
+    }
+    const inputArray = createDailyRewardDto['country'];
+
+    const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item.toLowerCase()))];
+    
+    const searchCriteria = [uniqueLowerCaseArray,createDailyRewardDto['start_date'],createDailyRewardDto['end_date']];
+    const val  = checkRecordExists(collection,searchCriteria);
+    if(!val){
+    var res = await this.dailyReward.create({...createDailyRewardDto,country:uniqueLowerCaseArray } );
    return res;
+  }else{
+    return {"status": false,"message": "Please select unique country"}
+  }
   }
 
  async findAll(type) {
