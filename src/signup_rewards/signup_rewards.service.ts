@@ -14,10 +14,10 @@ export class SignupRewardsService {
   ){}
  async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
       const collection = await this.signuprewardModel.find({
-        start_time: { $gte:createSignupRewardDto.start_time},
-        end_time: { $lte:createSignupRewardDto.end_time},
+        start_time: { $gte:new Date(createSignupRewardDto.start_time)},
+         end_time: { $lte:new Date(createSignupRewardDto.end_time)},
       }).select(['country','start_time','end_time']);
-  
+    
       // const collection = await this.signuprewardModel.aggregate([{
       //   $match: {
       //     start_time: {
@@ -153,7 +153,6 @@ export class SignupRewardsService {
         //  return a;
           // return val;
     if(!val){
-         
           
       
        return await this.signuprewardModel.create({ ...createSignupRewardDto,country:uniqueLowerCaseArray } );
