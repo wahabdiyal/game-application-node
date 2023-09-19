@@ -120,30 +120,12 @@ export class AuthService {
         status = true; message = "success"
       }
     }
-
     return {
       status: status,
       message: message,
       user: user,
       access_token: access_token,
     };
-
-    // const getIp  = await this.listIpService.findUserIp(ip,user.id);
-
-    // if (getIp['status'] == false) {
-    //   throw new NotAcceptableException("Not Allowed Access")
-    // }
-    // if(user.user_ip==null){
-    //   await this.usersService.update({_id:user.id},{user_ip:ip});
-    // }
-
-
-    // if (user?.password !== pass && user.role == "player") {
-
-    //   throw new UnauthorizedException();
-    // }
-
-
 
   }
 }
