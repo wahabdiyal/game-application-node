@@ -21,6 +21,11 @@ export class CountriesService {
     return await this.countryModel.find().where('status','true').exec();
   }
 
+  
+  async getActiveCountries() {
+    return await this.countryModel.countDocuments({ status: 'true' });
+  }
+
  async findOne(id: any) {
     const country = await this.countryModel.findById(id);
     return country;

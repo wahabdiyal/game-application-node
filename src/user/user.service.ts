@@ -301,7 +301,7 @@ return users;
   }
 
   async clearAttempts(email: string) {
-    await this.userModel.updateOne({ email: email }, { attempts: 0,status:'active' });
+    await this.userModel.updateOne({ email: email }, { attempts: 0, status: 'active' });
     return "attempts clear"
   }
   async findByEmail(email: string): Promise<User> {
@@ -391,6 +391,20 @@ return users;
     }
 
     return user;
+  }
+
+  async findAllUserCount() {
+
+    const operator = await this.userModel.countDocuments({ role: "operator", status: "active" });
+    const player = await this.userModel.countDocuments({ role: "player", status: "active" });
+    const blocked = await this.userModel.countDocuments({ status: "blocked" });
+    //blocked
+    //active
+    return {
+      operator: operator,
+      player: player,
+      blocked: blocked
+    };
   }
 
 
