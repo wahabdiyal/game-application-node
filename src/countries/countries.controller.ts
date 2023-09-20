@@ -31,4 +31,10 @@ export class CountriesController {
   remove(@Param('id') id: string) {
     return this.countriesService.remove(id);
   }
+
+  @Get('/active-countries/all')
+  getActiveCountries() {
+    return this.countriesService.getActiveCountries();
+    // return "Allah hu";
+  }
 }

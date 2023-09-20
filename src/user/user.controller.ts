@@ -77,4 +77,8 @@ export class UserController {
   clearAttempts(@Param('email') email: any) {
     return { status: true, message: this.userService.clearAttempts(email) };
   }
+  @Get('find-all-user-count/all') // Note the '?' to make it optional
+  findAllUserCount() {
+    return this.userService.findAllUserCount();
+  }
 }

@@ -38,6 +38,10 @@ export class GamesService {
   async findAll() {
     return await this.gameModel.find();
   }
+  async getActiveGamesCount() {
+    return await this.gameModel.countDocuments({ status: 'active' });
+  }
+
 
   async findOne(id: string) {
     return await this.gameModel.findOne({ _id: id });
