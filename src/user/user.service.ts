@@ -423,6 +423,9 @@ return users;
     }
 
     const user = await this.userModel.findOne({ _id: id });
+    if(!user){
+        return false;
+    }
     return user;
   }
 

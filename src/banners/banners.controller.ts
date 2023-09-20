@@ -10,7 +10,6 @@ export class BannersController {
     
     constructor(
     private readonly bannersService: BannersService,
-    
     ) {}
  
   @Post()
