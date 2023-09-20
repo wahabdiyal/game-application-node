@@ -15,6 +15,12 @@ export class BorrowStatusService {
     var res = await this.borrowStatusModel.create(createBorrowStatusDto);
     return res;
   }
+  async findLastTransaction() {
+    return await this.borrowStatusModel.findOne()
+      .sort({ createdAt: -1 }) // Replace "timestampField" with the actual field you want to sort by
+      .limit(1)
+      .exec();
+  }
 
   async findAll() {
     return await this.borrowStatusModel.find();

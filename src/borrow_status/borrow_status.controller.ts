@@ -16,6 +16,10 @@ export class BorrowStatusController {
   findAll() {
     return this.borrowStatusService.findAll();
   }
+   @Get('/last')
+  findLastTransaction() {
+    return this.borrowStatusService.findLastTransaction();
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {

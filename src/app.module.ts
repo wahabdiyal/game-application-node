@@ -44,7 +44,11 @@ import { BorrowStatusModule } from './borrow_status/borrow_status.module';
 import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 // import * as AutoIncrementFactory from 'mongoose-sequence';
 // import { Connection } from 'mongoose';
+ 
 import { PurchaseRequestsModule } from './purchase_requests/purchase_requests.module';
+ 
+import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-admin-wallets.module';
+ 
 
 @Module({
   imports: [
@@ -108,7 +112,11 @@ import { PurchaseRequestsModule } from './purchase_requests/purchase_requests.mo
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
+ 
     PurchaseRequestsModule,
+ 
+    RechargeAdminWalletsModule,
+ 
   ],
   controllers: [AppController],
   providers: [AppService],
