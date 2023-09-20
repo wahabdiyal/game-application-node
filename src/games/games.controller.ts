@@ -7,7 +7,7 @@ import { storage } from './../config/storage.config';
 
 @Controller('games')
 export class GamesController {
-  constructor(private readonly gamesService: GamesService) {}
+  constructor(private readonly gamesService: GamesService) { }
 
   @Post()
   // @UseInterceptors(FileInterceptor('file'))
@@ -18,16 +18,16 @@ export class GamesController {
     )
   )
   //////add  path file save and folder location/////
-  async create(@UploadedFile() file: Express.Multer.File,@Body() createGameDto: CreateGameDto) {
-    let filecustom =   file.path.replace("public\\", "");
+  async create(@UploadedFile() file: Express.Multer.File, @Body() createGameDto: CreateGameDto) {
+    let filecustom = file.path.replace("public\\", "");
     const remove = filecustom.replace("\\", "/");
-    return await this.gamesService.create({...createGameDto,file_url:remove.replace("public/","")});
+    return await this.gamesService.create({ ...createGameDto, file_url: remove.replace("public/", "") });
   }
 
   @Get()
   findAll() {
     return this.gamesService.findAll();
-  } 
+  }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -35,31 +35,37 @@ export class GamesController {
   }
 
   @Patch(':id')
-@UseInterceptors(
-  FileInterceptor(
-    "file", // name of the field being passed
-    { storage }
+  @UseInterceptors(
+    FileInterceptor(
+      "file", // name of the field being passed
+      { storage }
+    )
   )
-)
-async update(
-  @Param('id') id: string,
-  @UploadedFile() file: Express.Multer.File,
-  @Body() updateGameDto: UpdateGameDto
-) {
-  // You can implement your logic here, e.g., finding the existing game by id and updating it
-  // Then, you can update the file_url property similar to how you did in the create method
- 
-  const updatedGame = await this.gamesService.update(id, {
-    ...updateGameDto,
-    file_url: file ? (file.path.replace("public\\", "")).replace("\\","/") : undefined
-  });
+  async update(
+    @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateGameDto: UpdateGameDto
+  ) {
+    // You can implement your logic here, e.g., finding the existing game by id and updating it
+    // Then, you can update the file_url property similar to how you did in the create method
 
-  return updatedGame;
-}
+    const updatedGame = await this.gamesService.update(id, {
+      ...updateGameDto,
+      file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/") : undefined
+    });
+
+    return updatedGame;
+  }
 
 
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.gamesService.remove(id);
+  }
+
+  @Get('/active-game/all-count')
+  getActiveGamesCount() {
+    return this.gamesService.getActiveGamesCount();
+    // return "Allah hu";
   }
 }
