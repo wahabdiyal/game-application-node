@@ -44,6 +44,7 @@ import { BorrowStatusModule } from './borrow_status/borrow_status.module';
 import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 // import * as AutoIncrementFactory from 'mongoose-sequence';
 // import { Connection } from 'mongoose';
+import { PurchaseRequestsModule } from './purchase_requests/purchase_requests.module';
 
 @Module({
   imports: [
@@ -107,6 +108,7 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
+    PurchaseRequestsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
