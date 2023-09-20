@@ -240,36 +240,39 @@ return users;
       let getCoinValue = await this.signuprewardService.getCoinByUserCountry(user.country);
       if (user.refereal_code) {
         const getRefDetail = await this.refcodeService.getRefWithCode(user.refereal_code);
-        //   return getRefDetail;
-        const userRef = await this.findwithUserIdSelf(getRefDetail.user_id);
-        // return userRef;
-        const refRewardSetting = await this.refrewardService.getRefRewardByDate();
+        if (getRefDetail) {
 
-        if (refRewardSetting && getRefDetail && userRef) {
-          const daycount = moment(this.getDate()).diff(moment(this.getDate(moment(getRefDetail.use_date) ? getRefDetail.use_date : "2023-01-01 00:00:00")), 'days') + 1;
+          //   return getRefDetail;
+          const userRef = await this.findwithUserIdSelf(getRefDetail.user_id);
+          // return userRef;
+          const refRewardSetting = await this.refrewardService.getRefRewardByDate();
 
-          if (Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)) {
+          if (refRewardSetting && getRefDetail && userRef) {
+            const daycount = moment(this.getDate()).diff(moment(this.getDate(moment(getRefDetail.use_date) ? getRefDetail.use_date : "2023-01-01 00:00:00")), 'days') + 1;
 
-            if (Number(refRewardSetting.silver_coin) > 0) {
+            if (Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)) {
 
-              await this.UpdateUser(getRefDetail.user_id, Number(userRef.silver_balance) + Number(refRewardSetting.silver_coin), "silver");
+              if (Number(refRewardSetting.silver_coin) > 0) {
 
-            } if (Number(refRewardSetting.gold_coin) > 0) {
-              await this.UpdateUser(getRefDetail.user_id, Number(userRef.gold_balance) + Number(refRewardSetting.gold_coin), "gold");
+                await this.UpdateUser(getRefDetail.user_id, Number(userRef.silver_balance) + Number(refRewardSetting.silver_coin), "silver");
+
+              } if (Number(refRewardSetting.gold_coin) > 0) {
+                await this.UpdateUser(getRefDetail.user_id, Number(userRef.gold_balance) + Number(refRewardSetting.gold_coin), "gold");
+              }
+              await this.refcodeService.update(getRefDetail.id, { total_use: Number(getRefDetail.total_use) + 1, use_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss') });
+
             }
-            await this.refcodeService.update(getRefDetail.id, { total_use: Number(getRefDetail.total_use) + 1, use_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss') });
 
           }
-
+          ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
         }
-        ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
       }
-    const  lastRecords = await this.userModel.find().sort({createdAt:-1}).limit(1);
-       
+      const lastRecords = await this.userModel.find().sort({ createdAt: -1 }).limit(1);
+
       const userVal = await this.userModel.create({
         ...user, silver_balance: getCoinValue?.silver_coin,
         gold_balance: getCoinValue?.gold_coin,
-        "userId":lastRecords[0]  ?Number(lastRecords[0]['userId']) + 1 : 1,
+        "userId": lastRecords[0] ? Number(lastRecords[0]['userId']) + 1 : 1,
       });
       const payload = {
         id: userVal._id,
@@ -295,6 +298,11 @@ return users;
       return 'use unique email & password'
     }
     throw new BadRequestException('User already exists');
+  }
+
+  async clearAttempts(email: string) {
+    await this.userModel.updateOne({ email: email }, { attempts: 0,status:'active' });
+    return "attempts clear"
   }
   async findByEmail(email: string): Promise<User> {
 

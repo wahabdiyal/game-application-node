@@ -14,13 +14,13 @@ export class Withdraw_limits extends Document {
 
 
     @Prop({ default: 0 })
-    min_silver_coin: Number;
+    min_gold_coin: String;
     @Prop({ default: 0 })
-    min_gold_coin: Number;
+    max_gold_coin: String;
     @Prop({ default: "pending" })
-    status: Status;
+    status: String;
     @Prop({ default: 0 })
-    percentage: Number;
+    percentage: String;
     @Prop({ default: 0 })
     countries: String[];
     @Prop({ default: 0 })

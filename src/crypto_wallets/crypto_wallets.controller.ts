@@ -23,8 +23,8 @@ export class CryptoWalletsController {
   }
 
   @Get('/country/:country')
-  findOneCountry(@Param('country') country: string) {
-    return this.cryptoWalletsService.findOneCountry(country);
+  findByCountry(@Param('country') country: string) {
+    return this.cryptoWalletsService.findByCountry(country);
   }
 
   @Patch(':id')

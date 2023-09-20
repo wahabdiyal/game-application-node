@@ -21,7 +21,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import crypto from 'crypto';
 
 @Controller('user')
-@UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
+// @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
 export class UserController {
   constructor(
     private userService: UserService,
@@ -46,8 +46,8 @@ export class UserController {
       { storage }
     )
   )
-  update(@Param('id') id: any,  @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
-    return this.userService.update(id, {...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\","/").replace("public/","") : undefined});
+  update(@Param('id') id: any, @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
+    return this.userService.update(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
   }
   @Post('create')
   async createBook(
@@ -69,8 +69,12 @@ export class UserController {
     return this.userService.findwithUserRole(role);
   }
   @Post('/destroy')
-  deleteToken(@Request() req){
-        
-      return req.header('Authorization');
+  deleteToken(@Request() req) {
+    return req.header('Authorization');
+  }
+
+  @Patch('clear-attempts/:email')
+  clearAttempts(@Param('email') email: any) {
+    return { status: true, message: this.userService.clearAttempts(email) };
   }
 }

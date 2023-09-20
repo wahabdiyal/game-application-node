@@ -9,6 +9,7 @@ export class AllowedIpsController {
 
   @Post()
   create(@Body() createAllowedIpDto: CreateAllowedIpDto) {
+    
     return this.allowedIpsService.create(createAllowedIpDto);
   }
 

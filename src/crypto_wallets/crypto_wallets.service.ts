@@ -10,14 +10,14 @@ export class CryptoWalletsService {
   constructor(
     @InjectModel(CryptoWallet.name)
     private cryptoWalletService: mongoose.Model<CryptoWallet>,
-    ){}
+  ) { }
   async create(createCryptoWalletDto: CreateCryptoWalletDto) {
     var res = await this.cryptoWalletService.create(createCryptoWalletDto);
     return res;
   }
 
-  async findByCountry(country:string){
-    return await this.cryptoWalletService.find({ country: country});
+  async findByCountry(ctry: string) {
+    return await this.cryptoWalletService.find({ country: { $in: [ctry] } });
   }
 
   async findAll() {
@@ -25,31 +25,31 @@ export class CryptoWalletsService {
   }
 
   async findOne(id: any) {
-    return await this.cryptoWalletService.findOne({_id : id});
+    return await this.cryptoWalletService.findOne({ _id: id });
   }
 
 
   async findOneCountry(country: any) {
-    return await this.cryptoWalletService.findOne({country : country});
-  } 
+    return await this.cryptoWalletService.findOne({ country: country });
+  }
 
   async update(id: any, updateCryptoWalletDto: UpdateCryptoWalletDto) {
-    const crypto = await this.cryptoWalletService.findByIdAndUpdate(id,updateCryptoWalletDto);
+    const crypto = await this.cryptoWalletService.findByIdAndUpdate(id, updateCryptoWalletDto);
 
     if (!crypto) {
       throw new NotFoundException('Wallet not found.');
     }
-  
-    return {status: true,message: "Wallet updated successfully"};
+
+    return { status: true, message: "Wallet updated successfully" };
   }
 
   async remove(id: any) {
     const crypto = await this.cryptoWalletService.findByIdAndDelete(id);
 
-    if (!crypto){
+    if (!crypto) {
       throw new NotFoundException('Wallet not found.');
     }
-  
-    return {status: true,message: "Wallet Delete successfully"};
+
+    return { status: true, message: "Wallet Delete successfully" };
   }
 }

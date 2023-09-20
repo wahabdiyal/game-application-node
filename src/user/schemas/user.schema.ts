@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
-import { sequence } from 'mongoose-sequence'; 
+import { sequence } from 'mongoose-sequence';
 export enum UserType {
     admin = "admin",
     manager = "operator",
@@ -10,7 +10,7 @@ export enum UserType {
     timestamps: true,
 })
 export class User extends Document {
-    @Prop({unique: true})
+    @Prop({ unique: true })
     userId: number;
     @Prop()
     full_name: string;
@@ -54,15 +54,15 @@ export class User extends Document {
 
     @Prop({ required: true, default: true })
     allow_to_game: boolean;
-    @Prop({ required: true, default: '' })
+    @Prop({ default: '' })
     game_restrict_at: string;
-    @Prop({ required: true, default: '' })
+    @Prop({ default: '' })
     restriction_end_at: string; ///minutes
 
     @Prop()
     user_login_token: string;
 
-    @Prop()
+    @Prop({ default: 0 })
     attempts: number;
 
 }

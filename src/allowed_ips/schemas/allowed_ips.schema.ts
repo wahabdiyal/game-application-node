@@ -12,8 +12,10 @@ export class AllowedIP extends Document {
     remarks: string;
     @Prop({ required: true })
     ip_address: string;
-    @Prop({ type: Types.ObjectId, ref: 'User' }) // Reference the Operator schema
-    user_id: User;
+
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    user: User;
+
 
 }
 export const AllowedIPSchema = SchemaFactory.createForClass(AllowedIP)
