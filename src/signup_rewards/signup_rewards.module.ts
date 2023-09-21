@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { SignupRewardsService } from './signup_rewards.service';
 import { SignupRewardsController } from './signup_rewards.controller';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -7,7 +7,7 @@ import { AdminAccountsModule } from 'src/admin_accounts/admin_accounts.module';
  
 
 @Module({
-  imports:[MongooseModule.forFeature([{ name: 'SignupReward', schema: SignupRewardSchema }]) ],
+  imports:[MongooseModule.forFeature([{ name: 'SignupReward', schema: SignupRewardSchema }])],
   controllers: [SignupRewardsController],
   providers: [SignupRewardsService],
   exports: [SignupRewardsService]

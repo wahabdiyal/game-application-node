@@ -113,7 +113,7 @@ export class ChallengesService {
     )
     return "user restricted for " + restriction_time_mints + " mints"
   }
-  async removeExpireChallenges() {
+  async removeExpireChallenges(): Promise<any>{
     // return await this.challengeModel.find({ challenger_id: 'hello' });
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000); // Calculate the date 10 minutes ago
 
