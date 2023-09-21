@@ -11,6 +11,7 @@ import * as session from 'express-session';
 import * as admin from 'firebase-admin';
 import { ServiceAccount } from "firebase-admin";
 import { ConfigService } from '@nestjs/config';
+import { json, urlencoded } from 'express';
 
 
 const adminConfig: ServiceAccount = {
@@ -52,7 +53,8 @@ async function bootstrap() {
   hbs.registerPartials(join(__dirname, '..', 'views/partials'));
   hbs.registerPartials(join(__dirname, '..', 'views/layout'));
   app.setViewEngine('hbs');
-
+  app.use(json({ limit: '50mb' }));
+  app.use(urlencoded({ extended: true, limit: '50mb' }));
   // Custom Handlebars helper
   hbs.registerHelper("list", function (context, options) {
     var ret = "<ul>";

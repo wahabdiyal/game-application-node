@@ -81,8 +81,21 @@ export class UserController {
   findAllUserCount() {
     return this.userService.findAllUserCount();
   }
+
   @Get('find-country-wise-active-users/all') // for chart
   findCountryWiseActive() {
     return this.userService.findCountryWiseActive();
+
+
+  @Patch('mobile/profile/:id')
+  @UseInterceptors(
+    FileInterceptor(
+      "picture", // name of the field being passed
+      { storage }
+    )
+  )
+  updatemobile(@Param('id') id: any, @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
+    return this.userService.updateMobile(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
+
   }
 }

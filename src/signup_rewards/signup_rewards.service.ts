@@ -4,8 +4,8 @@ import { UpdateSignupRewardDto } from './dto/update-signup_reward.dto';
 import { SignupReward } from './schemas/signup-rewards.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
-import * as moment from "moment";
-
+ 
+/////// signup reward history of gold and admin account and also all reward daily reward referral ////
 @Injectable()
 export class SignupRewardsService {
   constructor(

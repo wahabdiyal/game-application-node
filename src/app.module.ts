@@ -48,11 +48,11 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 import { PurchaseRequestsModule } from './purchase_requests/purchase_requests.module';
  
 import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-admin-wallets.module';
-<<<<<<< HEAD
+
 import { LoginLogsModule } from './login_logs/login_logs.module';
-=======
- 
->>>>>>> e7526af7e8137267feda525e9b81d89e2f312a42
+
+import { BetsModule } from './bets/bets.module';
+
 
 @Module({
   imports: [
@@ -120,11 +120,14 @@ import { LoginLogsModule } from './login_logs/login_logs.module';
     PurchaseRequestsModule,
  
     RechargeAdminWalletsModule,
-<<<<<<< HEAD
+
     LoginLogsModule,
-=======
+
  
->>>>>>> e7526af7e8137267feda525e9b81d89e2f312a42
+
+    BetsModule,
+ 
+
   ],
   controllers: [AppController],
   providers: [AppService],
