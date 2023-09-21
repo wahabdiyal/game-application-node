@@ -81,4 +81,15 @@ export class UserController {
   findAllUserCount() {
     return this.userService.findAllUserCount();
   }
+
+  @Patch('mobile/profile/:id')
+  @UseInterceptors(
+    FileInterceptor(
+      "picture", // name of the field being passed
+      { storage }
+    )
+  )
+  updatemobile(@Param('id') id: any, @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
+    return this.userService.updateMobile(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
+  }
 }
