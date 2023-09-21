@@ -7,14 +7,19 @@ import mongoose from 'mongoose';
 import { User } from 'src/user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { AllowedIP } from 'src/allowed_ips/schemas/allowed_ips.schema';
+import { LoginLogs } from 'src/login_logs/schemas/login_logs.schema';
+import { LoginLogsService } from 'src/login_logs/login_logs.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
+    private loginLogsService: LoginLogsService,
     private jwtService: JwtService,
     @InjectModel(User.name)
     private userModel: mongoose.Model<User>,
+
+
     // @InjectModel(AllowedIP.name)
     // private allowedIPService: mongoose.Model<AllowedIP>,
     private listIpService: AllowedIpsService
@@ -118,6 +123,7 @@ export class AuthService {
         };
         access_token = await this.jwtService.signAsync(payload)
         status = true; message = "success"
+        await this.loginLogsService.create({ user: user._id, ip_address: ip })
       }
     }
     return {

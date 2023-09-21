@@ -19,6 +19,11 @@ export class Package  extends Document{
     amount_usd:string;
     @Prop({required: true,default:""})
     country:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
     
 
 }

@@ -20,5 +20,10 @@ export class Borrow  extends Document{
     remarks:string;
     @Prop({required: true,default:false})
     is_reverse:boolean;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 }
 export const BorrowSchema = SchemaFactory.createForClass(Borrow)

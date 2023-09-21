@@ -21,7 +21,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import crypto from 'crypto';
 
 @Controller('user')
-// @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
+@UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
 export class UserController {
   constructor(
     private userService: UserService,
@@ -80,5 +80,9 @@ export class UserController {
   @Get('find-all-user-count/all') // Note the '?' to make it optional
   findAllUserCount() {
     return this.userService.findAllUserCount();
+  }
+  @Get('find-country-wise-active-users/all') // for chart
+  findCountryWiseActive() {
+    return this.userService.findCountryWiseActive();
   }
 }

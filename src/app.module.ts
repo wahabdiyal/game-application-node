@@ -45,6 +45,7 @@ import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 // import * as AutoIncrementFactory from 'mongoose-sequence';
 // import { Connection } from 'mongoose';
 import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-admin-wallets.module';
+import { LoginLogsModule } from './login_logs/login_logs.module';
 
 @Module({
   imports: [
@@ -109,6 +110,7 @@ import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-ad
     BorrowModule,
     BorrowStatusModule,
     RechargeAdminWalletsModule,
+    LoginLogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

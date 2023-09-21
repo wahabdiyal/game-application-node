@@ -11,6 +11,11 @@ export class Currency  extends Document{
     data:[string];
     @Prop({required: true})
     meta:[string];
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
     
 }
 export const CurrencySchema = SchemaFactory.createForClass(Currency)

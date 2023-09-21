@@ -32,6 +32,11 @@ export class Withdraw extends Document{
     admin_commission :string;
     @Prop({default: 0,})
     withdraw_amount :string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 }
 export const WithdrawSchema = SchemaFactory.createForClass(Withdraw)
 
