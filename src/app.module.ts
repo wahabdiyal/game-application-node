@@ -44,8 +44,15 @@ import { BorrowStatusModule } from './borrow_status/borrow_status.module';
 import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 // import * as AutoIncrementFactory from 'mongoose-sequence';
 // import { Connection } from 'mongoose';
+ 
+import { PurchaseRequestsModule } from './purchase_requests/purchase_requests.module';
+ 
 import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-admin-wallets.module';
+<<<<<<< HEAD
 import { LoginLogsModule } from './login_logs/login_logs.module';
+=======
+ 
+>>>>>>> e7526af7e8137267feda525e9b81d89e2f312a42
 
 @Module({
   imports: [
@@ -109,8 +116,15 @@ import { LoginLogsModule } from './login_logs/login_logs.module';
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
+ 
+    PurchaseRequestsModule,
+ 
     RechargeAdminWalletsModule,
+<<<<<<< HEAD
     LoginLogsModule,
+=======
+ 
+>>>>>>> e7526af7e8137267feda525e9b81d89e2f312a42
   ],
   controllers: [AppController],
   providers: [AppService],

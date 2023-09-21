@@ -3,6 +3,7 @@ import { SignupRewardsService } from './signup_rewards.service';
 import { SignupRewardsController } from './signup_rewards.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SignupRewardSchema } from './schemas/signup-rewards.schema';
+import { AdminAccountsModule } from 'src/admin_accounts/admin_accounts.module';
  
 
 @Module({
