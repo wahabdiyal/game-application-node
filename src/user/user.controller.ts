@@ -85,7 +85,7 @@ export class UserController {
   @Get('find-country-wise-active-users/all') // for chart
   findCountryWiseActive() {
     return this.userService.findCountryWiseActive();
-
+  }
 
   @Patch('mobile/profile/:id')
   @UseInterceptors(
