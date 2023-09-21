@@ -8,10 +8,10 @@ import { Document } from 'mongoose';
 export class Bets  extends Document{
     
     
-    @Prop({default:"active", required:true})
-    status:string;
+    @Prop({ required:true})
+    first_player:string;
     @Prop({required: true})
-    title:string;
+    second_player:string;
     @Prop({required: true,})
     description:string;
     @Prop({required: true,default:null})
