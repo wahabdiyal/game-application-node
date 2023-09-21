@@ -19,16 +19,22 @@ export class BetsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.betsService.findOne(+id);
+    return this.betsService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    return this.betsService.update(+id, updateBetDto);
+    return this.betsService.update(id, updateBetDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.betsService.remove(+id);
+    return this.betsService.remove(id);
+  }
+
+  @Post('/user/betstatus/:id')
+  async betUpdateLoseWin(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
+    
+        return await this.betsService.betUpdateLoseWin(id,updateBetDto['status']);
   }
 }
