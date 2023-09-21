@@ -13,6 +13,11 @@ export class Country extends Document{
     country:string;
     @Prop({default:"true"})
     status:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
   
 }
 export const CountrySchema = SchemaFactory.createForClass(Country)

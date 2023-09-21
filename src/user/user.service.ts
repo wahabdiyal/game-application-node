@@ -407,6 +407,34 @@ return users;
     };
   }
 
+  async findCountryWiseActive() {
+
+    return await this.userModel.aggregate([
+      {
+        $match: { role: "player", status: "active" }
+      },
+      {
+        $group: {
+          _id: "$country",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          country: "$_id",
+          count: 1
+        }
+      },
+      {
+        $sort: { country: 1 } // Sort by "country" field in ascending order (1)
+      }
+    ]);
+  }
+
+
+
+
 
   async getAllUser() {
     return await this.userModel.find({ $or: [{ role: "Player" }, { role: "player" }] }).select([
@@ -427,6 +455,10 @@ return users;
         return false;
     }
     return user;
+  }
+
+  async findByUserId(userId: string) {
+    return await this.userModel.findOne({ userId: userId });
   }
 
   async UpdateUser(user_id, data, type) {

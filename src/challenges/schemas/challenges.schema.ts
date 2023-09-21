@@ -28,6 +28,11 @@ export class Challenges extends Document {
     @Prop()
     time_restrictions: string;
 
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
+
 }
 export const ChallengesSchema = SchemaFactory.createForClass(Challenges)
 

@@ -32,6 +32,11 @@ export class Games extends Document {
 
     @Prop({ default: "null", })
     description: string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 }
 export const GamesSchema = SchemaFactory.createForClass(Games)
 

@@ -25,6 +25,11 @@ export class ReferralReward  extends Document{
     
     @Prop({default: null,})
     description:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
  
     
 }

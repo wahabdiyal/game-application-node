@@ -17,5 +17,10 @@ export class UserRight extends Document{
     role_name:UserType;
     @Prop()
     access:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 }
 export const UserRightSchema = SchemaFactory.createForClass(UserRight)

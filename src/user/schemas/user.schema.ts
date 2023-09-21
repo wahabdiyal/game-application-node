@@ -27,11 +27,7 @@ export class User extends Document {
     @Prop({ default: 'active' })
     status: string;
 
-    @Prop({ default: null, })
-    created_by: string;
 
-    @Prop({ default: null, })
-    updated_by: string;
 
     @Prop({ required: true, unique: true })
     email: string;
@@ -64,6 +60,11 @@ export class User extends Document {
 
     @Prop({ default: 0 })
     attempts: number;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 
 }
 

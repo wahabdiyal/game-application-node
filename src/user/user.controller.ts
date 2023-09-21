@@ -21,7 +21,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import crypto from 'crypto';
 
 @Controller('user')
-// @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
+@UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
 export class UserController {
   constructor(
     private userService: UserService,
@@ -82,6 +82,11 @@ export class UserController {
     return this.userService.findAllUserCount();
   }
 
+  @Get('find-country-wise-active-users/all') // for chart
+  findCountryWiseActive() {
+    return this.userService.findCountryWiseActive();
+
+
   @Patch('mobile/profile/:id')
   @UseInterceptors(
     FileInterceptor(
@@ -91,5 +96,6 @@ export class UserController {
   )
   updatemobile(@Param('id') id: any, @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
     return this.userService.updateMobile(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
+
   }
 }
