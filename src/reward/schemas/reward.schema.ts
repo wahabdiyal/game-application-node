@@ -10,17 +10,18 @@ export class Reward extends Document{
     staus:string;
     @Prop()
     remarks:string;
-    @Prop({default: null})
-    created_by:string;
     @Prop({default: 0})
     coins:string;
-    @Prop({default: null})
-    updated_by:string;
     @Prop({default: null})
     type:string;
     
     @Prop({ type: Types.ObjectId, ref: 'User'})
     client_id: User; 
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 
     
 }

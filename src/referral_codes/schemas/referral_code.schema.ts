@@ -36,6 +36,11 @@ export class ReferralCode  extends Document{
     @Prop({required: true,default:0})
     use_date:string;
 
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
+
  
 }
 export const ReferralCodeSchema = SchemaFactory.createForClass(ReferralCode)

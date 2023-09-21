@@ -16,6 +16,11 @@ export class UserCryptoWallet extends Document {
     @Prop({ required: true })
     user_id: string;
 
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
+
 }
 export const UserCryptoWalletSchema = SchemaFactory.createForClass(UserCryptoWallet)
 

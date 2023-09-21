@@ -17,6 +17,11 @@ export class DailyRewardCollects  extends Document{
     date:string;
     @Prop({required: true})
     country:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
  
 }
 export const DailyRewardCollectsSchema = SchemaFactory.createForClass(DailyRewardCollects)

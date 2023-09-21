@@ -12,9 +12,13 @@ export class AllowedIP extends Document {
     remarks: string;
     @Prop({ required: true })
     ip_address: string;
-
     @Prop({ type: Types.ObjectId, ref: 'User' })
     user: User;
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
+
 
 
 }

@@ -1,12 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseGuards } from '@nestjs/common';
 import { CreateAllowedIpDto } from './dto/create-allowed_ip.dto';
 import { UpdateAllowedIpDto } from './dto/update-allowed_ip.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Types } from 'mongoose';
 import { User } from "src/user/schemas/user.schema";
 import { AllowedIP } from './schemas/allowed_ips.schema';
-
+import { AuthGuard } from 'src/auth/auth.guard';
 @Injectable()
+@UseGuards(AuthGuard)
 export class AllowedIpsService {
   constructor(
     @InjectModel(AllowedIP.name)
@@ -27,9 +28,9 @@ export class AllowedIpsService {
     return await this.allowedIPService.findOne({ _id: id });
   }
   async update(id: any, updateAllowedIpDto: UpdateAllowedIpDto) {
-    const admin_bank = await this.allowedIPService.findByIdAndUpdate(id, updateAllowedIpDto);
+    const ips = await this.allowedIPService.findByIdAndUpdate(id, updateAllowedIpDto);
 
-    if (!admin_bank) {
+    if (!ips) {
       throw new NotFoundException('not found.');
     }
     const data = await this.allowedIPService.findOne({ _id: id }).populate('user');;
@@ -38,9 +39,9 @@ export class AllowedIpsService {
   }
 
   async remove(id: any) {
-    const admin_bank = await this.allowedIPService.findByIdAndDelete(id);
+    const ips = await this.allowedIPService.findByIdAndDelete(id);
 
-    if (!admin_bank) {
+    if (!ips) {
       throw new NotFoundException('not found.');
     }
 

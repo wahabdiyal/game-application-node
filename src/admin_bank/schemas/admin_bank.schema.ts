@@ -11,6 +11,11 @@ export class AdminBank  extends Document{
     bank_detail:[string];
     @Prop({required: true})
     country:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
     
 }
 export const AdminBankSchema = SchemaFactory.createForClass(AdminBank)

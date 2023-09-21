@@ -14,6 +14,11 @@ export class RechargeAdminWallets extends Document {
     @Prop({ default: "" })
     remarks: string;
 
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
+
 }
 export const RechargeAdminWalletsSchema = SchemaFactory.createForClass(RechargeAdminWallets)
 

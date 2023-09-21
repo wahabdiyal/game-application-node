@@ -26,6 +26,11 @@ export class DailyReward  extends Document{
     silver_coin:string;
     @Prop({required: true,default:0})
     gold_coin:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
  
 }
 export const DailyRewardSchema = SchemaFactory.createForClass(DailyReward)
