@@ -83,7 +83,7 @@ export class UserController {
   findAllUserCount() {
     return this.userService.findAllUserCount();
   }
-<<<<<<< HEAD
+ 
   @Get('find-country-wise-active-users/:role') // for chart
   findCountryWiseActive(@Param('role') role: any) {
     return this.userService.findCountryWiseActive(role);
@@ -102,13 +102,9 @@ export class UserController {
   @Get('sign-up-graph/:role') // for chart
   signUpGraph(@Param('role') role: any) {
     return this.userService.signUpGraph(role);
-=======
-
-  @Get('find-country-wise-active-users/all') // for chart
-  findCountryWiseActive() {
-    return this.userService.findCountryWiseActive();
->>>>>>> 68581237917fbd68e032873d9d56b71e9950f8a3
   }
+
+ 
 
   @Post('mobile/profile/:id')
   @UseInterceptors(
