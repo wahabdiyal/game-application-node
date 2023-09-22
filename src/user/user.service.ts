@@ -573,5 +573,46 @@ return users;
     // console.log(new Date(`${year}-${month}-${day}`));
     return new Date(`${year}-${month}-${day}`);
   }
+  async fetchUserProfile(email: string): Promise<any> {
+
+    const user = await this.userModel.findOne({ email: email });
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    let r = (Math.random() * 36 ** 16).toString(36);
+   
+    const payload = {
+      id: user._id,
+      name: user.first_name + user.last_name,
+      country: user.country,
+      email: user.email,
+      status: user.status,
+      role: user.role,
+      user_login_token: r
+    };
+   const access_token = await this.jwtService.signAsync(payload)
+    
+
+    return {"status": true,"user":user,"access_token":access_token};
+  }
+
+  async updateMobile(id: any, body: any) {
+    const update = await this.userModel.findByIdAndUpdate(id, body);
+
+    if (!update) {
+      throw new NotFoundException('User not found.');
+    }
+   const user = await this.userModel.findOne({_id :id});
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    };
+   const access_token = await this.jwtService.signAsync(payload)
+    
+
+    return {"status": true,"user":user,"access_token":access_token};
+  }
 
 }
