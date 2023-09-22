@@ -87,7 +87,7 @@ export class UserController {
     return this.userService.findCountryWiseActive();
   }
 
-  @Patch('mobile/profile/:id')
+  @Post('mobile/profile/:id')
   @UseInterceptors(
     FileInterceptor(
       "picture", // name of the field being passed
