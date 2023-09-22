@@ -28,19 +28,6 @@ export class GoldsService {
     this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
     var res = await this.goldModel.create(createGoldDto);
 
-    //  const totalCount = await this.goldModel.find({
-    //   client_id:createGoldDto['client_id']
-    //  }).countDocuments();
-    //  console.log(totalCount)
-    //  if (totalCount > 20) {
-
-    //   const oldestRecords = await this.goldModel.find().sort({ createdAt: 1 }).limit(totalCount - 20);
-
-    //   for (const oldestRecord of oldestRecords) {
-    //     await this.goldModel.deleteOne({ _id: oldestRecord._id });
-    //   }
-    //  }
-
     return res;
   }
 

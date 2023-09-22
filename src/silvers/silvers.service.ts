@@ -31,19 +31,6 @@ export class SilversService {
 
     this.usersService.UpdateUser(createCoinDto['client_id'], newBalance, "silver");
     var res = await this.silverModel.create(createCoinDto);
-    //  const totalCount = await this.silverModel.find({
-    //   client_id:createCoinDto['client_id']
-    //  }).countDocuments();
-
-    //  if (totalCount > 20) {
-
-    //   const oldestRecords = await this.silverModel.find().sort({ createdAt: 1 }).limit(totalCount - 20);
-
-    //   for (const oldestRecord of oldestRecords) {
-    //     await this.silverModel.deleteOne({ _id: oldestRecord._id });
-    //   }
-    //  }
-
     return res;
 
   }

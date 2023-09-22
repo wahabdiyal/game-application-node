@@ -41,10 +41,65 @@ export class BorrowService {
     return res;
   }
 
-  async findAll() {
-    return await this.borrowModel.find();
+  async findAll(page = 0, perPage = 20, date = []) {
+
+    let data: any = [];
+    let totalCount: number = 0;
+    let totalPages: number = 0;
+
+    if (date.length > 0) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.borrowModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
+
+      totalPages = Math.ceil(totalCount / perPage);
+
+      if (page < 1) page = 1; if (page > totalPages) page = totalPages
+
+      const skip = (page - 1) * perPage;
+
+      data =  await this.borrowModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).skip(skip).limit(perPage).populate('sender')
+        .populate('receiver').exec();
+    }
+    else {
+
+      totalCount = await this.borrowModel.find().countDocuments().exec();
+
+      totalPages = Math.ceil(totalCount / perPage);
+
+      if (page < 1) page = 1; if (page > totalPages) page = totalPages
+
+      const skip = (page - 1) * perPage;
+
+      data = await this.borrowModel
+        .find()
+        .skip(skip)
+        .limit(perPage)
+        .populate('sender') // Replace 'sender' with the actual path in your schema
+        .populate('receiver') // Replace 'receiver' with the actual path in your schema
+        .exec();
+
+    }
+
+
+
+    return {
+      data: data,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+
+    return await this.borrowModel.find()
+
   }
-  
+
 
   async findOne(id: any) {
 

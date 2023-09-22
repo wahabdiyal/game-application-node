@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { BorrowService } from './borrow.service';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
 import { UpdateBorrowDto } from './dto/update-borrow.dto';
@@ -13,8 +13,9 @@ export class BorrowController {
   }
 
   @Get()
-  findAll() {
-    return this.borrowService.findAll();
+  findAll(@Query() {page,perpage,start_date,end_date}) {
+    let date = (start_date && end_date)?[{start:start_date,end:end_date}]:[];
+    return this.borrowService.findAll(page, perpage,date);
   }
 
   @Get(':id')
