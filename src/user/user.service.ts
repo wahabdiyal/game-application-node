@@ -407,11 +407,11 @@ return users;
     };
   }
 
-  async findCountryWiseActive() {
+  async findCountryWiseActive(role: string) {
 
     return await this.userModel.aggregate([
       {
-        $match: { role: "player", status: "active" }
+        $match: { role: role, status: "active" }
       },
       {
         $group: {
@@ -433,6 +433,64 @@ return users;
   }
 
 
+  async statusWiseUsers(role: string) {
+
+    return await this.userModel.aggregate([
+      {
+        $match: { role: role } // Remove the "status" from the $match stage
+      },
+      {
+        $group: {
+          _id: "$status", // Group only by "status"
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          status: "$_id", // Rename _id to status in the output
+          count: 1
+        }
+      },
+      {
+        $sort: { status: 1 } // Sort by "status" field in ascending order (1)
+      }
+    ]);
+
+  }
+
+
+  async signUpGraph(role: string) {
+
+    return await this.userModel.aggregate([
+      {
+        $match: { role: role } // Match documents with the desired role
+      },
+      {
+        $addFields: {
+          date: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: "$createdAt"
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$date", // Group by the newly created 'date' field
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 } // Sort by Date in ascending order (1)
+      }
+    ]);
+
+
+  }
+
+
 
 
 
@@ -451,8 +509,8 @@ return users;
     }
 
     const user = await this.userModel.findOne({ _id: id });
-    if(!user){
-        return false;
+    if (!user) {
+      return false;
     }
     return user;
   }
