@@ -10,13 +10,13 @@ export class Bets  extends Document{
     first_player:string;
     @Prop({ required:true})
     game_id:string;
-    @Prop({required: true,default:"ai"})
+    @Prop({default:""})
     second_player:string;
     @Prop({default:"0"})
     gold:string;
     @Prop({default:"0"})
     silver:string;
-    @Prop({default:"active"})
+    @Prop({default:"inactive"})
     status:string;
     @Prop({required: true,})
     remark:string;

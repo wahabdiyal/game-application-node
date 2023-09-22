@@ -110,7 +110,7 @@ export class UserController {
 >>>>>>> 68581237917fbd68e032873d9d56b71e9950f8a3
   }
 
-  @Patch('mobile/profile/:id')
+  @Post('mobile/profile/:id')
   @UseInterceptors(
     FileInterceptor(
       "picture", // name of the field being passed
