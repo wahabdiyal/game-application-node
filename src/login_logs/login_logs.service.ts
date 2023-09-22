@@ -46,4 +46,30 @@ export class LoginLogsService {
     return { status: true, message: "removed" };
 
   }
+  async operatorsVisits() {
+    return await this.loginLogsModal.aggregate([
+      {
+        $lookup: {
+          from: 'users', // Assuming your User collection is named 'users'
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user',
+        },
+      },
+      {
+        $unwind: '$user',
+      },
+      {
+        $group: {
+          _id: '$user.country',
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { count: -1 }, // Sort by count in descending order
+      },
+    ])
+      .exec()
+  }
 }
+

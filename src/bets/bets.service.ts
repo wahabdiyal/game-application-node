@@ -20,26 +20,27 @@ export class BetsService {
      
     if(createbetDto['second_player'] === "ai"){
     if ( Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "ai") {
-          await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance'])-Number(createbetDto['silver']),'silver');
-      var res = await this.betsModel.create(createbetDto);
-      return res;
+          await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');
+       const res = await this.betsModel.create(createbetDto);
+       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
     }
     else{
         return {status:false,message:"Coin is not enough to play."}
     } 
     
   } 
-  if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) &&Number(createbetDto['silver'])!=0 ) {
-      /////playing with silver /////
-      var res = await this.betsModel.create(createbetDto);
-      return res;
-    }else if ( Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold'])!=0) {
+  /////////////////////////silver coin//////////////////////
+  if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0 ) {
+       await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');  
+       const res = await this.betsModel.create(createbetDto);
+       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
+    }
+    ////// gold/////////////
+    else if ( Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold'])!=0) {
       /////playing with gold /////
-      // const second_player = await this.userService.findUserbyId(createbetDto['second_player']);
-      return 1;
-      var res = await this.betsModel.create(createbetDto);
-      return res;
-     
+      await this.userService.UpdateUser(first_user['id'],Number(first_user['gold_balance']) - Number(createbetDto['gold']),'gold');  
+      const res = await this.betsModel.create(createbetDto);
+      return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
     }
    else{
       return { status:false, message:"Invalid inputs try again"};
@@ -94,4 +95,67 @@ export class BetsService {
         return {status:false,message:"Already request proccessed"};
       }
   }
+
+  async betUpdateWinUser(id:string,user_id:string ){
+     
+    const bet = await this.betsModel.findById(id);
+      if(bet && bet.status == "active"){
+      const user = await this.userService.findUserbyId(user_id);
+      await this.update(id,{status:"complete"});
+       
+      return  await this.userService.updateMobile(user['id'],{silver_balance:Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])});
+       
+    }else{
+      return {status:false,message:"Already request proccessed"};
+    }
+}
+
+  async betSecondSilverUser(id,second_user){
+    const bet = await this.betsModel.findById(id);
+    if(bet && bet.status == "inactive"&& Number(bet.silver) > 0){
+      const user = await this.userService.findUserbyId(second_user);
+      
+      if(user &&  Number(user['silver_balance']) > Number(bet['silver'])){
+          await this.userService.UpdateUser(user['id'],Number(user['silver_balance']) - Number(bet['silver']),'silver');
+          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user});
+         return {status:true,bet:await this.betsModel.findById(id)}; 
+      }else{
+        return {status:false,message:"Invalid Coin not enough"};
+      }
+ 
+    }else{
+      return {status:false,message:"Already bet in progress"};
+    }
+  }
+  async betSecondGoldUser(id,second_user){
+    const bet = await this.betsModel.findById(id);
+    if(bet && bet.status == "inactive"&& Number(bet.gold) > 0){
+      const user = await this.userService.findUserbyId(second_user);
+      
+      if(user &&  Number(user['gold_balance']) >= Number(bet['gold'])){
+          await this.userService.UpdateUser(user['id'],Number(user['gold_balance']) - Number(bet['gold']),'gold');
+          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user});
+         return {status:true,bet:await this.betsModel.findById(id)}; 
+      }else{
+        return {status:false,message:"Invalid Coin not enough"};
+      }
+ 
+    }else{
+      return {status:false,message:"Already bet in progress"};
+    }
+  }
+
+  async betUpdateWinUserGold(id:string,user_id:string ){
+     
+    const bet = await this.betsModel.findById(id);
+      if(bet && bet.status == "active"){
+      const user = await this.userService.findUserbyId(user_id);
+      await this.update(id,{status:"complete"});
+      ////////////admin commumation///////////////
+      return await this.userService.updateMobile(user['id'],{gold_balance:Number(user['gold_balance'])+Number(bet['gold'])+Number(bet['gold'])});
+    }else{
+      return {status:false,message:"Already request proccessed"};
+    }
+}
+
 }

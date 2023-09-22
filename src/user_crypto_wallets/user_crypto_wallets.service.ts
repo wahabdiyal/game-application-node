@@ -4,15 +4,20 @@ import { UpdateUserCryptoWalletDto } from './dto/update-user_crypto_wallet.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserCryptoWallet } from './schemas/user_crypto_wallet.schema';
 import mongoose from 'mongoose';
+import { UserBanksService } from 'src/user_banks/user_banks.service';
+import { UserBank } from 'src/user_banks/schemas/user_banks.schema';
 
 @Injectable()
 export class UserCryptoWalletsService {
   constructor(
     @InjectModel(UserCryptoWallet.name)
-    private userCryptoWalletService: mongoose.Model<UserCryptoWallet>
+    private userCryptoWalletService: mongoose.Model<UserCryptoWallet>,
+    @InjectModel(UserBank.name)
+    private userBankService: mongoose.Model<UserBank>,
   ) { }
 
   async create(createUserCryptoWalletDto: CreateUserCryptoWalletDto) {
+    if (createUserCryptoWalletDto['is_selected'] === true) await this.clearSelectBankWallet(createUserCryptoWalletDto['user_id'].toString());
     var res = await this.userCryptoWalletService.create(createUserCryptoWalletDto);
     return res;
   }
@@ -46,12 +51,14 @@ export class UserCryptoWalletsService {
     return await this.userCryptoWalletService.findOne({ _id: id });
   }
   async findOneUser(user_id: any) {
- 
-    return await this.userCryptoWalletService.find({user_id : user_id});
-  } 
- 
+
+    return await this.userCryptoWalletService.find({ user_id: user_id });
+  }
+
 
   async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
+    if (updateUserCryptoWalletDto['is_selected'] === true) await this.clearSelectBankWallet(updateUserCryptoWalletDto['user_id'].toString());
+
     const crypto = await this.userCryptoWalletService.findByIdAndUpdate(id, updateUserCryptoWalletDto);
 
     if (!crypto) {
@@ -70,5 +77,17 @@ export class UserCryptoWalletsService {
     }
 
     return { status: true, message: "removed" };
+  }
+  async clearSelectBankWallet(user_id: string) {
+    await this.userCryptoWalletService.updateMany(
+      { user_id: user_id },
+      { $set: { is_selected: 0 } }
+    );
+
+    await this.userBankService.updateMany(
+      { user_id: user_id },
+      { $set: { is_selected: 0 } }
+    );
+
   }
 }

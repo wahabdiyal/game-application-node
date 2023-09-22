@@ -19,12 +19,14 @@ import { User } from './schemas/user.schema';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import crypto from 'crypto';
+import { LoginLogsService } from 'src/login_logs/login_logs.service';
 
 @Controller('user')
 @UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
 export class UserController {
   constructor(
     private userService: UserService,
+    private loginLogsService: LoginLogsService,
 
   ) { }
 
@@ -81,13 +83,34 @@ export class UserController {
   findAllUserCount() {
     return this.userService.findAllUserCount();
   }
+<<<<<<< HEAD
+  @Get('find-country-wise-active-users/:role') // for chart
+  findCountryWiseActive(@Param('role') role: any) {
+    return this.userService.findCountryWiseActive(role);
+  }
+  @Get('status-wise-users/:role') // for chart
+  statusWiseUsers(@Param('role') role: any) {
+    return this.userService.statusWiseUsers(role);
+  }
+
+  @Get('operators-visits/all') // for chart
+  operatorsVisits() {
+    return this.loginLogsService.operatorsVisits();
+  }
+
+
+  @Get('sign-up-graph/:role') // for chart
+  signUpGraph(@Param('role') role: any) {
+    return this.userService.signUpGraph(role);
+=======
 
   @Get('find-country-wise-active-users/all') // for chart
   findCountryWiseActive() {
     return this.userService.findCountryWiseActive();
+>>>>>>> 68581237917fbd68e032873d9d56b71e9950f8a3
   }
 
-  @Patch('mobile/profile/:id')
+  @Post('mobile/profile/:id')
   @UseInterceptors(
     FileInterceptor(
       "picture", // name of the field being passed

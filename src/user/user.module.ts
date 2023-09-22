@@ -8,6 +8,8 @@ import { ReferralCodesModule } from 'src/referral_codes/referral_codes.module';
 import { ReferralRewardsModule } from 'src/referral_rewards/referral_rewards.module';
 import { CoinTrasModule } from 'src/coin_tras/coin_tras.module';
  import { HttpModule } from '@nestjs/axios/dist';
+import { LoginLogsService } from 'src/login_logs/login_logs.service';
+import { LoginLogsModule } from 'src/login_logs/login_logs.module';
  
 @Module({
     imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
@@ -15,6 +17,7 @@ import { CoinTrasModule } from 'src/coin_tras/coin_tras.module';
     ReferralCodesModule,
     ReferralRewardsModule,
     CoinTrasModule,
+    LoginLogsModule,
     HttpModule,
   ],
     controllers: [UserController ],
