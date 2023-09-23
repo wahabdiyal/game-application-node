@@ -515,6 +515,10 @@ return users;
     return user;
   }
 
+  async findByUserIdForGold(userId: string) {
+    return await this.userModel.findOne({ _id: userId });
+  }
+
   async findByUserId(userId: string) {
     return await this.userModel.findOne({ userId: userId });
   }
@@ -604,6 +608,20 @@ return users;
       throw new NotFoundException('User not found.');
     }
    const user = await this.userModel.findOne({_id :id});
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    };
+   const access_token = await this.jwtService.signAsync(payload)
+    
+
+    return {"status": true,"user":user,"access_token":access_token};
+  }
+
+  async getUserRenewTokenForMobile(id:string){
+
+    const user = await this.userModel.findOne({_id :id});
     const payload = {
       id: user._id,
       email: user.email,

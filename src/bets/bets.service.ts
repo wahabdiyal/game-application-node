@@ -6,6 +6,8 @@ import { Bets } from './schemas/bets.schema';
 import mongoose from 'mongoose';
 import { UserService } from 'src/user/user.service';
 import { GamesService } from 'src/games/games.service';
+import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
+import { GoldsService } from 'src/golds/golds.service';
 
 @Injectable()
 export class BetsService {
@@ -13,7 +15,9 @@ export class BetsService {
     @InjectModel(Bets.name)
     private betsModel: mongoose.Model<Bets>,
     private userService: UserService,
-    private gameService: GamesService
+    private gameService: GamesService,
+    private adminAcountService : AdminAccountsService,
+    private goldService:GoldsService
   ) { }
   async create(createbetDto: CreateBetDto) {
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
@@ -118,7 +122,7 @@ export class BetsService {
       if(user &&  Number(user['silver_balance']) > Number(bet['silver'])){
           await this.userService.UpdateUser(user['id'],Number(user['silver_balance']) - Number(bet['silver']),'silver');
           await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user});
-         return {status:true,bet:await this.betsModel.findById(id)}; 
+         return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:await this.betsModel.findById(id)}; 
       }else{
         return {status:false,message:"Invalid Coin not enough"};
       }
@@ -135,7 +139,7 @@ export class BetsService {
       if(user &&  Number(user['gold_balance']) >= Number(bet['gold'])){
           await this.userService.UpdateUser(user['id'],Number(user['gold_balance']) - Number(bet['gold']),'gold');
           await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user});
-         return {status:true,bet:await this.betsModel.findById(id)}; 
+         return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:await this.betsModel.findById(id)}; 
       }else{
         return {status:false,message:"Invalid Coin not enough"};
       }
@@ -150,9 +154,34 @@ export class BetsService {
     const bet = await this.betsModel.findById(id);
       if(bet && bet.status == "active"){
       const user = await this.userService.findUserbyId(user_id);
+      const winprice = Number(bet['gold'])+Number(bet['gold']);
+      const game = await this.gameService.findOne(bet.game_id);
+       const commission = Math.ceil((Number(game.commission) /100)*winprice);
+       const userprice = winprice-commission;
+     
+
+       await this.adminAcountService.create({
+        "remarks":"Get commission from player",
+        "credit":commission,
+        "debit":"0",
+        "user_id":user['id'],
+       });
+      
+      // const admin = await this.userService.findByEmail(process.env.DF_EMAIL);
+
+      // await this.userService.update(admin.id,{gold_balance:Number(admin.gold_balance)+commission});
+     
+        await this.goldService.create({
+        client_id:user['_id'],
+        "remarks": "Player with gold in game and won",
+        "type":"credit",
+       
+        "coins": userprice
+       });
       await this.update(id,{status:"complete"});
+
       ////////////admin commumation///////////////
-      return await this.userService.updateMobile(user['id'],{gold_balance:Number(user['gold_balance'])+Number(bet['gold'])+Number(bet['gold'])});
+      return await this.userService.getUserRenewTokenForMobile(user['id']);
     }else{
       return {status:false,message:"Already request proccessed"};
     }
