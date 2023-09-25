@@ -52,10 +52,7 @@ export class BetsService {
 
 
   }
-
-  async findAll() {
-    return await this.betsModel.find();
-  }
+ 
 
   async findOne(id: any) {
     return await this.betsModel.findOne({ _id: id });
@@ -185,6 +182,37 @@ export class BetsService {
     }else{
       return {status:false,message:"Already request proccessed"};
     }
+}
+async findAll(page = 0, perPage = 20 ) {
+  let   totalCount = await this.betsModel.countDocuments().exec();
+  
+
+  const totalPages = Math.ceil(totalCount / perPage);
+
+  if (page < 1) {
+    page = 1;
+  } else if (page > totalPages) {
+    page = totalPages;
+  }
+
+  const skip = (page - 1) * perPage;
+  let data = [];
+  try {
+      data = await this.betsModel.find().skip(skip).limit(perPage).exec();
+      } catch (error) {
+    data = [];
+  }
+  return {
+    data: data,
+    currentPage: page,
+    totalPages,
+    perPage,
+    total_count: totalCount,
+  };
+
+
+  // const user = await this.userModel.find();
+  // return user;
 }
 
 }

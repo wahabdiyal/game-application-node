@@ -489,11 +489,6 @@ return users;
 
 
   }
-
-
-
-
-
   async getAllUser() {
     return await this.userModel.find({ $or: [{ role: "Player" }, { role: "player" }] }).select([
       "full_name",
@@ -520,7 +515,7 @@ return users;
   }
 
   async findByUserId(userId: string) {
-    return await this.userModel.findOne({ userId: userId });
+    return await this.userModel.findOne({ _id: userId });
   }
 
   async UpdateUser(user_id, data, type) {
@@ -631,6 +626,17 @@ return users;
     
 
     return {"status": true,"user":user,"access_token":access_token};
+  }
+
+  async findUserByIdOrEmail(value){
+      return await this.userModel.find({
+          $or: [
+          
+            { userId:value },
+            { email: { $regex: value, $options: 'i' } }, 
+          ],
+           
+      }).exec();
   }
 
 }

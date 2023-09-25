@@ -6,9 +6,10 @@ import { BorrowSchema } from './schemas/borrow.schema';
 import { UserModule } from 'src/user/user.module';
 import { GoldsModule } from 'src/golds/golds.module';
 import { SilversModule } from 'src/silvers/silvers.module';
+import { BorrowStatusModule } from 'src/borrow_status/borrow_status.module';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"Borrow",schema:BorrowSchema}]),UserModule,GoldsModule,SilversModule],
+  imports:[MongooseModule.forFeature([{name:"Borrow",schema:BorrowSchema}]),UserModule,GoldsModule,SilversModule,BorrowStatusModule],
   controllers: [BorrowController],
   providers: [BorrowService],
   exports: [BorrowService],
