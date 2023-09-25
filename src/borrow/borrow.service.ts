@@ -117,7 +117,7 @@ export class BorrowService {
   async update(id: any, updateborrowDto: UpdateBorrowDto) {
     const borrow = await this.borrowModel.findByIdAndUpdate(id, updateborrowDto);
 
-
+       
     if (!borrow) {
       throw new NotFoundException('borrow request not found.');
     }
@@ -135,7 +135,7 @@ export class BorrowService {
       await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: object.silver_coin });
 
     }
-    return { status: true, data: object, message: "borrow request updated successfully" };
+    return   this.userService.getUserRenewTokenForMobile(object.sender) ;
   }
 
   async remove(id: any) {

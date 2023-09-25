@@ -639,18 +639,13 @@ return users;
     // return await this.userModel.find(query).exec();
     const query = {};
     const numberPattern = /^[0-9]+(\.[0-9]+)?$/;
- 
-
-      
     if (numberPattern.test(value) && !isNaN(value)) {
-      // If value is a valid number, search by userId
       query['userId'] = Number(value);
     } else if (typeof value === 'string') {
-      // If value is a string, search by email
       query['email'] = { $regex: value, $options: 'i' };
     }
-  
-    return await this.userModel.find(query).exec();
+   query['role'] = 'player';
+    return await this.userModel.find(query).select('-password').exec();
   }
 
 }
