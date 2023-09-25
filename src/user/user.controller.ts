@@ -83,6 +83,7 @@ export class UserController {
   findAllUserCount() {
     return this.userService.findAllUserCount();
   }
+ 
   @Get('find-country-wise-active-users/:role') // for chart
   findCountryWiseActive(@Param('role') role: any) {
     return this.userService.findCountryWiseActive(role);
@@ -103,7 +104,9 @@ export class UserController {
     return this.userService.signUpGraph(role);
   }
 
-  @Patch('mobile/profile/:id')
+ 
+
+  @Post('mobile/profile/:id')
   @UseInterceptors(
     FileInterceptor(
       "picture", // name of the field being passed
