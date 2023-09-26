@@ -25,7 +25,8 @@ export class Gold extends Document{
     remarks:string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
     client_id: User;
-
+    @Prop({ type: Types.ObjectId, ref: 'Game'})
+    game_id:string;
     @Prop()
     created_by: string;
     @Prop()

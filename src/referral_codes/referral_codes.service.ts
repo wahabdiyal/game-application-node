@@ -42,10 +42,11 @@ export class ReferralCodesService {
       const checkUser = await this.referralModel.findOne({user_id: user.id});
       if(!checkUser){
          const res = await this.referralModel.create({user_id:user.id});
-        return res;
+        return {status:true,referal:res};
       }else{
          
-         return checkUser;
+        return {status:true,referal:checkUser};
+
       }
        
   }

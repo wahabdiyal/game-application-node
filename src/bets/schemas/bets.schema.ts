@@ -14,6 +14,8 @@ export class Bets  extends Document{
     second_player:string;
     @Prop({default:"0"})
     gold:string;
+    @Prop()
+    winner:string;
     @Prop({default:"0"})
     silver:string;
     @Prop({default:"inactive"})

@@ -172,10 +172,10 @@ export class BetsService {
         client_id:user['_id'],
         "remarks": "Player with gold in game and won",
         "type":"credit",
-       
+       'game_id':bet.game_id,
         "coins": userprice
        });
-      await this.update(id,{status:"complete"});
+      await this.update(id,{status:"complete",winner:user['_id']});
 
       ////////////admin commumation///////////////
       return await this.userService.getUserRenewTokenForMobile(user['id']);
