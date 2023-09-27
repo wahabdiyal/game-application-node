@@ -53,6 +53,8 @@ import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-ad
 import { LoginLogsModule } from './login_logs/login_logs.module';
 
 import { BetsModule } from './bets/bets.module';
+import { LogsModule } from './logs/logs.module';
+import { UserMenusModule } from './user_menus/user_menus.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -120,9 +122,8 @@ import { BetsModule } from './bets/bets.module';
  
     RechargeAdminWalletsModule,
     LoginLogsModule,
-    BetsModule,
- 
- 
+    LogsModule,
+    UserMenusModule
   ],
   controllers: [AppController],
   providers: [AppService],
