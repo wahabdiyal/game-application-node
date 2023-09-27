@@ -22,7 +22,7 @@ export class GoldsService {
     const user = await this.userService.findByID(createGoldDto['client_id']);
  
    
-    const user = await this.userService.findByUserIdForGold(createGoldDto['client_id']);
+    // const user = await this.userService.findByUserIdForGold(createGoldDto['client_id']);
    
  
     if (!user)
@@ -236,7 +236,7 @@ export class GoldsService {
   }
 
   async latestFirst(user_id: string) {
-    const gold = await this.goldModel.findOne({ client_id: user_id }).sort({ created_at: -1 }).exec();
+    const gold = await this.goldModel.findOne({ client_id: user_id }).sort({ createdAt: -1 }).exec();
     return gold;
   }
 
