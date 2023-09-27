@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AdminAccountsService } from './admin_accounts.service';
 import { CreateAdminAccountDto } from './dto/create-admin_account.dto';
 import { UpdateAdminAccountDto } from './dto/update-admin_account.dto';
@@ -15,6 +15,11 @@ export class AdminAccountsController {
   @Get()
   findAll() {
     return this.adminAccountsService.findAll();
+  }
+
+  @Get("commission")
+  getAllCommission(@Query() { page, perpage, game_id}) {
+    return this.adminAccountsService.findAllCommission(page,perpage,game_id);
   }
 
   @Get(':id')

@@ -70,7 +70,9 @@ export class DailyRewardCollectsService {
         }
 
       const dailyre =   await this.dailyRewardCollectionModel.create({user_id:user.id,total_reward:rewardDetail.inactive_day,reward_count:1,date:moment(),country:user.country});
-      return {status:true,dailyReward:dailyre};
+      return {...await this.userService.getUserRenewTokenForMobile(user['id']),dailyReward:dailyre,
+
+    };
     }else{
       if(rewardCollect.reward_count<rewardDetail.inactive_day){
         return {status:false,message:"User Found in request."};
