@@ -471,7 +471,7 @@ return users;
           date: {
             $dateToString: {
               format: "%Y-%m-%d",
-              date: "$createdAt"
+              date: { $toDate: "$createdAt" } // Convert to date
             }
           }
         }
@@ -517,6 +517,9 @@ return users;
 
   async findByUserId(userId: string) {
     return await this.userModel.findOne({ userId: userId });
+  }
+  async findByID(_id: string) {
+    return await this.userModel.findOne({ _id: _id });
   }
 
   async UpdateUser(user_id, data, type) {
@@ -581,7 +584,7 @@ return users;
       throw new NotFoundException('User not found.');
     }
     let r = (Math.random() * 36 ** 16).toString(36);
-   
+
     const payload = {
       id: user._id,
       name: user.first_name + user.last_name,
@@ -591,10 +594,10 @@ return users;
       role: user.role,
       user_login_token: r
     };
-   const access_token = await this.jwtService.signAsync(payload)
-    
+    const access_token = await this.jwtService.signAsync(payload)
 
-    return {"status": true,"user":user,"access_token":access_token};
+
+    return { "status": true, "user": user, "access_token": access_token };
   }
 
   async updateMobile(id: any, body: any) {
@@ -603,16 +606,16 @@ return users;
     if (!update) {
       throw new NotFoundException('User not found.');
     }
-   const user = await this.userModel.findOne({_id :id});
+    const user = await this.userModel.findOne({ _id: id });
     const payload = {
       id: user._id,
       email: user.email,
       role: user.role,
     };
-   const access_token = await this.jwtService.signAsync(payload)
-    
+    const access_token = await this.jwtService.signAsync(payload)
 
-    return {"status": true,"user":user,"access_token":access_token};
+
+    return { "status": true, "user": user, "access_token": access_token };
   }
 
 }

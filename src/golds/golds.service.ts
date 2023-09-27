@@ -17,7 +17,7 @@ export class GoldsService {
 
   async create(createGoldDto: CreateGoldDto): Promise<any> {
 
-    const user = await this.userService.findByUserId(createGoldDto['client_id']);
+    const user = await this.userService.findByID(createGoldDto['client_id']);
     if (!user)
       return { status: 'error', message: 'User not found' };
     else
