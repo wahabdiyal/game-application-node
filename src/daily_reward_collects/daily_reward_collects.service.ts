@@ -24,10 +24,8 @@ export class DailyRewardCollectsService {
     
   ){}
   async create(user) {
-
-      
       const rewardDetail = await this.dailyRewardService.findByCountry(user.country.toLowerCase());
-      
+     
       if(!rewardDetail){
         return {status:false, message:"Country is not available for this user."};
       }
@@ -35,8 +33,7 @@ export class DailyRewardCollectsService {
       let gold:any = await this.goldService.latestFirst(user.id);
       let  silver:any = await this.silverService.latestFirst(user.id);
 
-    
-       
+      
     const today = moment();
       const startDate = moment(rewardDetail.start_date);
       const endDate = moment(rewardDetail.end_date);
@@ -56,10 +53,11 @@ export class DailyRewardCollectsService {
         const date2 = moment();
         
         gold = date1.isSame(date2,"day");
+        
        }else{
         gold = false;
        }
-      
+     
         if( !gold &&  !silver) {
           return {status:false,message:"User transaction not found today"};
         }
@@ -70,8 +68,11 @@ export class DailyRewardCollectsService {
         if(rewardDetail.silver_coin != '0'){
           await this.goldService.create({coins:rewardDetail.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
         }
-      const dailyre =   await this.dailyRewardCollectionModel.create({user_id:user.id,reward_count:1,date:moment(),country:user.country});
-      return {status:true,dailyReward:dailyre};
+
+      const dailyre =   await this.dailyRewardCollectionModel.create({user_id:user.id,total_reward:rewardDetail.inactive_day,reward_count:1,date:moment(),country:user.country});
+      return {...await this.userService.getUserRenewTokenForMobile(user['id']),dailyReward:dailyre,
+
+    };
     }else{
       if(rewardCollect.reward_count<rewardDetail.inactive_day){
         return {status:false,message:"User Found in request."};
@@ -86,7 +87,15 @@ export class DailyRewardCollectsService {
       const value =  await this.dailyRewardCollectionModel.findOne({user_id:user.id});
       return (value==null)?true:false;
   }
-
+  async getCollectUser(user) {
+     
+    const dailyCollection =  await this.dailyRewardCollectionModel.findOne({user_id:user.id});
+            if(dailyCollection){
+              return {status:true,reward:dailyCollection};
+            }else{
+              return {status:false,message:"User not found in reward collection"};
+            }
+}
   
   /////////Action Cron and Event///////////////
 
@@ -110,16 +119,16 @@ export class DailyRewardCollectsService {
         const endDate = moment(rewardDetailAdmin.end_date);
         if(!today.isBetween(startDate, endDate)){
           console.log("continue........");
-          //// admin side can add field expired entry status then we jsut fetch active daily reward entries
+          //// admin side can add field expired entry status then we jsut fetch active daily reward entries///and now i don't remember
           continue;
         }
          if(Number(userDailyReward[c].reward_count) < Number(rewardDetailAdmin.inactive_day)){
             ///////////////////////// update daily reward package update//////////////////
             if(rewardDetailAdmin.gold_coin != '0'){
-              await this.silverService.create({coins:rewardDetailAdmin.gold_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:userDailyReward[c].user_id})
+              await this.goldService.create({coins:rewardDetailAdmin.gold_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:userDailyReward[c].user_id})
             }
             if(rewardDetailAdmin.silver_coin != '0'){
-              await this.goldService.create({coins:rewardDetailAdmin.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:userDailyReward[c].user_id})
+              await this.silverService.create({coins:rewardDetailAdmin.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:userDailyReward[c].user_id})
             }
             console.log(userDailyReward[c].user_id,userDailyReward[c].country);
 

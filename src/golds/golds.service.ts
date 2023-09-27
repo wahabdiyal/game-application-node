@@ -236,7 +236,7 @@ export class GoldsService {
   }
 
   async latestFirst(user_id: string) {
-    const gold = await this.goldModel.findOne({ client_id: user_id }).sort({ created_at: -1 }).exec();
+    const gold = await this.goldModel.findOne({ client_id: user_id }).sort({ createdAt: -1 }).exec();
     return gold;
   }
 
