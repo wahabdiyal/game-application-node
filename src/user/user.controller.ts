@@ -117,4 +117,8 @@ export class UserController {
     return this.userService.updateMobile(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
 
   }
+  @Get('mobile/search/emailorid/:role') // for chart
+  findUserByIdOrEmail(@Param('role') role: any) {
+    return this.userService.findUserByIdOrEmail(role);
+  }
 }

@@ -24,8 +24,10 @@ export class DailyRewardCollectsService {
     
   ){}
   async create(user) {
- 
-      const rewardDetail = await this.dailyRewardService.findByCountry(user.country);
+
+      
+      const rewardDetail = await this.dailyRewardService.findByCountry(user.country.toLowerCase());
+      
       if(!rewardDetail){
         return {status:false, message:"Country is not available for this user."};
       }
@@ -33,12 +35,13 @@ export class DailyRewardCollectsService {
       let gold:any = await this.goldService.latestFirst(user.id);
       let  silver:any = await this.silverService.latestFirst(user.id);
 
-
+    
+       
     const today = moment();
       const startDate = moment(rewardDetail.start_date);
       const endDate = moment(rewardDetail.end_date);
       if(!today.isBetween(startDate, endDate)){
-        return false;
+        return {status:false,message:"reward not found."};
       }
        if(silver) {
         const date1 = moment(silver.createdAt);
@@ -56,6 +59,7 @@ export class DailyRewardCollectsService {
        }else{
         gold = false;
        }
+      
         if( !gold &&  !silver) {
           return {status:false,message:"User transaction not found today"};
         }
@@ -66,7 +70,8 @@ export class DailyRewardCollectsService {
         if(rewardDetail.silver_coin != '0'){
           await this.goldService.create({coins:rewardDetail.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
         }
-      return  await this.dailyRewardCollectionModel.create({user_id:user.id,reward_count:1,date:moment(),country:user.country});
+      const dailyre =   await this.dailyRewardCollectionModel.create({user_id:user.id,reward_count:1,date:moment(),country:user.country});
+      return {status:true,dailyReward:dailyre};
     }else{
       if(rewardCollect.reward_count<rewardDetail.inactive_day){
         return {status:false,message:"User Found in request."};
@@ -77,6 +82,7 @@ export class DailyRewardCollectsService {
   }
 
   async checkCollectUser(user) : Promise<boolean>{
+     
       const value =  await this.dailyRewardCollectionModel.findOne({user_id:user.id});
       return (value==null)?true:false;
   }
@@ -96,7 +102,6 @@ export class DailyRewardCollectsService {
   @OnEvent("daily.rewards")
  async eventDailyReward(payload:DailyRewardCollect){
     const userDailyReward:any = await this.getAllDailyRewardCollects();
-    
     for (let c = 0; c < userDailyReward.length; c++) {
          const rewardDetailAdmin = await this.dailyRewardService.findByCountry(userDailyReward[c].country);
         //  current date match//
@@ -105,7 +110,6 @@ export class DailyRewardCollectsService {
         const endDate = moment(rewardDetailAdmin.end_date);
         if(!today.isBetween(startDate, endDate)){
           console.log("continue........");
-
           //// admin side can add field expired entry status then we jsut fetch active daily reward entries
           continue;
         }

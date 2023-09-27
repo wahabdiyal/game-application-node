@@ -27,7 +27,7 @@ export class BorrowStatusService {
   }
 
   async findOne(id: any) {
-    return await this.borrowStatusModel.findById(id);
+    return await this.borrowStatusModel.findOne();
   }
 
   async update(id: any, updateborrowDto: UpdateBorrowStatusDto) {

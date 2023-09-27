@@ -489,11 +489,6 @@ return users;
 
 
   }
-
-
-
-
-
   async getAllUser() {
     return await this.userModel.find({ $or: [{ role: "Player" }, { role: "player" }] }).select([
       "full_name",
@@ -515,8 +510,12 @@ return users;
     return user;
   }
 
+  async findByUserIdForGold(userId: string) {
+    return await this.userModel.findOne({ _id: userId });
+  }
+
   async findByUserId(userId: string) {
-    return await this.userModel.findOne({ userId: userId });
+    return await this.userModel.findOne({ _id: userId });
   }
   async findByID(_id: string) {
     return await this.userModel.findOne({ _id: _id });
@@ -616,6 +615,45 @@ return users;
 
 
     return { "status": true, "user": user, "access_token": access_token };
+  }
+
+  async getUserRenewTokenForMobile(id:string){
+
+    const user = await this.userModel.findOne({_id :id});
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    };
+   const access_token = await this.jwtService.signAsync(payload)
+    
+
+    return {"status": true,"user":user,"access_token":access_token};
+  }
+
+  async findUserByIdOrEmail(value ){
+    // const query = {
+    //   $or: [
+    //     { userId: typeof value === 'number' ? value : NaN },
+    //     { email: { $regex: typeof value === 'string' ? value : '', $options: 'i' } },
+    //   ],
+    // };
+  
+    // return await this.userModel.find(query).exec();
+    const query = {};
+    const numberPattern = /^[0-9]+(\.[0-9]+)?$/;
+    if (numberPattern.test(value) && !isNaN(value)) {
+      query['userId'] = Number(value);
+    }else if (typeof value === 'string') {
+      query['email'] = { $regex: value, $options: 'i' };
+    }
+   query['role'] = 'player';
+    const user =  await this.userModel.findOne(query).select('-password').exec();
+      if(user){
+        return {status:true,user:user};
+      }else{
+        return { status : false , message:"User not found"};
+      }
   }
 
 }

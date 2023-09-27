@@ -14,7 +14,7 @@ export class DailyRewardCollectsController {
       if(value) { 
          return this.dailyRewardCollectsService.create(req.user);
       }else{
-        return true;
+        return {status:false,message:"Already reward taken."};
       }
 
       

@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import { SilversService } from 'src/silvers/silvers.service';
 import { GoldsService } from 'src/golds/golds.service';
 import { UserService } from 'src/user/user.service';
+import { BorrowStatusService } from 'src/borrow_status/borrow_status.service';
 
 @Injectable()
 export class BorrowService {
@@ -15,16 +16,21 @@ export class BorrowService {
     private borrowModel: mongoose.Model<Borrow>,
     private silverService: SilversService,
     private goldService: GoldsService,
-    private userService: UserService
+    private userService: UserService,
+    private borrowStatusSerivcie : BorrowStatusService
   ) { }
 
   async create(createborrowDto: CreateBorrowDto) {
-
+    const borrowStatus = await this.borrowStatusSerivcie.findOne(1);
+      
+    if(Number(createborrowDto['gold_coin']) !=0 && borrowStatus.gold_status=="false" ){
+      return { check:false,message:"Borrow gold service not available"}
+    }
     const user = await this.userService.findUserbyId(createborrowDto['sender']);
     const u = user && (Number(user.silver_balance) >= Number(createborrowDto['silver_coin'])) && (Number(user.gold_balance) >= Number(createborrowDto['gold_coin']));
-
+ 
     if (!u) {
-      return { status: false, message: "Coin are not match with request" };
+      return { check: false, message: "Coin are not match with request" };
     }
     if (createborrowDto['status'] != 'pending') {
       await this.goldService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow reqeust", type: "debit", status: "success", coins: createborrowDto['gold_coin'] });
@@ -36,9 +42,11 @@ export class BorrowService {
       await this.silverService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: createborrowDto["silver_coin"] });
 
     }
-
+    delete createborrowDto['_id'];
+    delete createborrowDto['createdAt'];
+    delete createborrowDto['updatedAt'];
     var res = await this.borrowModel.create(createborrowDto);
-    return res;
+    return {...res.toObject(),check:true};
   }
 
   async findAll(page = 0, perPage = 20, date = []) {
@@ -109,7 +117,7 @@ export class BorrowService {
   async update(id: any, updateborrowDto: UpdateBorrowDto) {
     const borrow = await this.borrowModel.findByIdAndUpdate(id, updateborrowDto);
 
-
+       
     if (!borrow) {
       throw new NotFoundException('borrow request not found.');
     }
@@ -127,7 +135,7 @@ export class BorrowService {
       await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: object.silver_coin });
 
     }
-    return { status: true, data: object, message: "borrow request updated successfully" };
+    return   this.userService.getUserRenewTokenForMobile(object.sender) ;
   }
 
   async remove(id: any) {
