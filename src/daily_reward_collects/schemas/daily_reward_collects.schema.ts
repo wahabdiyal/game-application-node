@@ -11,6 +11,8 @@ export class DailyRewardCollects  extends Document{
     status:string;
     @Prop({required: true,default:0})
     reward_count:string;
+    @Prop({default:0})
+    total_reward:string;
     @Prop({required: true,})
     user_id:string;
     @Prop({required: true,default:null})

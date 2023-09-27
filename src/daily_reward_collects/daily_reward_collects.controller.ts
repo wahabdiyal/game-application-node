@@ -10,15 +10,17 @@ export class DailyRewardCollectsController {
   @UseGuards(AuthGuard)
   @Post()
   async create(@Request() req) {
-    const value = await this.dailyRewardCollectsService.checkCollectUser(req.user) ;
+    const value = await this.dailyRewardCollectsService.checkCollectUser(req.user);
       if(value) { 
          return this.dailyRewardCollectsService.create(req.user);
       }else{
         return {status:false,message:"Already reward taken."};
       }
-
-      
-    
+  }
+  @UseGuards(AuthGuard)
+  @Post('get/user/reward')
+  async getuser(@Request() req) {
+        return await this.dailyRewardCollectsService.getCollectUser(req.user);
   }
  
 }

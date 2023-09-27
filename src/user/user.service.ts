@@ -619,6 +619,7 @@ return users;
     const user = await this.userModel.findOne({_id :id});
     const payload = {
       id: user._id,
+      country:user.country,
       email: user.email,
       role: user.role,
     };
