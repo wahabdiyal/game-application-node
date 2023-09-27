@@ -5,7 +5,7 @@ export enum Status {
     pending = "pending",
     inprocess = "inprocess",
     approved = "approved",
-    disapprove = "disapprove"
+    cancled = "cancled"
 }
 @Schema({
     timestamps: true,

@@ -3,8 +3,8 @@ import { Document } from 'mongoose';
 
 export enum UserType{
     admin="admin",
-    manager="manager",
-    user="user"
+    operator="operator",
+    player="player"
 }
 @Schema({
         timestamps: true,
