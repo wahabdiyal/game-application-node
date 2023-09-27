@@ -22,7 +22,7 @@ export class GoldsService {
     const user = await this.userService.findByID(createGoldDto['client_id']);
  
    
-    const user = await this.userService.findByUserIdForGold(createGoldDto['client_id']);
+    // const user = await this.userService.findByUserIdForGold(createGoldDto['client_id']);
    
  
     if (!user)
