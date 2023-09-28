@@ -13,8 +13,9 @@ export class BetsController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage ,status}) {
-    return this.betsService.findAll(page,perpage,status);
+  findAll(@Query() { page, perpage ,status,start_date,end_date,key}) {
+    let date = (start_date && end_date)?[{start:start_date,end:end_date}]:[];
+    return this.betsService.findAll(page,perpage,status,date,key);
   }
 
   @Get(':id')
