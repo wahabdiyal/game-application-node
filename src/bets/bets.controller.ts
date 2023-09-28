@@ -13,8 +13,8 @@ export class BetsController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage }) {
-    return this.betsService.findAll(page,perpage);
+  findAll(@Query() { page, perpage ,status}) {
+    return this.betsService.findAll(page,perpage,status);
   }
 
   @Get(':id')

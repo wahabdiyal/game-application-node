@@ -117,7 +117,7 @@ import { UserMenusModule } from './user_menus/user_menus.module';
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
- 
+    BetsModule,
     PurchaseRequestsModule,
  
     RechargeAdminWalletsModule,
