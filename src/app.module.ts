@@ -55,6 +55,7 @@ import { LoginLogsModule } from './login_logs/login_logs.module';
 import { BetsModule } from './bets/bets.module';
  
 import { UserMenusModule } from './user_menus/user_menus.module';
+import { CreateLogsModule } from './create-logs/create-logs.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -122,8 +123,9 @@ import { UserMenusModule } from './user_menus/user_menus.module';
  
     RechargeAdminWalletsModule,
     LoginLogsModule,
-    
-    UserMenusModule
+    BetsModule,
+    UserMenusModule,
+    CreateLogsModule
   ],
   controllers: [AppController],
   providers: [AppService],
