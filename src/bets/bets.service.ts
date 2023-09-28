@@ -35,7 +35,7 @@ export class BetsService {
     if ( Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "ai") {
  
           await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');
-       const res = await this.betsModel.create(createbetDto);
+       const res = await this.betsModel.create({...createbetDto,first_email:first_user['email'],first_name:first_user['first_name'],last_name:first_user['last_name'],first_user_id:first_user['userId']});
        return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
     }
     else{
@@ -46,14 +46,14 @@ export class BetsService {
   /////////////////////////silver coin//////////////////////
   if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0 ) {
        await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');  
-       const res = await this.betsModel.create(createbetDto);
+       const res = await this.betsModel.create({...createbetDto,first_email:first_user['email'],first_name:first_user['first_name'],last_name:first_user['last_name'],first_user_id:first_user['userId']});
        return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
     }
     ////// gold/////////////
     else if ( Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold'])!=0) {
       /////playing with gold /////
       await this.userService.UpdateUser(first_user['id'],Number(first_user['gold_balance']) - Number(createbetDto['gold']),'gold');  
-      const res = await this.betsModel.create(createbetDto);
+      const res = await this.betsModel.create({...createbetDto,first_email:first_user['email'],first_name:first_user['first_name'],last_name:first_user['last_name'],first_user_id:first_user['userId']});
       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
     }
    else{
@@ -123,7 +123,7 @@ export class BetsService {
       
       if(user &&  Number(user['silver_balance']) > Number(bet['silver'])){
           await this.userService.UpdateUser(user['id'],Number(user['silver_balance']) - Number(bet['silver']),'silver');
-          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user});
+          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId});
          return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:await this.betsModel.findById(id)}; 
       }else{
         return {status:false,message:"Invalid Coin not enough"};
@@ -140,7 +140,7 @@ export class BetsService {
       
       if(user &&  Number(user['gold_balance']) >= Number(bet['gold'])){
           await this.userService.UpdateUser(user['id'],Number(user['gold_balance']) - Number(bet['gold']),'gold');
-          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user});
+          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId});
          return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:await this.betsModel.findById(id)}; 
       }else{
         return {status:false,message:"Invalid Coin not enough"};
@@ -190,7 +190,7 @@ export class BetsService {
       return {status:false,message:"Already request proccessed"};
     }
 }
-async findAll(page = 0, perPage = 20,status='') {
+async findAll(page = 0, perPage = 20,status='',date=[],value=null) {
   const query = {};
   if(status=='active'){
     query['status']='active';
@@ -198,6 +198,21 @@ async findAll(page = 0, perPage = 20,status='') {
     query['status']='inactive';
   }else if(status=='complete'){
     query['status']='complete';
+  }
+  if (date.length > 0) {
+    const parsedStartDate = new Date(date[0].start);
+    const parsedEndDate = new Date(date[0].end);
+      query['createdAt']={ $gte: parsedStartDate, $lte: parsedEndDate };
+  }
+  if(value){
+    query['$or']=[
+      { first_name: { $regex: value, $options: 'i' } },  
+      { first_email: { $regex: value, $options: 'i' } },  
+      { first_user_id: { $regex: value, $options: 'i' } },  
+      { second_name: { $regex: value, $options: 'i' } },  
+      { second_email: { $regex: value, $options: 'i' } },  
+      { second_user_id: { $regex: value, $options: 'i' } },  
+    ];
   }
   let totalCount = await this.betsModel.find(query).countDocuments().exec();
   const totalPages = Math.ceil(totalCount / perPage);
