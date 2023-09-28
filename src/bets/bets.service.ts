@@ -22,8 +22,8 @@ export class BetsService {
   async create(createbetDto: CreateBetDto) {
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
      
-    if(createbetDto['second_player'] === "ai"){
-    if ( Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "ai") {
+    if(createbetDto['second_player'] === "hacked"){
+    if ( Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "hacked") {
           await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');
        const res = await this.betsModel.create(createbetDto);
        return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};

@@ -7,12 +7,16 @@ import { Document } from 'mongoose';
 })
 export class Bets  extends Document{
     @Prop({required:true})
+
     first_player:string;
     @Prop({ required:true})
-    game_id:string;
-    @Prop({default:""})
+
     second_player:string;
     @Prop({default:"0"})
+
+    game_id:string;
+    @Prop({default:""})
+       
     gold:string;
     @Prop()
     winner:string;
@@ -22,6 +26,9 @@ export class Bets  extends Document{
     status:string;
     @Prop({required: true,})
     remark:string;
+
+    @Prop({default:"0"})
+    counter:string;
 }
 export const BetsSchema = SchemaFactory.createForClass(Bets)
 

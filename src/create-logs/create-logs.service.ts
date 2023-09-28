@@ -1,0 +1,95 @@
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateCreateLogDto } from './dto/create-create-log.dto';
+import { UpdateCreateLogDto } from './dto/update-create-log.dto';
+import { InjectModel } from '@nestjs/mongoose';
+import { User } from "src/user/schemas/user.schema";
+import mongoose from 'mongoose';
+import { CreateLogs } from './schemas/create-logs.schema';
+
+@Injectable()
+export class CreateLogsService {
+  constructor(
+    @InjectModel(CreateLogs.name)
+    private createLogsModal: mongoose.Model<CreateLogs>,
+  ) { }
+  async create(createCreateLogDto: CreateCreateLogDto) {
+    return await this.createLogsModal.create(createCreateLogDto);
+  }
+  async findAll(page = 0, perPage = 20, date = []) {
+    let totalCount = 0
+    if (date.length > 0) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.createLogsModal.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).populate('user').countDocuments().exec();
+    } else {
+      totalCount = await this.createLogsModal.find().populate('user').countDocuments().exec();
+    }
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const skip = (page - 1) * perPage;
+
+    let data = [];
+    try {
+
+      if (date.length > 0) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+
+        data = await this.createLogsModal.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else {
+        data = await this.createLogsModal.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
+    } catch (error) {
+      date = [];
+    }
+    return {
+      data: data,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+  }
+
+
+
+  async findOne(id: any) {
+    return await this.createLogsModal.findById(id);
+
+  }
+  async findOneByCountry(country: string) {
+    return await this.createLogsModal.findOne({ country: country });
+  }
+
+  async update(id: any, updateCreateLogDto: UpdateCreateLogDto) {
+    const country = await this.createLogsModal.findByIdAndUpdate(id, updateCreateLogDto);
+
+    if (!country) {
+      throw new NotFoundException('not found.');
+    }
+
+    return { status: true, message: "updated" };
+  }
+
+  async remove(id: any) {
+    const country = await this.createLogsModal.findByIdAndDelete(id);
+
+    if (!country) {
+      throw new NotFoundException('not found.');
+    }
+
+    return { status: true, message: "Delete" };
+  }
+}
