@@ -21,7 +21,11 @@ export class BetsService {
   ) { }
   async create(createbetDto: CreateBetDto) {
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
-     
+     const game = await this.gameService.findbyId(createbetDto['game_id']);
+      if(!game){
+              return {status:false,message:"Game not found"};
+      }
+      createbetDto['game_id'] = game._id;
     if(createbetDto['second_player'] === "ai"){
     if ( Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "ai") {
           await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');
@@ -49,15 +53,10 @@ export class BetsService {
    else{
       return { status:false, message:"Invalid inputs try again"};
     }  
-
-
   }
- 
-
   async findOne(id: any) {
     return await this.betsModel.findOne({ _id: id });
   }
-
   async update(id: any, updatebetDto: UpdateBetDto) {
     const bet = await this.betsModel.findByIdAndUpdate(id, updatebetDto);
 
@@ -185,22 +184,26 @@ export class BetsService {
       return {status:false,message:"Already request proccessed"};
     }
 }
-async findAll(page = 0, perPage = 20 ) {
-  let   totalCount = await this.betsModel.countDocuments().exec();
-  
-
+async findAll(page = 0, perPage = 20,status='') {
+  const query = {};
+  if(status=='active'){
+    query['status']='active';
+  }else if(status=='inactive'){
+    query['status']='inactive';
+  }else if(status=='complete'){
+    query['status']='complete';
+  }
+  let totalCount = await this.betsModel.find(query).countDocuments().exec();
   const totalPages = Math.ceil(totalCount / perPage);
-
   if (page < 1) {
     page = 1;
   } else if (page > totalPages) {
     page = totalPages;
   }
-
   const skip = (page - 1) * perPage;
   let data = [];
   try {
-      data = await this.betsModel.find().skip(skip).limit(perPage).exec();
+      data = await this.betsModel.find(query).skip(skip).limit(perPage).exec();
       } catch (error) {
     data = [];
   }
