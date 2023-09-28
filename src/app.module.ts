@@ -118,7 +118,7 @@ import { CreateLogsModule } from './create-logs/create-logs.module';
     ChallengesModule,
     BorrowModule,
     BorrowStatusModule,
- 
+    BetsModule,
     PurchaseRequestsModule,
  
     RechargeAdminWalletsModule,

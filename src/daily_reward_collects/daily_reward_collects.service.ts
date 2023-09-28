@@ -63,10 +63,10 @@ export class DailyRewardCollectsService {
         }
     if(!rewardCollect){
         if(rewardDetail.gold_coin != '0'){
-          await this.silverService.create({coins:rewardDetail.gold_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
+          await this.goldService.create({coins:rewardDetail.gold_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
         }
         if(rewardDetail.silver_coin != '0'){
-          await this.goldService.create({coins:rewardDetail.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
+          await this.silverService.create({coins:rewardDetail.silver_coin,type:"credit",remarks:"Daily reward collect",entry_type:"admin",client_id:user.id})
         }
 
       const dailyre =   await this.dailyRewardCollectionModel.create({user_id:user.id,total_reward:rewardDetail.inactive_day,reward_count:1,date:moment(),country:user.country});

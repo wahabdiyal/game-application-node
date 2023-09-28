@@ -59,10 +59,8 @@ export class UserBanksService {
   }
 
   async findOneUser(user_id: any) {
-
-    return await this.userBankService.find({ user_id: user_id });
-
-  }
+   return await this.userBankService.find({ user_id: user_id });
+      }
 
   async update(id: any, updateUserBankDto: UpdateUserBankDto) {
 
