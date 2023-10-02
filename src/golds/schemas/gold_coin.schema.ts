@@ -22,6 +22,8 @@ export class Gold extends Document{
     @Prop({default:null })
     type:Type ;
     @Prop()
+    bal:string;
+    @Prop()
     remarks:string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
     client_id: User;

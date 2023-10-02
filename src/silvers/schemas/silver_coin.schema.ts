@@ -23,6 +23,8 @@ export class Silver extends Document{
     @Prop({default:null })
     type:Type ;
     @Prop()
+    bal:string;
+    @Prop()
     remarks:string;
     @Prop({default: null,})
     entry_by:string;

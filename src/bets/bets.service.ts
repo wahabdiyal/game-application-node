@@ -8,6 +8,7 @@ import { UserService } from 'src/user/user.service';
 import { GamesService } from 'src/games/games.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 import { GoldsService } from 'src/golds/golds.service';
+import { SilversService } from 'src/silvers/silvers.service';
 
 @Injectable()
 export class BetsService {
@@ -17,7 +18,8 @@ export class BetsService {
     private userService: UserService,
     private gameService: GamesService,
     private adminAcountService : AdminAccountsService,
-    private goldService:GoldsService
+    private goldService:GoldsService,
+    private silverService:SilversService,
   ) { }
   async create(createbetDto: CreateBetDto) {
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
@@ -80,15 +82,29 @@ export class BetsService {
   }
 
   async betUpdateLoseWin(id:string,status:boolean){
-     
       const bet = await this.betsModel.findById(id);
       if(bet && bet.status != "complete"){
         const user = await this.userService.findUserbyId(bet.first_player);
         await this.update(id,{status:"complete"});
         if(status){
-        return  await this.userService.updateMobile(user['id'],{silver_balance:Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])});
+          await this.silverService.create({
+            client_id:bet.first_player,
+            remarks: "AI with silver in game and won",
+            type:"credit",
+           game_id:bet.game_id,
+            coins:Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])
+           });
+          return  await this.userService.updateMobile(user['id'],{updated_by:""});
+        // return  await this.userService.updateMobile(user['id'],{silver_balance:Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])});
         } 
         ////////only for ai
+        await this.silverService.create({
+          client_id:user['_id'],
+          "remarks": "AI with silver in game and lose",
+          "type":"debit",
+         'game_id':bet.game_id,
+          "coins":0
+         });
         return  await this.userService.updateMobile(user['id'],{silver_balance:Number(user['silver_balance'])});
 
       }else{
@@ -102,8 +118,14 @@ export class BetsService {
       if(bet && bet.status == "active"){
       const user = await this.userService.findUserbyId(user_id);
       await this.update(id,{status:"complete"});
-       
-      return  await this.userService.updateMobile(user['id'],{silver_balance:Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])});
+      await this.silverService.create({
+        client_id:user['_id'],
+        "remarks": "Player with silver in game and won",
+        "type":"credit",
+       'game_id':bet.game_id,
+        "coins":Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])
+       });
+      return  await this.userService.updateMobile(user['id'],{updated_by:""});
        
     }else{
       return {status:false,message:"Already request proccessed"};
