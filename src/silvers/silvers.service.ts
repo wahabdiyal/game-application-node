@@ -21,6 +21,7 @@ export class SilversService {
   }
 
   async create(createCoinDto: CreateSilverDto): Promise<any> {
+  
     const user = await this.usersService.findByUserId(createCoinDto['client_id']);
     if (!user)
       return { status: 'error', message: 'User not found' };
@@ -29,8 +30,8 @@ export class SilversService {
 
     const newBalance = (createCoinDto['type'] == "credit") ? parseInt(user.silver_balance) + parseInt(createCoinDto['coins'], 10) : parseInt(user.silver_balance) - parseInt(createCoinDto['coins'], 10);
 
-    this.usersService.UpdateUser(createCoinDto['client_id'], newBalance, "silver");
-    var res = await this.silverModel.create(createCoinDto);
+    await this.usersService.UpdateUser(createCoinDto['client_id'], newBalance, "silver");
+    var res = await this.silverModel.create({...createCoinDto,bal:newBalance});
     return res;
 
   }

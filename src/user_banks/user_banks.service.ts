@@ -66,11 +66,13 @@ export class UserBanksService {
 
     ///clear all selected wallet and banks
     if (updateUserBankDto['is_selected'] === true) await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());
+    
+    if (updateUserBankDto['is_selected'] === 1){ await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());}
 
     const user_bank = await this.userBankService.findByIdAndUpdate(id, updateUserBankDto);
 
     if (!user_bank) {
-      throw new NotFoundException('not found');
+      throw new NotFoundException('Bank not found');
     }
     const bank = await this.userBankService.findOne({ _id: id })
 

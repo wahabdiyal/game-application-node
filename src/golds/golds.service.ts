@@ -33,7 +33,8 @@ export class GoldsService {
     const newBalance = (createGoldDto['type'] == "credit") ? parseInt(user.gold_balance) + parseInt(createGoldDto['coins'], 10) : parseInt(user.gold_balance) - parseInt(createGoldDto['coins'], 10);
 
     this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
-    var res = await this.goldModel.create(createGoldDto);
+    /////add user current balance in gold and field in db
+    var res = await this.goldModel.create({createGoldDto,'bal':newBalance});
 
     return res;
   }

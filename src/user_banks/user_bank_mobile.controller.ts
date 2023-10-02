@@ -33,6 +33,7 @@ export class UserBankMobileController {
   }
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserBankDto: UpdateUserBankDto) {
+ 
     return this.userBanksService.update(id, updateUserBankDto);
   }
   @Delete(':id')

@@ -25,7 +25,7 @@ export class UserCryptoWalletsService {
     return await this.userCryptoWalletService.aggregate([
       {
         $match: {
-          user_id: user_id, // Replace with the user_id you're looking for
+          user_id: user_id,  
         },
       },
       {
@@ -58,6 +58,7 @@ export class UserCryptoWalletsService {
 
   async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
     if (updateUserCryptoWalletDto['is_selected'] === true) await this.clearSelectBankWallet(updateUserCryptoWalletDto['user_id'].toString());
+    if (updateUserCryptoWalletDto['is_selected'] === 1) await this.clearSelectBankWallet(updateUserCryptoWalletDto['user_id'].toString());
 
     const crypto = await this.userCryptoWalletService.findByIdAndUpdate(id, updateUserCryptoWalletDto);
 
@@ -76,7 +77,7 @@ export class UserCryptoWalletsService {
       throw new NotFoundException('Wallet not found.');
     }
 
-    return { status: true, message: "removed" };
+    return { status: true, message: "Wallet removed" };
   }
   async clearSelectBankWallet(user_id: string) {
     await this.userCryptoWalletService.updateMany(
