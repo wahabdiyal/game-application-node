@@ -38,6 +38,22 @@ export class GoldsService {
     return res;
   }
 
+  async adminCreate(createGoldDto: CreateGoldDto): Promise<any> {
+
+    const user = await this.userService.findByUserId(createGoldDto['userId']);
+    if (!user)
+      return { status: 'error', message: 'User not found' };
+
+
+    createGoldDto['client_id'] = user._id;
+    const newBalance = (createGoldDto['type'] == "credit") ? parseInt(user.gold_balance) + parseInt(createGoldDto['coins'], 10) : parseInt(user.gold_balance) - parseInt(createGoldDto['coins'], 10);
+
+    this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
+    var res = await this.goldModel.create(createGoldDto);
+
+    return res;
+  }
+
   async findAll(): Promise<Gold[]> {
 
     const golds = await this.goldModel.find();

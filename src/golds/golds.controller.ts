@@ -15,6 +15,11 @@ export class GoldsController {
     return this.goldsService.create(createGoldDto);
   }
 
+  @Post('create/admin-panel')
+  adminCreate(@Body() createGoldDto: CreateGoldDto) {
+    return this.goldsService.adminCreate(createGoldDto);
+  }
+
   @Get()
   findAll() {
     return this.goldsService.findAll();

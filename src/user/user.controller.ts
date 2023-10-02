@@ -83,7 +83,7 @@ export class UserController {
   findAllUserCount() {
     return this.userService.findAllUserCount();
   }
- 
+
   @Get('find-country-wise-active-users/:role') // for chart
   findCountryWiseActive(@Param('role') role: any) {
     return this.userService.findCountryWiseActive(role);
@@ -104,7 +104,7 @@ export class UserController {
     return this.userService.signUpGraph(role);
   }
 
- 
+
 
   @Post('mobile/profile/:id')
   @UseInterceptors(
@@ -120,5 +120,10 @@ export class UserController {
   @Get('mobile/search/emailorid/:role') // for chart
   findUserByIdOrEmail(@Param('role') role: any) {
     return this.userService.findUserByIdOrEmail(role);
+  }
+
+  @Patch('update-play-status/player') // The endpoint for updating play status
+  updatePlayStatus(@Query() { id, bet_block }) {
+    return this.userService.updatePlayStatus(id, bet_block);
   }
 }
