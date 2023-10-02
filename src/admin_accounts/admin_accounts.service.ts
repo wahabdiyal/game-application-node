@@ -11,13 +11,6 @@ import { UserService } from 'src/user/user.service';
 export class AdminAccountsService {
   constructor(
     @InjectModel(AdminAccount.name)
-<<<<<<< HEAD
-    private accountService: mongoose.Model<AdminAccount>
-  ) { }
-  async create(createAdminAccountDto: CreateAdminAccountDto) {
-    // return {...createAdminAccountDto,"gold_coin_balance":Number(createAdminAccountDto['gold_coin_balance'])+Number(createAdminAccountDto['credit'])}
-    var res = await this.accountService.create(createAdminAccountDto);
-=======
     private acoountModel: mongoose.Model<AdminAccount>,
     private userService : UserService
   ){}
@@ -41,24 +34,11 @@ export class AdminAccountsService {
       gold_coin_balance:userbal,
       email:player.email 
     });
->>>>>>> a4cab6d53801203b22da403335520fc76737ea33
     return res;
     }
     return {status:false,message:"Admin mail not found"};
     }
 
-<<<<<<< HEAD
-  async findAll() {
-    return await this.accountService.find();
-  }
-
-  async findOne(id: any) {
-    return await this.accountService.findOne({ _id: id });
-  }
-
-  async update(id: any, updateAdminAccountDto: UpdateAdminAccountDto) {
-    const account = await this.accountService.findByIdAndUpdate(id, updateAdminAccountDto);
-=======
  async findAll() {
   return await this.acoountModel.find();
   }
@@ -98,29 +78,28 @@ export class AdminAccountsService {
 
   async update(id: any, updateAdminAccountDto: UpdateAdminAccountDto) {
     const account = await this.acoountModel.findByIdAndUpdate(id,updateAdminAccountDto);
->>>>>>> a4cab6d53801203b22da403335520fc76737ea33
 
     if (!account) {
       throw new NotFoundException('account not found.');
     }
-
-    return { status: true, data: await this.accountService.findOne({ _id: id }), message: "account updated successfully" };
+  
+    return {status: true,message: "account updated successfully"};
   }
 
   async remove(id: any) {
     const account = await this.acoountModel.findByIdAndDelete(id);
 
-    if (!account) {
+    if (!account){
       throw new NotFoundException('account not found.');
     }
-
-    return { status: true, message: "account Delete successfully" };
+  
+    return {status: true,message: "account Delete successfully"};
   }
   async getLatestEntry(): Promise<any> {
     try {
       const latestRecord = await this.acoountModel
         .findOne()
-        .sort({ createdAt: -1 })
+        .sort({ createdAt: -1 }) 
         .exec();
       return latestRecord;
     } catch (error) {
