@@ -37,6 +37,10 @@ export class Games extends Document {
     created_by: string;
     @Prop()
     updated_by: string;
+
+    @Prop({ default: '0' })
+    bet_expires_sec: string;
+
 }
 export const GamesSchema = SchemaFactory.createForClass(Games)
 
