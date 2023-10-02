@@ -514,8 +514,8 @@ return users;
     return await this.userModel.findOne({ _id: userId });
   }
 
-  async findByUserId(userId: string) {
-    return await this.userModel.findOne({ _id: userId });
+  async findByUserId(user_id: string) {
+    return await this.userModel.findOne({ user_id: user_id });
   }
   async findByID(_id: string) {
     return await this.userModel.findOne({ _id: _id });
