@@ -9,6 +9,11 @@ export class BorrowStatus  extends Document{
     gold_status:string;
     @Prop()
     remarks:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
   
 }
 export const BorrowStatusSchema = SchemaFactory.createForClass(BorrowStatus)

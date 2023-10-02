@@ -18,8 +18,14 @@ export class UserBank extends Document {
 
     @Prop({ required: true })
     user_id: string;
-    // @Prop({ default: "", })
-    // remarks: string;
+
+    @Prop({ default: 0 })
+    is_selected: number;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 }
 export const UserBankSchema = SchemaFactory.createForClass(UserBank)
 

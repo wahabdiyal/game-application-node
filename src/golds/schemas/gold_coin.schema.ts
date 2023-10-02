@@ -23,10 +23,14 @@ export class Gold extends Document{
     type:Type ;
     @Prop()
     remarks:string;
-    @Prop({default: null,})
-    entry_by:string;
     @Prop({ type: Types.ObjectId, ref: 'User'})
-    client_id: User; 
+    client_id: User;
+    @Prop({ type: Types.ObjectId, ref: 'Game'})
+    game_id:string;
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 
     
 }

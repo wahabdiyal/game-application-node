@@ -11,12 +11,19 @@ export class DailyRewardCollects  extends Document{
     status:string;
     @Prop({required: true,default:0})
     reward_count:string;
+    @Prop({default:0})
+    total_reward:string;
     @Prop({required: true,})
     user_id:string;
     @Prop({required: true,default:null})
     date:string;
     @Prop({required: true})
     country:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
  
 }
 export const DailyRewardCollectsSchema = SchemaFactory.createForClass(DailyRewardCollects)

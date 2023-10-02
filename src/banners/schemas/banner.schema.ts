@@ -16,6 +16,11 @@ export class Banner  extends Document{
     @Prop({required: true,default:null})
     file_url:string;
 
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
+
  
 }
 export const BannerSchema = SchemaFactory.createForClass(Banner)

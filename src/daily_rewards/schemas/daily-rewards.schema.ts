@@ -13,9 +13,9 @@ export class DailyReward  extends Document{
     @Prop({required: true,default:"0"})
     title:string;
     @Prop({required: true,default:0})
-    start_date:string;
+    start_date:Date;
     @Prop({required: true,default:0})
-    end_date:string;
+    end_date:Date;
     @Prop({required: true,default:0})
     inactive_day:string;
     @Prop({required: true,default:0})
@@ -26,6 +26,11 @@ export class DailyReward  extends Document{
     silver_coin:string;
     @Prop({required: true,default:0})
     gold_coin:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
  
 }
 export const DailyRewardSchema = SchemaFactory.createForClass(DailyReward)

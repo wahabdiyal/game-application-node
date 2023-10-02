@@ -301,7 +301,7 @@ return users;
   }
 
   async clearAttempts(email: string) {
-    await this.userModel.updateOne({ email: email }, { attempts: 0,status:'active' });
+    await this.userModel.updateOne({ email: email }, { attempts: 0, status: 'active' });
     return "attempts clear"
   }
   async findByEmail(email: string): Promise<User> {
@@ -393,7 +393,102 @@ return users;
     return user;
   }
 
+  async findAllUserCount() {
 
+    const operator = await this.userModel.countDocuments({ role: "operator", status: "active" });
+    const player = await this.userModel.countDocuments({ role: "player", status: "active" });
+    const blocked = await this.userModel.countDocuments({ status: "blocked" });
+    //blocked
+    //active
+    return {
+      operator: operator,
+      player: player,
+      blocked: blocked
+    };
+  }
+
+  async findCountryWiseActive(role: string) {
+
+    return await this.userModel.aggregate([
+      {
+        $match: { role: role, status: "active" }
+      },
+      {
+        $group: {
+          _id: "$country",
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          country: "$_id",
+          count: 1
+        }
+      },
+      {
+        $sort: { country: 1 } // Sort by "country" field in ascending order (1)
+      }
+    ]);
+  }
+
+
+  async statusWiseUsers(role: string) {
+
+    return await this.userModel.aggregate([
+      {
+        $match: { role: role } // Remove the "status" from the $match stage
+      },
+      {
+        $group: {
+          _id: "$status", // Group only by "status"
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          status: "$_id", // Rename _id to status in the output
+          count: 1
+        }
+      },
+      {
+        $sort: { status: 1 } // Sort by "status" field in ascending order (1)
+      }
+    ]);
+
+  }
+
+
+  async signUpGraph(role: string) {
+
+    return await this.userModel.aggregate([
+      {
+        $match: { role: role } // Match documents with the desired role
+      },
+      {
+        $addFields: {
+          date: {
+            $dateToString: {
+              format: "%Y-%m-%d",
+              date: { $toDate: "$createdAt" } // Convert to date
+            }
+          }
+        }
+      },
+      {
+        $group: {
+          _id: "$date", // Group by the newly created 'date' field
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: { _id: 1 } // Sort by Date in ascending order (1)
+      }
+    ]);
+
+
+  }
   async getAllUser() {
     return await this.userModel.find({ $or: [{ role: "Player" }, { role: "player" }] }).select([
       "full_name",
@@ -409,7 +504,21 @@ return users;
     }
 
     const user = await this.userModel.findOne({ _id: id });
+    if (!user) {
+      return false;
+    }
     return user;
+  }
+
+  async findByUserIdForGold(userId: string) {
+    return await this.userModel.findOne({ _id: userId });
+  }
+
+  async findByUserId(userId: string) {
+    return await this.userModel.findOne({ _id: userId });
+  }
+  async findByID(_id: string) {
+    return await this.userModel.findOne({ _id: _id });
   }
 
   async UpdateUser(user_id, data, type) {
@@ -465,6 +574,87 @@ return users;
     const year = date.getFullYear();
     // console.log(new Date(`${year}-${month}-${day}`));
     return new Date(`${year}-${month}-${day}`);
+  }
+  async fetchUserProfile(email: string): Promise<any> {
+
+    const user = await this.userModel.findOne({ email: email });
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    let r = (Math.random() * 36 ** 16).toString(36);
+
+    const payload = {
+      id: user._id,
+      name: user.first_name + user.last_name,
+      country: user.country,
+      email: user.email,
+      status: user.status,
+      role: user.role,
+      user_login_token: r
+    };
+    const access_token = await this.jwtService.signAsync(payload)
+
+
+    return { "status": true, "user": user, "access_token": access_token };
+  }
+
+  async updateMobile(id: any, body: any) {
+    const update = await this.userModel.findByIdAndUpdate(id, body);
+
+    if (!update) {
+      throw new NotFoundException('User not found.');
+    }
+    const user = await this.userModel.findOne({ _id: id });
+    const payload = {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    };
+    const access_token = await this.jwtService.signAsync(payload)
+
+
+    return { "status": true, "user": user, "access_token": access_token };
+  }
+
+  async getUserRenewTokenForMobile(id:string){
+
+    const user = await this.userModel.findOne({_id :id});
+    const payload = {
+      id: user._id,
+      country:user.country,
+      email: user.email,
+      role: user.role,
+    };
+   const access_token = await this.jwtService.signAsync(payload)
+    
+
+    return {"status": true,"user":user,"access_token":access_token};
+  }
+
+  async findUserByIdOrEmail(value ){
+    // const query = {
+    //   $or: [
+    //     { userId: typeof value === 'number' ? value : NaN },
+    //     { email: { $regex: typeof value === 'string' ? value : '', $options: 'i' } },
+    //   ],
+    // };
+  
+    // return await this.userModel.find(query).exec();
+    const query = {};
+    const numberPattern = /^[0-9]+(\.[0-9]+)?$/;
+    if (numberPattern.test(value) && !isNaN(value)) {
+      query['userId'] = Number(value);
+    }else if (typeof value === 'string') {
+      query['email'] = { $regex: value, $options: 'i' };
+    }
+   query['role'] = 'player';
+    const user =  await this.userModel.findOne(query).select('-password').exec();
+      if(user){
+        return {status:true,user:user};
+      }else{
+        return { status : false , message:"User not found"};
+      }
   }
 
 }

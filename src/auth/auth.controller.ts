@@ -111,7 +111,8 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-    return this.userService.findByEmail(req.user.email);
+   return  this.userService.fetchUserProfile(req.user.email);
+
   }
 
 

@@ -15,6 +15,11 @@ export class BannerCollection  extends Document{
     country:[string];
     @Prop({required: true,})
     banner_id:[string];
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
    
 
  

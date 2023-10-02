@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { SignupRewardsService } from './signup_rewards.service';
 import { CreateSignupRewardDto } from './dto/create-signup_reward.dto';
 import { UpdateSignupRewardDto } from './dto/update-signup_reward.dto';
+ 
 
 @Controller('signup-rewards')
 export class SignupRewardsController {
@@ -11,7 +12,6 @@ export class SignupRewardsController {
   create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
     return this.signupRewardsService.create(createSignupRewardDto);
   }
-
   @Get()
   findAll() {
     return this.signupRewardsService.findAll();

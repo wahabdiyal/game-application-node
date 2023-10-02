@@ -30,7 +30,7 @@ export class AuthMiddleware implements NestMiddleware {
     //     return res.status(401).json({ message: 'Unauthorized Token is missing.' });
     //   }
     // }
-    console.log("Token not valid")
+    // console.log("Token not valid")
 //////////// token condtion for every request of token//////////////////////////
     next();
  
