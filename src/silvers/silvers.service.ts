@@ -36,6 +36,30 @@ export class SilversService {
 
   }
 
+  async createApiRequest(createCoinDto: CreateSilverDto): Promise<any> {
+
+   var res = await this.silverModel.create( createCoinDto );
+    return res;
+
+  }
+
+  async adminCreate(createCoinDto: CreateSilverDto): Promise<any> {
+    const user = await this.usersService.findByUserId(createCoinDto['userId']);
+    if (!user)
+      return { status: 'error', message: 'User not found' }; //////custom generated userId is used
+
+
+    createCoinDto['client_id'] = user._id;
+    const newBalance = (createCoinDto['type'] == "credit") ? parseInt(user.silver_balance) + parseInt(createCoinDto['coins'], 10) : parseInt(user.silver_balance) - parseInt(createCoinDto['coins'], 10);
+
+    this.usersService.UpdateUser(createCoinDto['client_id'], newBalance, "silver");
+    var res = await this.silverModel.create(createCoinDto);
+    return res;
+
+  }
+
+
+
   async findAll(): Promise<Silver[]> {
     const silvers = await this.silverModel.find();
     return silvers;
@@ -110,10 +134,10 @@ export class SilversService {
         const parsedEndDate = new Date(date[0].end);
         data = await this.silverModel.find({ client_id: id }).find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
 
       } else {
-        data = await this.silverModel.find({ client_id: id }).skip(skip).limit(perPage).exec();
+        data = await this.silverModel.find({ client_id: id }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
       }
     } catch (error) {
       date = [];

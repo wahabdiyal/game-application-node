@@ -4,6 +4,7 @@ import { UpdateBetDto } from './dto/update-bet.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Bets } from './schemas/bets.schema';
 import mongoose from 'mongoose';
+ 
 import { UserService } from 'src/user/user.service';
 import { GamesService } from 'src/games/games.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
@@ -23,12 +24,22 @@ export class BetsService {
   ) { }
   async create(createbetDto: CreateBetDto) {
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
- 
+    const today = new Date();
+      const userBet = await this.betsModel.find({
+        first_player: createbetDto['first_player'],
+        createdAt: { $gte: new Date(today.getFullYear(), today.getMonth(), today.getDate()),
+          $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1), },
+      }).countDocuments().exec();
+   const game = await this.gameService.findbyId(createbetDto['game_id']);
+      if(game && Number(game.maximum_challenges) < userBet)
+       {
+        return { status:false,message:"Challenges exceeded"};
+       }
      
 //     if(createbetDto['second_player'] === "hacked"){
 //     if ( Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "hacked") {
  
-     const game = await this.gameService.findbyId(createbetDto['game_id']);
+  
       if(!game){
               return {status:false,message:"Game not found"};
       }
@@ -38,7 +49,7 @@ export class BetsService {
  
           await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');
        const res = await this.betsModel.create({...createbetDto,first_email:first_user['email'],first_name:first_user['first_name'],last_name:first_user['last_name'],first_user_id:first_user['userId']});
-       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
+       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res,game:game};
     }
     else{
         return {status:false,message:"Coin is not enough to play."}
@@ -49,14 +60,14 @@ export class BetsService {
   if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0 ) {
        await this.userService.UpdateUser(first_user['id'],Number(first_user['silver_balance']) - Number(createbetDto['silver']),'silver');  
        const res = await this.betsModel.create({...createbetDto,first_email:first_user['email'],first_name:first_user['first_name'],last_name:first_user['last_name'],first_user_id:first_user['userId']});
-       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
+       return {...await this.userService.fetchUserProfile(first_user['email']),bet:res,game:game};
     }
     ////// gold/////////////
     else if ( Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold'])!=0) {
       /////playing with gold /////
       await this.userService.UpdateUser(first_user['id'],Number(first_user['gold_balance']) - Number(createbetDto['gold']),'gold');  
       const res = await this.betsModel.create({...createbetDto,first_email:first_user['email'],first_name:first_user['first_name'],last_name:first_user['last_name'],first_user_id:first_user['userId']});
-      return {...await this.userService.fetchUserProfile(first_user['email']),bet:res};
+      return {...await this.userService.fetchUserProfile(first_user['email']),bet:res,game:game};
     }
    else{
       return { status:false, message:"Invalid inputs try again"};
@@ -119,7 +130,6 @@ export class BetsService {
   }
 
   async betUpdateWinUser(id:string,user_id:string ){
-     
     const bet = await this.betsModel.findById(id);
       if(bet && bet.status == "active"){
       const user = await this.userService.findUserbyId(user_id);
@@ -139,6 +149,7 @@ export class BetsService {
 }
 
   async betSecondSilverUser(id,second_user){
+ 
     const bet = await this.betsModel.findById(id);
     if(bet && bet.status == "inactive"&& Number(bet.silver) > 0){
       const user = await this.userService.findUserbyId(second_user);
@@ -146,7 +157,8 @@ export class BetsService {
       if(user &&  Number(user['silver_balance']) > Number(bet['silver'])){
           await this.userService.UpdateUser(user['id'],Number(user['silver_balance']) - Number(bet['silver']),'silver');
           await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId});
-         return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:await this.betsModel.findById(id)}; 
+          const updateBet = await this.betsModel.findById(id);
+         return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:updateBet,game:await this.gameService.findOne(updateBet['game_id'])}; 
       }else{
         return {status:false,message:"Invalid Coin not enough"};
       }
@@ -163,7 +175,8 @@ export class BetsService {
       if(user &&  Number(user['gold_balance']) >= Number(bet['gold'])){
           await this.userService.UpdateUser(user['id'],Number(user['gold_balance']) - Number(bet['gold']),'gold');
           await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId});
-         return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:await this.betsModel.findById(id)}; 
+          const updateBet = await this.betsModel.findById(id);
+         return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:updateBet,game:await this.gameService.findOne(updateBet['game_id'])}; 
       }else{
         return {status:false,message:"Invalid Coin not enough"};
       }
@@ -236,7 +249,7 @@ async findAll(page = 0, perPage = 20,status='',date=[],value=null) {
       { second_user_id: { $regex: value, $options: 'i' } },  
     ];
   }
-  let totalCount = await this.betsModel.find(query).countDocuments().exec();
+  let totalCount = await this.betsModel.find(query).sort({ createdAt: -1 }).countDocuments().exec();
   const totalPages = Math.ceil(totalCount / perPage);
   if (page < 1) {
     page = 1;
@@ -246,7 +259,7 @@ async findAll(page = 0, perPage = 20,status='',date=[],value=null) {
   const skip = (page - 1) * perPage;
   let data = [];
   try {
-      data = await this.betsModel.find(query).skip(skip).limit(perPage).exec();
+      data = await this.betsModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } catch (error) {
     data = [];
   }

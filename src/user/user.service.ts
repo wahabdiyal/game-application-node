@@ -9,6 +9,7 @@ import { ReferralCodesService } from 'src/referral_codes/referral_codes.service'
 import { ReferralRewardsService } from 'src/referral_rewards/referral_rewards.service';
 import * as moment from "moment";
 import { CoinTrasService } from 'src/coin_tras/coin_tras.service';
+import axios, { AxiosInstance } from 'axios';
 
 
 
@@ -140,7 +141,7 @@ return users;
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           role: role,
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && date.length > 0) {
         let parsedStartDate = new Date(date[0].start);
         let parsedEndDate = new Date(date[0].end);
@@ -154,7 +155,7 @@ return users;
             { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && role) {
         data = await this.userModel.find({
           $or: [
@@ -166,7 +167,7 @@ return users;
             { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], role: role
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (date.length > 0 && role) {
         const parsedStartDate = new Date(date[0].start);
@@ -174,7 +175,7 @@ return users;
         data = await this.userModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           role: role,
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (search) {
         data = await this.userModel.find({
@@ -187,23 +188,23 @@ return users;
 
             // Add more fields here
           ],
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (role) {
 
         data = await this.userModel.find({
           role: role,
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {
-        data = await this.userModel.find().skip(skip).limit(perPage).exec();
+        data = await this.userModel.find().sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       data = [];
@@ -233,7 +234,7 @@ return users;
     //     "refereal_code":userobj?.refereal_code?userobj.refereal_code:null
     // }
     // console.log(userobj?.refereal_code?userobj.refereal_code:null);
-
+     const axiosInstance: AxiosInstance = this.httpService.axiosRef; 
     let usercheck = await this.userModel.find({ $or: [{ email: user.email }, { phone: user.phone }] });
 
     if (!usercheck.length) {
@@ -248,32 +249,111 @@ return users;
           const refRewardSetting = await this.refrewardService.getRefRewardByDate();
 
           if (refRewardSetting && getRefDetail && userRef) {
+           
+
             const daycount = moment(this.getDate()).diff(moment(this.getDate(moment(getRefDetail.use_date) ? getRefDetail.use_date : "2023-01-01 00:00:00")), 'days') + 1;
-
             if (Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)) {
-
               if (Number(refRewardSetting.silver_coin) > 0) {
-
-                await this.UpdateUser(getRefDetail.user_id, Number(userRef.silver_balance) + Number(refRewardSetting.silver_coin), "silver");
-
+                await this.UpdateUser(getRefDetail.user_id, Number(userRef['silver_balance']) + Number(refRewardSetting.silver_coin), "silver");
+                const response = await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
+                  "coins": refRewardSetting.silver_coin,
+                  "bal":refRewardSetting.silver_coin,
+                  "remarks": "Added by refferal reward",
+                  "client_id": getRefDetail.user_id,
+                  "type": "credit"
+                }).then((response) => {
+                  console.log(JSON.stringify(response.data));
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
               } if (Number(refRewardSetting.gold_coin) > 0) {
-                await this.UpdateUser(getRefDetail.user_id, Number(userRef.gold_balance) + Number(refRewardSetting.gold_coin), "gold");
+                await this.UpdateUser(getRefDetail.user_id, Number(userRef['gold_balance']) + Number(refRewardSetting.gold_coin), "gold");
+            
+                const response = await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah',{
+                  "coins": refRewardSetting.silver_coin,
+                  "bal":refRewardSetting.silver_coin,
+                  "remarks": "Added by refferal reward",
+                  "client_id": getRefDetail.user_id,
+                  "type": "credit"
+                }).then((response) => {
+                  console.log(JSON.stringify(response.data));
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
               }
               await this.refcodeService.update(getRefDetail.id, { total_use: Number(getRefDetail.total_use) + 1, use_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss') });
-
             }
-
           }
           ////////////////////when error fix then here code for update user coin who ref code found accouding to refreward/
         }
       }
       const lastRecords = await this.userModel.find().sort({ createdAt: -1 }).limit(1);
-
+     
+ 
       const userVal = await this.userModel.create({
         ...user, silver_balance: getCoinValue?.silver_coin,
         gold_balance: getCoinValue?.gold_coin,
         "userId": lastRecords[0] ? Number(lastRecords[0]['userId']) + 1 : 1,
       });
+      if(getCoinValue){
+        if(Number(getCoinValue.gold_coin) !=0 && Number(getCoinValue.silver_coin) !=0 ){
+          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah',{
+            "coins": getCoinValue.silver_coin,
+            "bal":userVal.silver_balance,
+            "remarks": "Added Signup reward",
+            "client_id": userVal._id,
+            "type": "credit"
+          }).then((response) => {
+            console.log("signupreward-silver",JSON.stringify(response.data));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+         
+          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah',{
+            "coins": getCoinValue.gold_coin,
+            "bal":userVal.gold_balance,
+            "remarks": "Added Signup reward",
+            "client_id": userVal._id,
+            "type": "credit"
+          }).then((response) => {
+            console.log("signupreward-gold",JSON.stringify(response.data));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
+        else if(Number(getCoinValue.gold_coin) !=0){
+          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah',{
+            "coins": getCoinValue.gold_coin,
+            "bal":userVal.gold_balance,
+            "remarks": "Added Signup reward",
+            "client_id": userVal._id,
+            "type": "credit"
+          }).then((response) => {
+            console.log("signupreward-gold",JSON.stringify(response.data));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }else if(Number(getCoinValue.silver_coin) !=0){
+          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah',{
+            "coins": getCoinValue.silver_coin,
+            "bal":userVal.silver_balance,
+            "remarks": "Added Signup reward",
+            "client_id": userVal._id,
+            "type": "credit"
+          }).then((response) => {
+            console.log("signupreward-silver",JSON.stringify(response.data));
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+        }
+      }
       const payload = {
         id: userVal._id,
         name: userVal.full_name,
@@ -350,6 +430,11 @@ return users;
 
     return { status: true, message: "User updated successfully" };
   }
+  async updatePlayStatus(id: string, bet_block: string) {
+    await this.userModel.updateOne({ _id: id }, { bet_block: bet_block });
+    return this.userModel.findOne({ _id: id });
+  }
+
 
   async remove(id: any) {
     const user = await this.userModel.findByIdAndDelete(id);
@@ -515,7 +600,7 @@ return users;
   }
 
   async findByUserId(userId: string) {
-    return await this.userModel.findOne({ _id: userId });
+    return await this.userModel.findOne({ userId: userId });
   }
   async findByID(_id: string) {
     return await this.userModel.findOne({ _id: _id });
@@ -617,44 +702,44 @@ return users;
     return { "status": true, "user": user, "access_token": access_token };
   }
 
-  async getUserRenewTokenForMobile(id:string){
+  async getUserRenewTokenForMobile(id: string) {
 
-    const user = await this.userModel.findOne({_id :id});
+    const user = await this.userModel.findOne({ _id: id });
     const payload = {
       id: user._id,
-      country:user.country,
+      country: user.country,
       email: user.email,
       role: user.role,
     };
-   const access_token = await this.jwtService.signAsync(payload)
-    
+    const access_token = await this.jwtService.signAsync(payload)
 
-    return {"status": true,"user":user,"access_token":access_token};
+
+    return { "status": true, "user": user, "access_token": access_token };
   }
 
-  async findUserByIdOrEmail(value ){
+  async findUserByIdOrEmail(value) {
     // const query = {
     //   $or: [
     //     { userId: typeof value === 'number' ? value : NaN },
     //     { email: { $regex: typeof value === 'string' ? value : '', $options: 'i' } },
     //   ],
     // };
-  
+
     // return await this.userModel.find(query).exec();
     const query = {};
     const numberPattern = /^[0-9]+(\.[0-9]+)?$/;
     if (numberPattern.test(value) && !isNaN(value)) {
       query['userId'] = Number(value);
-    }else if (typeof value === 'string') {
+    } else if (typeof value === 'string') {
       query['email'] = { $regex: value, $options: 'i' };
     }
-   query['role'] = 'player';
-    const user =  await this.userModel.findOne(query).select('-password').exec();
-      if(user){
-        return {status:true,user:user};
-      }else{
-        return { status : false , message:"User not found"};
-      }
+    query['role'] = 'player';
+    const user = await this.userModel.findOne(query).select('-password').exec();
+    if (user) {
+      return { status: true, user: user };
+    } else {
+      return { status: false, message: "User not found" };
+    }
   }
 
 }

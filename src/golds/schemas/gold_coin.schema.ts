@@ -33,6 +33,8 @@ export class Gold extends Document{
     created_by: string;
     @Prop()
     updated_by: string;
+    @Prop()
+    userId:string;
 
     
 }
