@@ -14,6 +14,10 @@ export class GoldsController {
   create(@Body() createGoldDto: CreateGoldDto) {
     return this.goldsService.create(createGoldDto);
   }
+  @Post('/apirequest/server/jk_y97wah')
+  createApiRequest(@Body() createSilverDto: CreateGoldDto) {
+    return this.goldsService.createApiRequest(createSilverDto);
+  }
 
   @Get()
   findAll() {

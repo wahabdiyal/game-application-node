@@ -39,6 +39,13 @@ export class GoldsService {
     return res;
   }
 
+  async createApiRequest(createCoinDto: CreateGoldDto): Promise<any> {
+
+    var res = await this.goldModel.create( createCoinDto );
+     return res;
+ 
+   }
+
   async findAll(): Promise<Gold[]> {
 
     const golds = await this.goldModel.find();
