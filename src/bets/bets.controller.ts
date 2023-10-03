@@ -41,7 +41,7 @@ export class BetsController {
 
   @Post('/silver/bet/:id')
   async betSecondSilverUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    
+        
         return await this.betsService.betSecondSilverUser(id,updateBetDto['second_user']);
   }
   @Post('/winner/bet/:id')

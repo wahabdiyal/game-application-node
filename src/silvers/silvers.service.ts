@@ -35,6 +35,12 @@ export class SilversService {
     return res;
 
   }
+  async createApiRequest(createCoinDto: CreateSilverDto): Promise<any> {
+
+   var res = await this.silverModel.create( createCoinDto );
+    return res;
+
+  }
 
   async findAll(): Promise<Silver[]> {
     const silvers = await this.silverModel.find();

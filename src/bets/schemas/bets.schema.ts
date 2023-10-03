@@ -16,7 +16,7 @@ export class Bets  extends Document{
     @Prop()
     first_user_id:string;
 
-    @Prop({ required:true})
+    @Prop()
 
     second_player:string;
     @Prop()
