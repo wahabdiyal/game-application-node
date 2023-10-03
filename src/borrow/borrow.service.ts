@@ -82,7 +82,7 @@ export class BorrowService {
 
       if (page < 1) page = 1; if (page > totalPages) page = totalPages
 
-      const skip = (page - 1) * perPage;
+      const skip = ((page - 1) * perPage)<0 ? 0: ((page - 1) * perPage);
 
       data = await this.borrowModel
         .find()

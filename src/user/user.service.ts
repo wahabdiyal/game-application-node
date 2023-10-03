@@ -140,7 +140,7 @@ return users;
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           role: role,
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && date.length > 0) {
         let parsedStartDate = new Date(date[0].start);
         let parsedEndDate = new Date(date[0].end);
@@ -154,7 +154,7 @@ return users;
             { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && role) {
         data = await this.userModel.find({
           $or: [
@@ -166,7 +166,7 @@ return users;
             { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], role: role
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (date.length > 0 && role) {
         const parsedStartDate = new Date(date[0].start);
@@ -174,7 +174,7 @@ return users;
         data = await this.userModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           role: role,
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (search) {
         data = await this.userModel.find({
@@ -187,23 +187,23 @@ return users;
 
             // Add more fields here
           ],
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (role) {
 
         data = await this.userModel.find({
           role: role,
-        }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {
-        data = await this.userModel.find().skip(skip).limit(perPage).exec();
+        data = await this.userModel.find().sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       data = [];
