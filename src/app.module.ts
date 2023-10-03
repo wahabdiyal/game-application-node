@@ -12,7 +12,6 @@ import { SilversModule } from './silvers/silvers.module';
 import { CoinUserModule } from './coin_user/coin_user.module';
 import { WithdrawModule } from './withdraw/withdraw.module';
 
-import { UserRightModule } from './user_right/user_right.module';
 import { ContactModule } from './contact/contact.module';
 import { User, UserSchema } from './user/schemas/user.schema';
 import { CountriesModule } from './countries/countries.module';
@@ -56,6 +55,7 @@ import { BetsModule } from './bets/bets.module';
  
 import { UserMenusModule } from './user_menus/user_menus.module';
 import { CreateLogsModule } from './create-logs/create-logs.module';
+import { UserRightsModule } from './user-rights/user-rights.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -92,7 +92,6 @@ import { CreateLogsModule } from './create-logs/create-logs.module';
     SilversModule,
     CoinUserModule,
     WithdrawModule,
-    UserRightModule,
     ContactModule,
     CountriesModule,
     SignupRewardsModule,
@@ -125,7 +124,8 @@ import { CreateLogsModule } from './create-logs/create-logs.module';
     LoginLogsModule,
     BetsModule,
     UserMenusModule,
-    CreateLogsModule
+    CreateLogsModule,
+    UserRightsModule
   ],
   controllers: [AppController],
   providers: [AppService],

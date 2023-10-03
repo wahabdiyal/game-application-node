@@ -19,6 +19,11 @@ export class GoldsController {
     return this.goldsService.createApiRequest(createSilverDto);
   }
 
+  @Post('create/admin-panel')
+  adminCreate(@Body() createGoldDto: CreateGoldDto) {
+    return this.goldsService.adminCreate(createGoldDto);
+  }
+
   @Get()
   findAll() {
     return this.goldsService.findAll();

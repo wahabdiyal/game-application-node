@@ -16,15 +16,15 @@ export class GoldsService {
   ) { }
 
   async create(createGoldDto: CreateGoldDto): Promise<any> {
- 
 
-   ////asad code inside/////
+
+    ////asad code inside/////
     const user = await this.userService.findByID(createGoldDto['client_id']);
- 
-   
+
+
     // const user = await this.userService.findByUserIdForGold(createGoldDto['client_id']);
-   
- 
+
+
     if (!user)
       return { status: 'error', message: 'User not found' };
     else
@@ -39,12 +39,30 @@ export class GoldsService {
     return res;
   }
 
+
   async createApiRequest(createCoinDto: CreateGoldDto): Promise<any> {
 
     var res = await this.goldModel.create( createCoinDto );
      return res;
  
    }
+
+  async adminCreate(createGoldDto: CreateGoldDto): Promise<any> {
+
+    const user = await this.userService.findByUserId(createGoldDto['userId']);
+    if (!user)
+      return { status: 'error', message: 'User not found' };
+
+
+    createGoldDto['client_id'] = user._id;
+    const newBalance = (createGoldDto['type'] == "credit") ? parseInt(user.gold_balance) + parseInt(createGoldDto['coins'], 10) : parseInt(user.gold_balance) - parseInt(createGoldDto['coins'], 10);
+
+    this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
+    var res = await this.goldModel.create(createGoldDto);
+
+    return res;
+  }
+
 
   async findAll(): Promise<Gold[]> {
 
@@ -88,17 +106,9 @@ export class GoldsService {
   }
 
   async fetchAllCoinUserId(id: any, page = 0, perPage = 20, date = []) {
-    // const gold = await this.goldModel.find({client_id: id});
-
-    // if (gold.length==0) {
-    //   throw new NotFoundException('Gold Coin not found.');
-    // }
-    // return {status: true,message: "Gold Coin User","coin":gold};
-
 
     let totalCount = 0
     if (date.length > 0) {
-
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -121,16 +131,14 @@ export class GoldsService {
 
     let data = [];
     try {
-
       if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.goldModel.find({ client_id: id }).find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
-
+        }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
       } else {
-        data = await this.goldModel.find({ client_id: id }).skip(skip).limit(perPage).exec();
+        data = await this.goldModel.find({ client_id: id }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
       }
     } catch (error) {
       date = [];
@@ -161,8 +169,7 @@ export class GoldsService {
             creditSum: { $sum: { $cond: [{ $eq: ['$type', 'credit'] }, { $toInt: '$coins' }, 0] } },
             debitSum: { $sum: { $cond: [{ $eq: ['$type', 'debit'] }, { $toInt: '$coins' }, 0] } },
           },
-        },
-
+        }
       ]);
 
       let sumcredit = 0;
@@ -211,7 +218,6 @@ export class GoldsService {
         last_transation_date: goldcoin?.get('createdAt'),
         credit: sumcredit,
         debit: sumdebit
-
       });
     }
     return coinCounts;

@@ -249,7 +249,7 @@ async findAll(page = 0, perPage = 20,status='',date=[],value=null) {
       { second_user_id: { $regex: value, $options: 'i' } },  
     ];
   }
-  let totalCount = await this.betsModel.find(query).countDocuments().exec();
+  let totalCount = await this.betsModel.find(query).sort({ createdAt: -1 }).countDocuments().exec();
   const totalPages = Math.ceil(totalCount / perPage);
   if (page < 1) {
     page = 1;
@@ -259,7 +259,7 @@ async findAll(page = 0, perPage = 20,status='',date=[],value=null) {
   const skip = (page - 1) * perPage;
   let data = [];
   try {
-      data = await this.betsModel.find(query).skip(skip).limit(perPage).exec();
+      data = await this.betsModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } catch (error) {
     data = [];
   }

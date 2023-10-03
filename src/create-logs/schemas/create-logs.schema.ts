@@ -14,6 +14,9 @@ export class CreateLogs extends Document {
     @Prop()
     requestType: string;
 
+    @Prop()
+    ip: string;
+
     @Prop({ type: mongoose.Schema.Types.Mixed }) // Specify the type as Mixed
     body: JSON;
 
