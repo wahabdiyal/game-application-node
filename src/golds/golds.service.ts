@@ -39,6 +39,14 @@ export class GoldsService {
     return res;
   }
 
+
+  async createApiRequest(createCoinDto: CreateGoldDto): Promise<any> {
+
+    var res = await this.goldModel.create( createCoinDto );
+     return res;
+ 
+   }
+
   async adminCreate(createGoldDto: CreateGoldDto): Promise<any> {
 
     const user = await this.userService.findByUserId(createGoldDto['userId']);
@@ -54,6 +62,7 @@ export class GoldsService {
 
     return res;
   }
+
 
   async findAll(): Promise<Gold[]> {
 

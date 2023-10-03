@@ -35,6 +35,14 @@ export class SilversService {
     return res;
 
   }
+
+  async createApiRequest(createCoinDto: CreateSilverDto): Promise<any> {
+
+   var res = await this.silverModel.create( createCoinDto );
+    return res;
+
+  }
+
   async adminCreate(createCoinDto: CreateSilverDto): Promise<any> {
     const user = await this.usersService.findByUserId(createCoinDto['userId']);
     if (!user)
@@ -49,6 +57,7 @@ export class SilversService {
     return res;
 
   }
+
 
 
   async findAll(): Promise<Silver[]> {
