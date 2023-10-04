@@ -80,6 +80,10 @@ export class AdminAccountsService {
       const parsedEndDate = new Date(date[0].end);
 
       totalCount = await this.acoountModel.find({
+        $or:[
+          {type:"commission_bet"},
+          {type:"commission_withdraw"}
+        ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         country: status
       }).countDocuments().exec();
@@ -89,6 +93,10 @@ export class AdminAccountsService {
       const parsedEndDate = new Date(date[0].end);
 
       totalCount = await this.acoountModel.find({
+        $or:[
+        {type:"commission_bet"},
+        {type:"commission_withdraw"}
+      ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).countDocuments().exec();
     } else if (status) {
@@ -96,7 +104,12 @@ export class AdminAccountsService {
         country: status ,
       }).countDocuments().exec();
     } else {
-      totalCount = await this.acoountModel.find().countDocuments().exec();
+      totalCount = await this.acoountModel.find({
+        $or:[
+          {type:"commission_bet"},
+          {type:"commission_withdraw"}
+        ],
+      }).countDocuments().exec();
     }
 
     const totalPages = Math.ceil(totalCount / perPage);
@@ -117,6 +130,10 @@ export class AdminAccountsService {
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.acoountModel.find({
+          $or:[
+            {type:"commission_bet"},
+            {type:"commission_withdraw"}
+          ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           country: status
         }).skip(skip).limit(perPage).exec();
@@ -129,11 +146,20 @@ export class AdminAccountsService {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.acoountModel.find({
+          $or:[
+            {type:"commission_bet"},
+            {type:"commission_withdraw"}
+          ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).skip(skip).limit(perPage).exec();
 
       } else {
-        data = await this.acoountModel.find().skip(skip).limit(perPage).exec();
+        data = await this.acoountModel.find({
+          $or:[
+            {type:"commission_bet"},
+            {type:"commission_withdraw"}
+          ],
+        }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       date = [];
