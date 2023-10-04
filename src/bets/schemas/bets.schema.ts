@@ -25,7 +25,8 @@ export class Bets  extends Document{
     second_name:string;
     @Prop()
     second_user_id:string;
-
+    @Prop()
+    second_join_time:string;
     @Prop({default:"0"})
 
     game_id:string;
