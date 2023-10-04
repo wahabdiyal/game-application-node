@@ -59,7 +59,7 @@ export class AdminAccountsService {
   const skip = (page - 1) * perPage;
   let data = [];
   try {
-      data = await this.acoountModel.find(query).skip(skip).limit(perPage).populate('first_player').populate('second_player').exec();
+      data = await this.acoountModel.find(query).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').exec();
       } catch (error) {
     data = [];
   }
@@ -137,11 +137,11 @@ export class AdminAccountsService {
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           country: status
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').exec();
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
       } else if (status) {
         data = await this.acoountModel.find({
           country: status
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').exec();
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
       }
       else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
@@ -152,7 +152,7 @@ export class AdminAccountsService {
             {type:"commission_withdraw"}
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').exec();
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
 
       } else {
         data = await this.acoountModel.find({
@@ -160,7 +160,7 @@ export class AdminAccountsService {
             {type:"commission_bet"},
             {type:"commission_withdraw"}
           ],
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('user_id').exec();
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
       }
     } catch (error) {
       date = [];

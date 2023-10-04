@@ -205,7 +205,7 @@ export class BetsService {
         bet_id:id,
         first_player:bet.first_player,
         second_player:bet.second_player,
-        game_id:game.game_id,
+        game_id:game.id,
         type:'commission_bet'
        });
       

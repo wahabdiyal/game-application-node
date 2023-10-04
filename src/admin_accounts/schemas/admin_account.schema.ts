@@ -1,6 +1,7 @@
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from 'mongoose';
+import { Games } from "src/games/schemas/games.schema";
 import { User } from "src/user/schemas/user.schema";
 @Schema({
         timestamps: true,
@@ -23,8 +24,8 @@ export class AdminAccount  extends Document{
     @Prop({ type: Types.ObjectId, ref: 'User' })
     second_player:User;
 
-    @Prop()
-    game_id:string;
+    @Prop({type: Types.ObjectId, ref: 'Games' })
+    game_id:Games;
 
     @Prop({default:"other"})
     type:string;
