@@ -156,7 +156,7 @@ export class BetsService {
       
       if(user &&  Number(user['silver_balance']) > Number(bet['silver'])){
           await this.userService.UpdateUser(user['id'],Number(user['silver_balance']) - Number(bet['silver']),'silver');
-          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId});
+          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId,second_join_time:new Date().toISOString()});
           const updateBet = await this.betsModel.findById(id);
          return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:updateBet,game:await this.gameService.findOne(updateBet['game_id'])}; 
       }else{
@@ -174,7 +174,7 @@ export class BetsService {
       
       if(user &&  Number(user['gold_balance']) >= Number(bet['gold'])){
           await this.userService.UpdateUser(user['id'],Number(user['gold_balance']) - Number(bet['gold']),'gold');
-          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId});
+          await this.betsModel.findByIdAndUpdate(id,{status:"active",second_player:second_user,second_email:user.email,second_name:user.first_name,second_user_id:user.userId,second_join_time:new Date().toISOString()});
           const updateBet = await this.betsModel.findById(id);
          return {...await this.userService.getUserRenewTokenForMobile(user['id']),bet:updateBet,game:await this.gameService.findOne(updateBet['game_id'])}; 
       }else{
