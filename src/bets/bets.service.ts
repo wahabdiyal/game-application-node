@@ -202,8 +202,10 @@ export class BetsService {
         "credit":commission,
         "debit":"0",
         "user_id":user['id'],
+        country:user['country'],
+        bet_id:id,
         game_id:game.game_id,
-        type:'commission'
+        type:'commission_bet'
        });
       
       // const admin = await this.userService.findByEmail(process.env.DF_EMAIL);

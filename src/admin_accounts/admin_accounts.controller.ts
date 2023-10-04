@@ -22,6 +22,12 @@ export class AdminAccountsController {
     return this.adminAccountsService.findAllCommission(page,perpage,game_id);
   }
 
+  @Get("sale/report")
+  getAdminSale(@Query() { page, perpage, start_date, end_date,country}) {
+    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
+    return this.adminAccountsService.getAdminSale(page,perpage,date, country?country.toLowerCase():country);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.adminAccountsService.findOne(id);

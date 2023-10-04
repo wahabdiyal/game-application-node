@@ -72,6 +72,81 @@ export class AdminAccountsService {
   };
   }
 
+  async getAdminSale(page = 0, perPage = 20, date = [], status = false) {
+
+    let totalCount = 0
+    if (date.length > 0 && status) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.acoountModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        country: status
+      }).countDocuments().exec();
+    } else if (date.length > 0) {
+
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.acoountModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
+    } else if (status) {
+      totalCount = await this.acoountModel.find({
+        country: status ,
+      }).countDocuments().exec();
+    } else {
+      totalCount = await this.acoountModel.find().countDocuments().exec();
+    }
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const skip = (page - 1) * perPage;
+
+    let data = [];
+    try {
+
+      if (date.length > 0 && status) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+
+        data = await this.acoountModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          country: status
+        }).skip(skip).limit(perPage).exec();
+      } else if (status) {
+        data = await this.acoountModel.find({
+          country: status
+        }).skip(skip).limit(perPage).exec();
+      }
+      else if (date.length > 0) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.acoountModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).skip(skip).limit(perPage).exec();
+
+      } else {
+        data = await this.acoountModel.find().skip(skip).limit(perPage).exec();
+      }
+    } catch (error) {
+      date = [];
+    }
+    return {
+      data: data,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+
+  }
  async findOne(id: any) {
     return await this.acoountModel.findOne({_id : id});
   }
