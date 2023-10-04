@@ -195,8 +195,7 @@ export class BetsService {
       const game = await this.gameService.findOne(bet.game_id);
        const commission = Math.ceil((Number(game.commission) /100)*winprice);
        const userprice = winprice-commission;
-     
-
+      
        await this.adminAcountService.create({
         "remarks":"Get commission from player",
         "credit":commission,
@@ -204,6 +203,8 @@ export class BetsService {
         "user_id":user['id'],
         country:user['country'],
         bet_id:id,
+        first_player:bet.first_player,
+        second_player:bet.second_player,
         game_id:game.game_id,
         type:'commission_bet'
        });
