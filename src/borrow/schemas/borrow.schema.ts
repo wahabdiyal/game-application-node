@@ -4,9 +4,9 @@ import { Document, Types } from 'mongoose';
     timestamps: true,
 })
 export class Borrow extends Document {
-    @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+    @Prop({  type: Types.ObjectId, ref: 'User' })
     sender: string;
-    @Prop({ required: true, type: Types.ObjectId, ref: 'User' })
+    @Prop({   type: Types.ObjectId, ref: 'User' })
     receiver: string;
     @Prop({ default: 0 })
     gold_coin: string;

@@ -1,6 +1,8 @@
 
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
+import { Games } from "src/games/schemas/games.schema";
+import { User } from "src/user/schemas/user.schema";
 @Schema({
         timestamps: true,
 })
@@ -15,12 +17,15 @@ export class AdminAccount  extends Document{
     
     @Prop({required: true,default:"0"})
     gold_coin_balance:string;
+  
+    @Prop({type: Types.ObjectId, ref: 'User' })
+    first_player:User;
+    
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    second_player:User;
 
-    @Prop()
-    client_id:string;
-
-    @Prop()
-    game_id:string;
+    @Prop({type: Types.ObjectId, ref: 'Games' })
+    game_id:Games;
 
     @Prop({default:"other"})
     type:string;
@@ -40,7 +45,7 @@ export class AdminAccount  extends Document{
     @Prop()
     updated_by: string;
 
-    @Prop()
+    @Prop({ type: Types.ObjectId, ref: 'User'})
     user_id:string;
 
     @Prop()

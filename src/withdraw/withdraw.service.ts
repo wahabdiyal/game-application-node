@@ -33,7 +33,11 @@ export class WithdrawService {
     if (createWithdrawDto['status'] == "approved") {
       const latestAdminBal = await this.adminAccount.getLatestEntry();
 
-      await this.adminAccount.create({ remarks: "Added gold balance from withdrawal", credit: Number(createWithdrawDto['coins']), client_id: createWithdrawDto['client_id'], gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
+      await this.adminAccount.create({ 
+        remarks: "Added gold balance from withdrawal", 
+        credit: Number(createWithdrawDto['coins']), 
+        client_id: createWithdrawDto['client_id'], 
+        gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
     }
     var res = await this.withDrawModel.create(createWithdrawDto);
     return res;
