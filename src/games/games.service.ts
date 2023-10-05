@@ -54,7 +54,8 @@ export class GamesService {
     if (!game) {
       throw new NotFoundException('game not found.');
     }
-    return { status: true, message: "game updated successfully" };
+    const data =await this.gameModel.findOne({ _id: id });
+    return { status: true, data: data, message: "game updated successfully" };
   }
 
   async remove(id: string) {
