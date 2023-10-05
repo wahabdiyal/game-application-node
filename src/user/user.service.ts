@@ -587,8 +587,9 @@ return users;
     } catch (e) {
       return false;
     }
-
-    const user = await this.userModel.findOne({ _id: id });
+    
+    const user = await this.userModel.findOne({_id:id});
+ 
     if (!user) {
       return false;
     }
