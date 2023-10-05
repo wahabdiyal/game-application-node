@@ -28,8 +28,8 @@ export class Silver extends Document{
     remarks:string;
     @Prop({default: null,})
     entry_by:string;
-    @Prop({ type: Types.ObjectId, ref: 'User'})
-    client_id: User;
+    @Prop()
+    client_id: string;
     @Prop()
     userId:string;
 
