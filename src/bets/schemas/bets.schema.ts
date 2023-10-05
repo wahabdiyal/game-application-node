@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Document } from 'mongoose';
- 
+import { Document, Types } from 'mongoose';
+import { Games } from "src/games/schemas/games.schema";
+import { User } from "src/user/schemas/user.schema";
  
 @Schema({
         timestamps: true,
 })
 export class Bets  extends Document{
-    @Prop({required:true})
+    @Prop({required:true, type: Types.ObjectId, ref: 'User'})
 
     first_player:string;
     @Prop()
@@ -16,7 +17,7 @@ export class Bets  extends Document{
     @Prop()
     first_user_id:string;
 
-    @Prop()
+    @Prop({ type: Types.ObjectId, ref: 'User'})
 
     second_player:string;
     @Prop()
@@ -27,7 +28,7 @@ export class Bets  extends Document{
     second_user_id:string;
     @Prop()
     second_join_time:string;
-    @Prop({default:"0"})
+    @Prop({default:"0", type: Types.ObjectId, ref: 'Games'})
 
     game_id:string;
     @Prop({default:""})
