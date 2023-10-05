@@ -213,12 +213,12 @@ export class BetsService {
 
       // await this.userService.update(admin.id,{gold_balance:Number(admin.gold_balance)+commission});
      
-        await this.goldService.create({
+        return await this.goldService.create({
         client_id:user['_id'],
-        "remarks": "Player with gold in game and won",
-        "type":"credit",
-       'game_id':bet.game_id,
-        "coins": userprice
+        remarks: "Player with gold in game and won",
+        type:"credit",
+       game_id:bet.game_id,
+        coins: userprice
        });
       await this.update(id,{status:"complete",winner:user['_id']});
 
