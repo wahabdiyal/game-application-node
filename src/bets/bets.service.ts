@@ -262,7 +262,7 @@ async findAll(page = 0, perPage = 20,status='',date=[],value=null) {
   const skip = (page - 1) * perPage;
   let data = [];
   try {
-      data = await this.betsModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      data = await this.betsModel.find(query).populate('first_player').populate('second_player').populate('game_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } catch (error) {
     data = [];
   }
