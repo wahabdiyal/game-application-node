@@ -30,33 +30,43 @@ export class PurchaseRequestsService {
   }
 
   async update(id: any, updatePurchaseDto: UpdatePurchaseRequestDto) {
-    const request = await this.purchasemModel.findByIdAndUpdate(id, updatePurchaseDto);
+    const object = await this.purchasemModel.findOne({ _id: id });
+   
+    ////update object
+    await this.purchasemModel.findByIdAndUpdate(id, updatePurchaseDto);
 
-    if (!request) {
-      throw new NotFoundException('Purchase request not found.');
-    }
-
-    const object = await this.purchasemModel.findOne(request._id);
-
-    if (object.status === "approved") {
+    if (updatePurchaseDto['status'] === "approved") {
+      ////admin debit admin wallet
       await this.adminAccountService.create({
-        "remarks": "Purchase Request Approved",
+        "remarks": "purchase approved, TrD:" + id,
         "debit": object['gold_coin'],
         "credit": 0,
         "user_id": object['user_id'],
       });
+      //credit player
       await this.goldService.create({
         "client_id": object['user_id'],
         "entry_by": "admin",
-        "remarks": "Purchase from admin account by Approved.",
+        "remarks": "purchase approved, TrD:" + id,
         "type": "credit",
         "status": "complete",
         "coins": object['gold_coin'],
       });
 
     }
+    else {
+      if (object.status === 'approved') await this.goldService.create({
+        "client_id": object['user_id'],
+        "entry_by": "admin",
+        "remarks": "purchase reversed, Trd:" + id,
+        "type": "debit",
+        "status": "complete",
+        "coins": object['gold_coin'],
+      });
+    }
+    const data = await this.purchasemModel.findById(id);
 
-    return { status: true, data: object, message: "Purchase request updated successfully" };
+    return { status: true, data: data, message: "updated" };
   }
 
   async remove(id: any) {
@@ -119,21 +129,21 @@ export class PurchaseRequestsService {
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status
-        }).skip(skip).limit(perPage).exec();
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (status) {
         data = await this.purchasemModel.find({
           status: status
-        }).skip(skip).limit(perPage).exec();
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
       else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {
-        data = await this.purchasemModel.find().skip(skip).limit(perPage).exec();
+        data = await this.purchasemModel.find().populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       date = [];

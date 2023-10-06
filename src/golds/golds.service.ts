@@ -21,7 +21,7 @@ export class GoldsService {
     ////asad code inside/////
     const user = await this.userService.findByID(createGoldDto['client_id']);
 
-
+    
     // const user = await this.userService.findByUserIdForGold(createGoldDto['client_id']);
 
 
@@ -35,6 +35,7 @@ export class GoldsService {
     this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
     /////add user current balance in gold and field in db
     var res = await this.goldModel.create({createGoldDto,'bal':newBalance});
+    console.log(createGoldDto['client_id'],newBalance);
 
     return res;
   }
@@ -140,6 +141,7 @@ export class GoldsService {
       } else {
         data = await this.goldModel.find({ client_id: id }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
       }
+      console.log(id);
     } catch (error) {
       date = [];
     }
