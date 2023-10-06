@@ -1,11 +1,7 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from 'mongoose';
 import { User } from "src/user/schemas/user.schema";
-export enum Type{
-    credit="credit",
-    debit="debit",
-  
-}
+ 
 export enum Status{
     approved="approved",
     pending="pending",
@@ -20,14 +16,14 @@ export class Gold extends Document{
     @Prop()
     coins:string;
     @Prop({default:null })
-    type:Type ;
+    type:string ;
     @Prop()
     bal:string;
     @Prop()
     remarks:string;
-    @Prop({ type: Types.ObjectId, ref: 'User'})
-    client_id: User;
-    @Prop({ type: Types.ObjectId, ref: 'Game'})
+    @Prop()
+    client_id: string;
+    @Prop()
     game_id:string;
     @Prop()
     created_by: string;

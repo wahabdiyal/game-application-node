@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserService } from 'src/user/user.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
+import { GoldsService } from 'src/golds/golds.service';
+import { WithdrawLimitsService } from 'src/withdraw_limits/withdraw_limits.service';
 
 
 @Injectable()
@@ -14,19 +16,69 @@ export class WithdrawService {
     @InjectModel(Withdraw.name)
     private withDrawModel: mongoose.Model<Withdraw>,
     private userService: UserService,
+    private goldService: GoldsService,
     private adminAccount: AdminAccountsService,
+    private readonly withdrawlimitService:WithdrawLimitsService
 
   ) { }
 
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-    if (userCoin == null) {
+     
+    if (!userCoin) {
       return new NotFoundException("User not found");
     }
     ///////condition add here check for balance 
     if (Number(userCoin['gold_balance']) <= 0) {
       return { status: false, 'message': 'Request not processed because user not have enough coins.' };
     }
+
+    await this.goldService.create({
+      client_id:createWithdrawDto['client_id'],
+      remarks: "Coin is debit withdrawl",
+      type:"debit",
+      coins:createWithdrawDto['coins']
+     });
+
+    await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
+
+    if (createWithdrawDto['status'] == "approved") {
+      const latestAdminBal = await this.adminAccount.getLatestEntry();
+
+      await this.adminAccount.create({ 
+        remarks: "Added gold balance from withdrawal", 
+        credit: Number(createWithdrawDto['coins']), 
+        client_id: createWithdrawDto['client_id'], 
+        gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
+    }
+    var res = await this.withDrawModel.create(createWithdrawDto);
+    return res;
+  }
+
+  ///////////mobile///////////////
+
+  async getLimitWithdraw(country:string){
+    const valueWithdrawLimit = await this.withdrawlimitService.findOneByCountry(country);
+    return valueWithdrawLimit;
+  }
+
+  async createWithdrawRequest(createWithdrawDto: CreateWithdrawDto): Promise<any> {
+    const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
+     
+    if (!userCoin) {
+      return new NotFoundException("User not found");
+    }
+    ///////condition add here check for balance 
+    if (Number(userCoin['gold_balance']) <= 0) {
+      return { status: false, 'message': 'Request not processed because user not have enough coins.' };
+    }
+
+    await this.goldService.create({
+      client_id:createWithdrawDto['client_id'],
+      remarks: "Coin is debit withdrawl",
+      type:"debit",
+      coins:createWithdrawDto['coins']
+     });
 
     await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
 
@@ -128,6 +180,46 @@ export class WithdrawService {
       throw new NotFoundException('Withdraw not found.');
     }
 
+
+    const latestAdminBal = await this.adminAccount.getLatestEntry();
+    const withdrow = await this.findOne(id);
+    
+    if (withdrow && withdrow['status'] == "approved" && withdraw['proved_date']==null){
+      
+      const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
+      await this.adminAccount.create({ 
+        remarks: "Added gold balance from withdrawal", 
+        type:"commission_withdraw",
+        "debit":"0",
+        credit: Number(commission), 
+        user_id: withdrow['client_id'], 
+          });
+          await this.withDrawModel.findByIdAndUpdate(id, {proved_date: new Date().toISOString()});
+     //////////// we need to cut coin when we are create withdraw request //////////////////////
+
+      //    await this.goldService.create({
+      //   client_id:withdrow['client_id'],
+      //   remarks: "Coin is debit withdrawl",
+      //   type:"debit",
+      //   coins:withdrow['coins']
+      //  });
+       
+      }else if(withdrow && updateWithdrawDto['status']=='cancel'){
+        const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
+      // await this.adminAccount.create({ 
+      //   remarks: "Added gold balance from withdrawal", 
+      //   type:"commission_withdraw",
+      //   "debit":Number(commission),
+      //   credit:"0" , 
+      //   user_id: withdrow['client_id'], 
+      //     });
+         await this.goldService.create({
+        client_id:withdrow['client_id'],
+        remarks: "Coin is debit withdrawl",
+        type:"credit",
+        coins:withdrow['coins']
+       }); 
+      }
     return { status: true, message: "Withdraw updated successfully" };
   }
 

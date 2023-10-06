@@ -587,8 +587,9 @@ return users;
     } catch (e) {
       return false;
     }
-
-    const user = await this.userModel.findOne({ _id: id });
+    
+    const user = await this.userModel.findOne({_id:id});
+ 
     if (!user) {
       return false;
     }
@@ -740,6 +741,15 @@ return users;
     } else {
       return { status: false, message: "User not found" };
     }
+  }
+
+  async UpdateUserPassword(user_id, data) {
+      const user =  await this.userModel.updateOne({ _id: user_id }, { password: data });
+      if(user){
+          return {status:true,message:"User update Successfully"}
+      }else{
+        return {status:false,"message":"Some went wrong."};
+      }
   }
 
 }

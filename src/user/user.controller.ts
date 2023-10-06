@@ -117,6 +117,22 @@ export class UserController {
     return this.userService.updateMobile(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
 
   }
+
+  @Post('mobile/update/password')
+  @UseInterceptors(FileInterceptor("form-data"))
+ async updatepasswordmobile( @Body() body: any, @Request() req) {
+    if(!body['newpassword'] || !body['oldpassword']){
+       return {status:false,message:"Field not found"};
+    }
+    const user = await this.userService.findByID(req.user.id);
+    if(user && user['password'] === body['oldpassword']) {
+      return this.userService.UpdateUserPassword(req.user.id,body['newpassword']);
+  }else{
+    return {status:false,message:"Password is not valid."}
+  }
+
+}
+
   @Get('mobile/search/emailorid/:role') // for chart
   findUserByIdOrEmail(@Param('role') role: any) {
     return this.userService.findUserByIdOrEmail(role);

@@ -14,17 +14,17 @@ export class Withdraw_limits extends Document {
 
 
     @Prop({ default: 0 })
-    min_gold_coin: String;
+    min_gold_coin: string;
     @Prop({ default: 0 })
-    max_gold_coin: String;
+    max_gold_coin: string;
     @Prop({ default: "pending" })
-    status: String;
+    status: string;
     @Prop({ default: 0 })
-    percentage: String;
+    percentage: string;
     @Prop({ default: 0 })
-    countries: String[];
+    countries: [string];
     @Prop({ default: 0 })
-    description: String;
+    description: string;
 }
 export const Withdraw_limitsSchema = SchemaFactory.createForClass(Withdraw_limits)
 

@@ -14,11 +14,23 @@ export class DailyRewardsService {
 
   async create(createDailyRewardDto: CreateDailyRewardDto) {
 
-    const collection = await this.dailyReward.find({
+     const collection = await this.dailyReward.find({
       start_date: { $gte: new Date(createDailyRewardDto['start_date']) },
       end_date: { $lte: new Date(createDailyRewardDto['end_date']) },
     });
+    
+    // await this.dailyReward.aggregate([
+    //   {
+    //     $match: {
+    //       start_date: {
+    //         $gte: new Date(createDailyRewardDto['start_date']),
+    //         $lte: new Date(createDailyRewardDto['end_date'])
+    //       }
+    //     }
+    //   }
+    // ]);
 
+    // return [{collection},new Date(createDailyRewardDto['start_date']),new Date(createDailyRewardDto['end_date'])];
     function checkRecordExists(records, criteria) {
       const [countries, startTime, endTime] = criteria;
       const isInRange = function (date, start, end) {
@@ -30,7 +42,7 @@ export class DailyRewardsService {
           const ctry = record.country[m];
           for (let usrcty = 0; usrcty < countries.length; usrcty++) {
             const element = countries[usrcty];
-            if (element == ctry) {
+            if (element.toLowerCase() == ctry.toLowerCase()) {
               return true;
             }
           }

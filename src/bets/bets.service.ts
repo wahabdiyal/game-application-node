@@ -31,7 +31,7 @@ export class BetsService {
           $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1), },
       }).countDocuments().exec();
    const game = await this.gameService.findbyId(createbetDto['game_id']);
-      if(game && Number(game.maximum_challenges) < userBet)
+      if(game && Number(game.maximum_challenges) < userBet && createbetDto['status']!='active')
        {
         return { status:false,message:"Challenges exceeded"};
        }
@@ -100,11 +100,13 @@ export class BetsService {
 
   async betUpdateLoseWin(id:string,status:boolean){
       const bet = await this.betsModel.findById(id);
-      if(bet && bet.status != "complete"){
+      if(bet && bet.status == "complete"){
+         
         const user = await this.userService.findUserbyId(bet.first_player);
         await this.update(id,{status:"complete"});
+       
         if(status){
-          await this.silverService.create({
+         await this.silverService.create({
             client_id:bet.first_player,
             remarks: "AI with silver in game and won",
             type:"credit",
@@ -116,7 +118,7 @@ export class BetsService {
         } 
         ////////only for ai
         await this.silverService.create({
-          client_id:user['_id'],
+          client_id:user['id'],
           "remarks": "AI with silver in game and lose",
           "type":"debit",
          'game_id':bet.game_id,
@@ -213,12 +215,12 @@ export class BetsService {
 
       // await this.userService.update(admin.id,{gold_balance:Number(admin.gold_balance)+commission});
      
-        await this.goldService.create({
+       await this.goldService.create({
         client_id:user['_id'],
-        "remarks": "Player with gold in game and won",
-        "type":"credit",
-       'game_id':bet.game_id,
-        "coins": userprice
+        remarks: "Player with gold in game and won",
+        type:"credit",
+       game_id:bet.game_id,
+        coins: userprice
        });
       await this.update(id,{status:"complete",winner:user['_id']});
 
