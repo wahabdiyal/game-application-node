@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserService } from 'src/user/user.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 import { GoldsService } from 'src/golds/golds.service';
+import { WithdrawLimitsService } from 'src/withdraw_limits/withdraw_limits.service';
 
 
 @Injectable()
@@ -17,10 +18,51 @@ export class WithdrawService {
     private userService: UserService,
     private goldService: GoldsService,
     private adminAccount: AdminAccountsService,
+    private readonly withdrawlimitService:WithdrawLimitsService
 
   ) { }
 
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
+    const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
+     
+    if (!userCoin) {
+      return new NotFoundException("User not found");
+    }
+    ///////condition add here check for balance 
+    if (Number(userCoin['gold_balance']) <= 0) {
+      return { status: false, 'message': 'Request not processed because user not have enough coins.' };
+    }
+
+    await this.goldService.create({
+      client_id:createWithdrawDto['client_id'],
+      remarks: "Coin is debit withdrawl",
+      type:"debit",
+      coins:createWithdrawDto['coins']
+     });
+
+    await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
+
+    if (createWithdrawDto['status'] == "approved") {
+      const latestAdminBal = await this.adminAccount.getLatestEntry();
+
+      await this.adminAccount.create({ 
+        remarks: "Added gold balance from withdrawal", 
+        credit: Number(createWithdrawDto['coins']), 
+        client_id: createWithdrawDto['client_id'], 
+        gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
+    }
+    var res = await this.withDrawModel.create(createWithdrawDto);
+    return res;
+  }
+
+  ///////////mobile///////////////
+
+  async getLimitWithdraw(country:string){
+    const valueWithdrawLimit = await this.withdrawlimitService.findOneByCountry(country);
+    return valueWithdrawLimit;
+  }
+
+  async createWithdrawRequest(createWithdrawDto: CreateWithdrawDto): Promise<any> {
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
      
     if (!userCoin) {
@@ -164,13 +206,13 @@ export class WithdrawService {
        
       }else if(withdrow && updateWithdrawDto['status']=='cancel'){
         const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
-      await this.adminAccount.create({ 
-        remarks: "Added gold balance from withdrawal", 
-        type:"commission_withdraw",
-        "debit":Number(commission),
-        credit:"0" , 
-        user_id: withdrow['client_id'], 
-          });
+      // await this.adminAccount.create({ 
+      //   remarks: "Added gold balance from withdrawal", 
+      //   type:"commission_withdraw",
+      //   "debit":Number(commission),
+      //   credit:"0" , 
+      //   user_id: withdrow['client_id'], 
+      //     });
          await this.goldService.create({
         client_id:withdrow['client_id'],
         remarks: "Coin is debit withdrawl",

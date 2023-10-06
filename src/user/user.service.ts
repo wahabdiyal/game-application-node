@@ -743,4 +743,13 @@ return users;
     }
   }
 
+  async UpdateUserPassword(user_id, data) {
+      const user =  await this.userModel.updateOne({ _id: user_id }, { password: data });
+      if(user){
+          return {status:true,message:"User update Successfully"}
+      }else{
+        return {status:false,"message":"Some went wrong."};
+      }
+  }
+
 }
