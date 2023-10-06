@@ -30,7 +30,7 @@ export class DailyRewardsService {
           const ctry = record.country[m];
           for (let usrcty = 0; usrcty < countries.length; usrcty++) {
             const element = countries[usrcty];
-            if (element == ctry) {
+            if (element.toLowerCase() == ctry.toLowerCase()) {
               return true;
             }
           }
