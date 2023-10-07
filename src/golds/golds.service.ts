@@ -17,7 +17,8 @@ export class GoldsService {
 
   async create(createGoldDto: CreateGoldDto): Promise<any> {
 
-
+    var res = await this.goldModel.create(createGoldDto);
+    
     ////asad code inside/////
     const user = await this.userService.findByID(createGoldDto['client_id']);
 
@@ -34,8 +35,7 @@ export class GoldsService {
 
     this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
     /////add user current balance in gold and field in db
-    var res = await this.goldModel.create({createGoldDto,'bal':newBalance});
-    console.log(createGoldDto['client_id'],newBalance);
+    
 
     return res;
   }
