@@ -14,24 +14,65 @@ export class DailyRewardsService {
 
   async create(createDailyRewardDto: CreateDailyRewardDto) {
 
-     const collection = await this.dailyReward.find({
-      start_date: { $gte: new Date(createDailyRewardDto['start_date']) },
-      end_date: { $lte: new Date(createDailyRewardDto['end_date']) },
-    });
-    
-    // await this.dailyReward.aggregate([
-    //   {
-    //     $match: {
-    //       start_date: {
-    //         $gte: new Date(createDailyRewardDto['start_date']),
-    //         $lte: new Date(createDailyRewardDto['end_date'])
-    //       }
-    //     }
-    //   }
-    // ]);
+      // let collection = await this.dailyReward.find({"start_date": {"$gte": new Date(createDailyRewardDto['start_date']), "$lt": new Date(createDailyRewardDto['end_date'])}}).find({"end_date": {"$gte": new Date(createDailyRewardDto['start_date']), "$lt": new Date(createDailyRewardDto['end_date'])}})
 
-    // return [{collection},new Date(createDailyRewardDto['start_date']),new Date(createDailyRewardDto['end_date'])];
-    function checkRecordExists(records, criteria) {
+      //  .where('start_date').gte(Number(new Date(createDailyRewardDto['start_date']))).lte(Number(new Date(createDailyRewardDto['end_date'])))
+      //  .where('end_date').gte(Number(new Date(createDailyRewardDto['start_date']))).lte(Number(new Date(createDailyRewardDto['end_date'])))
+      //  .exec();{
+ 
+    
+      let collection =  await this.dailyReward.find({});
+      const matchedCollection = [];
+
+for (const item of collection) {
+ 
+  const itemStartDate = new Date(item.start_date).getTime();
+  const itemEndDate = new Date(item.end_date).getTime();
+
+  
+  if (itemStartDate <= new Date(createDailyRewardDto['start_date']).getTime() && itemEndDate >= new Date(createDailyRewardDto['end_date']).getTime()) {
+    
+    matchedCollection.push(item);
+  }else if(itemStartDate >= new Date(createDailyRewardDto['start_date']).getTime() && itemEndDate <= new Date(createDailyRewardDto['end_date']).getTime()){
+    matchedCollection.push(item);
+  }
+}
+    
+  //  let collection =  await this.dailyReward.find({
+  //   $and: [
+  //     {
+  //       start_date: {
+  //         $gte: new Date(createDailyRewardDto['start_date']),
+  //         $lte: new Date(createDailyRewardDto['end_date'])
+  //       }
+  //     },
+  //     {
+  //       end_date: {
+  //         $gte: new Date(createDailyRewardDto['start_date']),
+  //         $lte: new Date(createDailyRewardDto['end_date'])
+  //       }
+  //     }
+  //   ]
+  // });
+      // if(collection.length==0){
+      //   collection =  await this.dailyReward.aggregate([
+      //     {
+      //       $match: {
+      //         end_date: {
+      //           $gte: new Date(createDailyRewardDto['start_date']),
+      //           $lte: new Date(createDailyRewardDto['end_date'])
+      //         }
+      //       }
+      //     }
+      //   ]);
+      // }
+     
+
+
+   //return [{matchedCollection},new Date(createDailyRewardDto['start_date']),new Date(createDailyRewardDto['end_date'])];
+   
+   
+   function checkRecordExists(records, criteria) {
       const [countries, startTime, endTime] = criteria;
       const isInRange = function (date, start, end) {
         return date.isBetween(start, end, undefined, '[');
@@ -52,12 +93,16 @@ export class DailyRewardsService {
     }
     const inputArray = createDailyRewardDto['country'];
 
-    const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item))];
+    const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item.toLowerCase()))];
+ 
 
     const searchCriteria = [uniqueLowerCaseArray, createDailyRewardDto['start_date'], createDailyRewardDto['end_date']];
-    const val = checkRecordExists(collection, searchCriteria);
+    const val = checkRecordExists(matchedCollection, searchCriteria);
     if (!val) {
-      var res = await this.dailyReward.create({ ...createDailyRewardDto, country: uniqueLowerCaseArray });
+      var res = await this.dailyReward.create({ ...createDailyRewardDto,
+        start_date: new Date(createDailyRewardDto['start_date']),
+        end_date: new Date(createDailyRewardDto['end_date']),
+         country: uniqueLowerCaseArray });
       return res;
     } else {
       return { "status": false, "message": "Please select unique country" }
