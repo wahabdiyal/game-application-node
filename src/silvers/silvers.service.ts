@@ -22,7 +22,7 @@ export class SilversService {
 
   async create(createCoinDto: CreateSilverDto): Promise<any> {
   
-    const user = await this.usersService.findByUserId(createCoinDto['client_id']);
+    const user = await this.usersService.findByID(createCoinDto['client_id']);
     if (!user)
       return { status: 'error', message: 'User not found' };
     else

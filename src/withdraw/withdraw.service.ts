@@ -24,21 +24,13 @@ export class WithdrawService {
       return new NotFoundException("User not found");
     }
     ///////condition add here check for balance 
-    if (Number(userCoin['gold_balance']) <= 0) {
-      return { status: false, 'message': 'Request not processed because user not have enough coins.' };
-    }
+    if (Number(userCoin['gold_balance']) <= 0 || Number(userCoin['gold_balance']) < Number(createWithdrawDto['coins']))
+      return { status: false, 'message': 'not enough coins.' };
+
 
     await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
 
-    if (createWithdrawDto['status'] == "approved") {
-      const latestAdminBal = await this.adminAccount.getLatestEntry();
 
-      await this.adminAccount.create({ 
-        remarks: "Added gold balance from withdrawal", 
-        credit: Number(createWithdrawDto['coins']), 
-        client_id: createWithdrawDto['client_id'], 
-        gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
-    }
     var res = await this.withDrawModel.create(createWithdrawDto);
     return res;
   }
@@ -89,18 +81,18 @@ export class WithdrawService {
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status
-        }).skip(skip).limit(perPage).exec();
+        }).populate('client_id').skip(skip).limit(perPage).exec();
       } else if (status) {
         data = await this.withDrawModel.find({
           status: status
-        }).skip(skip).limit(perPage).exec();
+        }).populate('client_id').skip(skip).limit(perPage).exec();
       }
       else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).exec();
+        }).populate('client_id').skip(skip).limit(perPage).exec();
 
       } else {
         data = await this.withDrawModel.find().skip(skip).limit(perPage).exec();
@@ -122,11 +114,70 @@ export class WithdrawService {
   }
 
   async update(id: any, updateWithdrawDto: UpdateWithdrawDto) {
-    const withdraw = await this.withDrawModel.findByIdAndUpdate(id, updateWithdrawDto);
+    const previous = await this.withDrawModel.findOne({ _id: id });
+    const userCoin = await this.userService.findUserbyId(previous['client_id'].toString());
 
-    if (!withdraw) {
-      throw new NotFoundException('Withdraw not found.');
+    ///update entity
+    await this.withDrawModel.findByIdAndUpdate(id, updateWithdrawDto);
+
+    const latestAdminBal = await this.adminAccount.getLatestEntry();
+    if ((previous.status as string) == "approved") {
+      if (updateWithdrawDto['status'] == "canceled") {
+        await this.adminAccount.create({
+          remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+          credit: 0,
+          debit: Number(previous['coins']),
+          user_id: previous['client_id'],
+          gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(previous['coins'])
+        });
+        await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) + Number(previous['coins']) });
+      }
+      if (updateWithdrawDto['status'] == "inprocessed" || updateWithdrawDto['status'] == "pending") {
+        await this.adminAccount.create({
+          remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+          credit: 0,
+          debit: Number(previous['coins']),
+          user_id: previous['client_id'],
+          gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(previous['coins'])
+        });
+      }
+
+
+
+
     }
+    else if ((previous.status as string) == "canceled") {
+      if (updateWithdrawDto['status'] == "approved") {
+        await this.adminAccount.create({
+          remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+          credit: Number(previous['coins']),
+          debit: 0,
+          user_id: previous['client_id'],
+          gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
+        });
+        await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) - Number(previous['coins']) });
+      }
+      if (updateWithdrawDto['status'] == "inprocessed" || updateWithdrawDto['status'] == "pending") {
+        await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) - Number(previous['coins']) });
+      }
+    }
+
+    else {
+      if (updateWithdrawDto['status'] == "approved") {
+        await this.adminAccount.create({
+          remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+          credit: Number(previous['coins']),
+          debit: 0,
+          user_id: previous['client_id'],
+          gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
+        });
+      }
+      if (updateWithdrawDto['status'] == "canceled") {
+        await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) + Number(previous['coins']) });
+      }
+    } ///pending//inprogress
+
+
 
     return { status: true, message: "Withdraw updated successfully" };
   }

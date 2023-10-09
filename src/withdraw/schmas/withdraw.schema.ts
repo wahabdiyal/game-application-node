@@ -6,7 +6,7 @@ export enum Status{
     approved="approved",
     pending="pending",
     inprocessed="inprocessed",
-    cancel="cancel"
+    canceled="canceled"
   
 }
 @Schema({

@@ -1,42 +1,42 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from 'mongoose';
 import { User } from "src/user/schemas/user.schema";
-export enum Type{
-    credit="credit",
-    debit="debit",
-  
+export enum Type {
+    credit = "credit",
+    debit = "debit",
+
 }
-export enum Status{
-    approved="approved",
-    pending="pending",
-  
+export enum Status {
+    approved = "approved",
+    pending = "pending",
+
 }
 @Schema({
-        timestamps: true,
+    timestamps: true,
 })
-export class Gold extends Document{
-    @Prop({default:"pending"})
-    status:Status;
+export class Gold extends Document {
+    @Prop({ default: "pending" })
+    status: Status;
     @Prop()
-    coins:string;
-    @Prop({default:null })
-    type:Type ;
+    coins: string;
+    @Prop({ default: null })
+    type: Type;
     @Prop()
-    bal:string;
+    bal: string;
     @Prop()
-    remarks:string;
-    @Prop({ type: Types.ObjectId, ref: 'User'})
-    client_id: User;
-    @Prop({ type: Types.ObjectId, ref: 'Game'})
-    game_id:string;
+    remarks: string;
+    @Prop()
+    client_id: string;
+    @Prop({ type: Types.ObjectId, ref: 'Game' })
+    game_id: string;
     @Prop()
     created_by: string;
     @Prop()
     updated_by: string;
     @Prop()
-    userId:string;
+    userId: string;
 
-    
+
 }
 export const GoldSchema = SchemaFactory.createForClass(Gold)
 
