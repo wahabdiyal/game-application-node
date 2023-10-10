@@ -29,6 +29,7 @@ export class Silver extends Document {
     @Prop({ default: null, })
     entry_by: string;
     @Prop()
+    @Prop()
     client_id: string;
     @Prop()
     userId: string;

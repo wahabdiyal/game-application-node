@@ -18,17 +18,17 @@ export class Gold extends Document {
     @Prop({ default: "pending" })
     status: Status;
     @Prop()
-    coins: string;
-    @Prop({ default: null })
-    type: Type;
+    coins:string;
+    @Prop({default:null })
+    type:string ;
     @Prop()
     bal: string;
     @Prop()
-    remarks: string;
+    remarks:string;
     @Prop()
     client_id: string;
-    @Prop({ type: Types.ObjectId, ref: 'Game' })
-    game_id: string;
+    @Prop()
+    game_id:string;
     @Prop()
     created_by: string;
     @Prop()
