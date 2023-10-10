@@ -100,62 +100,34 @@ export class BetsService {
   }
 
   /////actual function to update win & loss
-  async betUpdateLoseWin(id: string, winner: string) {
+  async betUpdateLoseWin(id: string, status: boolean) {
     const bet = await this.betsModel.findById(id);
-    const loser = bet.first_player == winner ? bet.second_player : bet.first_player;
-
     if (bet && bet.status != "complete") {
-      if (winner == 'ai' || loser == 'ai') {
-        ///calculate ai user to be charged or discharged
-        // await this.adminAcountService.create({ 
-        //   remarks: "Added gold balance from withdrawal", 
-        //   credit: Number(createWithdrawDto['coins']), 
-        //   client_id: createWithdrawDto['client_id'], 
-        //   gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) 
-        // });
-      }
-
-      if (parseInt(bet.gold) != 0) {
-        await this.goldService.create({
-          "client_id": winner,
-          "entry_by": "admin",
-          "remarks": "game win, TrD:" + id,
-          "type": "credit",
-          "status": "complete",
-          "coins": parseInt(bet.gold),
-        });
-        await this.goldService.create({
-          "client_id": loser,
-          "entry_by": "admin",
-          "remarks": "game loss, TrD:" + id,
-          "type": "debit",
-          "status": "complete",
-          "coins": parseInt(bet.gold),
-        });
-
-      }
-      else {
+      const user = await this.userService.findUserbyId(bet.first_player);
+      await this.update(id, { status: "complete" });
+      if (status) {
         await this.silverService.create({
-          "client_id": winner,
-          "entry_by": "admin",
-          "remarks": "game win, TrD:" + id,
-          "type": "credit",
-          "status": "complete",
-          "coins": parseInt(bet.silver),
+          client_id: bet.first_player,
+          remarks:"ai silver win game TrD:" + bet['_id'],
+          type: "credit",
+          game_id: bet.game_id,
+          coins: Number(user['silver_balance']) + Number(bet['silver']) + Number(bet['silver'])
         });
-        await this.silverService.create({
-          "client_id": loser,
-          "entry_by": "admin",
-          "remarks": "game loss, TrD:" + id,
-          "type": "debit",
-          "status": "complete",
-          "coins": parseInt(bet.silver),
-        });
+        return await this.userService.updateMobile(user['id'], { updated_by: "" });
+        // return  await this.userService.updateMobile(user['id'],{silver_balance:Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])});
       }
+      ////////only for ai
+      await this.silverService.create({
+        client_id: user['_id'],
+        "remarks":  "ai silver loss game TrD:" + bet['_id'],
+        "type": "debit",
+        'game_id': bet.game_id,
+        "coins": 0
+      });
+      return await this.userService.updateMobile(user['id'], { silver_balance: Number(user['silver_balance']) });
 
-      return await this.betsModel.findOneAndUpdate({ _id: id }, { winner: winner, status: 'complete' });
     } else {
-      return { status: false, message: "Already request processed" };
+      return { status: false, message: "Already request proccessed" };
     }
   }
 
@@ -166,7 +138,7 @@ export class BetsService {
       await this.update(id, { status: "complete" });
       await this.silverService.create({
         client_id: user['_id'],
-        "remarks": "Player with silver in game and won",
+        "remarks":  "player silver win game TrD:" + bet['_id'],
         "type": "credit",
         'game_id': bet.game_id,
         "coins": Number(user['silver_balance']) + Number(bet['silver']) + Number(bet['silver'])
@@ -259,7 +231,7 @@ export class BetsService {
     }
   }
   async findAll(page = 0, perPage = 20, status = '', date = [], value = null) {
-    const query = {};
+    const query = { second_player: { $ne: "ai" } };
     if (status == 'active') {
       query['status'] = 'active';
     } else if (status == 'inactive') {

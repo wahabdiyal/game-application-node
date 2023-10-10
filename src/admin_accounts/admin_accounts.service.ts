@@ -147,10 +147,10 @@ export class AdminAccountsService {
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.acoountModel.find({
-          // $or: [
-          //   { type: "commission_bet" },
-          //   { type: "commission_withdraw" }
-          // ],
+          $or: [
+            { type: "commission_bet" },
+            { type: "commission_withdraw" }
+          ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           country: status
         }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
@@ -163,19 +163,19 @@ export class AdminAccountsService {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.acoountModel.find({
-          // $or: [
-          //   { type: "commission_bet" },
-          //   { type: "commission_withdraw" }
-          // ],
+          $or: [
+            { type: "commission_bet" },
+            { type: "commission_withdraw" }
+          ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
 
       } else {
         data = await this.acoountModel.find({
-          // $or: [
-          //   { type: "commission_bet" },
-          //   { type: "commission_withdraw" }
-          // ],
+          $or: [
+            { type: "commission_bet" },
+            { type: "commission_withdraw" }
+          ],
         }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
       }
     } catch (error) {
