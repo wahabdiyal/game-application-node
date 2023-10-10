@@ -165,6 +165,114 @@ export class WithdrawService {
     return await this.withDrawModel.findOne({ _id: id });
   }
 
+  // async update(id: any, updateWithdrawDto: UpdateWithdrawDto) {
+  //   const previous = await this.withDrawModel.findOne({ _id: id });
+  //   const userCoin = await this.userService.findUserbyId(previous['client_id'].toString());
+
+  //   ///update entity
+  //   await this.withDrawModel.findByIdAndUpdate(id, updateWithdrawDto);
+
+  //   let latestAdminBal:any = await this.adminAccount.getLatestEntry();
+  //   if ((previous.status as string) == "approved") {
+  //     if (updateWithdrawDto['status'] == "canceled") {
+  //       await this.adminAccount.create({
+  //         remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+  //         credit: 0,
+  //         debit: Number(previous['coins']),
+  //         user_id: previous['client_id'],
+  //         gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(previous['coins'])
+  //       });
+  //       await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) + Number(previous['coins']) });
+  //     }
+  //     if (updateWithdrawDto['status'] == "inprocessed" || updateWithdrawDto['status'] == "pending") {
+  //       await this.adminAccount.create({
+  //         remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+  //         credit: 0,
+  //         debit: Number(previous['coins']),
+  //         user_id: previous['client_id'],
+  //         gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(previous['coins'])
+  //       });
+  //     }
+
+
+
+
+  //   }
+  //   else if ((previous.status as string) == "canceled") {
+  //     if (updateWithdrawDto['status'] == "approved") {
+  //       await this.adminAccount.create({
+  //         remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+  //         credit: Number(previous['coins']),
+  //         debit: 0,
+  //         user_id: previous['client_id'],
+  //         gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
+  //       });
+  //       await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) - Number(previous['coins']) });
+  //     }
+  //     if (updateWithdrawDto['status'] == "inprocessed" || updateWithdrawDto['status'] == "pending") {
+  //       await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) - Number(previous['coins']) });
+  //     }
+  //   }
+
+  //   else {
+  //     if (updateWithdrawDto['status'] == "approved") {
+  //       await this.adminAccount.create({
+  //         remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
+  //         credit: Number(previous['coins']),
+  //         debit: 0,
+  //         user_id: previous['client_id'],
+  //         gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
+  //       });
+  //     }
+  //     if (updateWithdrawDto['status'] == "canceled") {
+  //       await this.userService.update({ _id: previous['client_id'].toString() }, { gold_balance: Number(userCoin['gold_balance']) + Number(previous['coins']) });
+  //     }
+  //   } ///pending//inprogress
+
+
+
+
+  //   const latestAdminBal = await this.adminAccount.getLatestEntry();
+  //   const withdrow = await this.findOne(id);
+    
+  //   if (withdrow && withdrow['status'] == "approved" && withdraw['proved_date']==null){
+      
+  //     const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
+  //     await this.adminAccount.create({ 
+  //       remarks: "Added gold balance from withdrawal", 
+  //       type:"commission_withdraw",
+  //       "debit":"0",
+  //       credit: Number(commission), 
+  //       user_id: withdrow['client_id'], 
+  //         });
+  //         await this.withDrawModel.findByIdAndUpdate(id, {proved_date: new Date().toISOString()});
+  //    //////////// we need to cut coin when we are create withdraw request //////////////////////
+
+  //     //    await this.goldService.create({
+  //     //   client_id:withdrow['client_id'],
+  //     //   remarks: "Coin is debit withdrawl",
+  //     //   type:"debit",
+  //     //   coins:withdrow['coins']
+  //     //  });
+       
+  //     }else if(withdrow && updateWithdrawDto['status']=='cancel'){
+  //       const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
+  //     // await this.adminAccount.create({ 
+  //     //   remarks: "Added gold balance from withdrawal", 
+  //     //   type:"commission_withdraw",
+  //     //   "debit":Number(commission),
+  //     //   credit:"0" , 
+  //     //   user_id: withdrow['client_id'], 
+  //     //     });
+  //        await this.goldService.create({
+  //       client_id:withdrow['client_id'],
+  //       remarks: "Coin is debit withdrawl",
+  //       type:"credit",
+  //       coins:withdrow['coins']
+  //      }); 
+  //     }
+  //   return { status: true, message: "Withdraw updated successfully" };
+  // }
   async update(id: any, updateWithdrawDto: UpdateWithdrawDto) {
     const previous = await this.withDrawModel.findOne({ _id: id });
     const userCoin = await this.userService.findUserbyId(previous['client_id'].toString());
@@ -229,51 +337,8 @@ export class WithdrawService {
       }
     } ///pending//inprogress
 
-
-
-
-    const latestAdminBal = await this.adminAccount.getLatestEntry();
-    const withdrow = await this.findOne(id);
-    
-    if (withdrow && withdrow['status'] == "approved" && withdraw['proved_date']==null){
-      
-      const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
-      await this.adminAccount.create({ 
-        remarks: "Added gold balance from withdrawal", 
-        type:"commission_withdraw",
-        "debit":"0",
-        credit: Number(commission), 
-        user_id: withdrow['client_id'], 
-          });
-          await this.withDrawModel.findByIdAndUpdate(id, {proved_date: new Date().toISOString()});
-     //////////// we need to cut coin when we are create withdraw request //////////////////////
-
-      //    await this.goldService.create({
-      //   client_id:withdrow['client_id'],
-      //   remarks: "Coin is debit withdrawl",
-      //   type:"debit",
-      //   coins:withdrow['coins']
-      //  });
-       
-      }else if(withdrow && updateWithdrawDto['status']=='cancel'){
-        const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
-      // await this.adminAccount.create({ 
-      //   remarks: "Added gold balance from withdrawal", 
-      //   type:"commission_withdraw",
-      //   "debit":Number(commission),
-      //   credit:"0" , 
-      //   user_id: withdrow['client_id'], 
-      //     });
-         await this.goldService.create({
-        client_id:withdrow['client_id'],
-        remarks: "Coin is debit withdrawl",
-        type:"credit",
-        coins:withdrow['coins']
-       }); 
-      }
     return { status: true, message: "Withdraw updated successfully" };
   }
-
   async remove(id: any) {
     const withdraw = await this.withDrawModel.findByIdAndDelete(id);
 
