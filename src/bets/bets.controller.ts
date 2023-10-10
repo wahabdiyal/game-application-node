@@ -5,7 +5,7 @@ import { UpdateBetDto } from './dto/update-bet.dto';
 
 @Controller('bets')
 export class BetsController {
-  constructor(private readonly betsService: BetsService) {}
+  constructor(private readonly betsService: BetsService) { }
 
   @Post("mobile")
   create(@Body() createBetDto: CreateBetDto) {
@@ -13,9 +13,9 @@ export class BetsController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage ,status,start_date,end_date,key}) {
-    let date = (start_date && end_date)?[{start:start_date,end:end_date}]:[];
-    return this.betsService.findAll(page,perpage,status,date,key);
+  findAll(@Query() { page, perpage, status, start_date, end_date, key }) {
+    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
+    return this.betsService.findAll(page, perpage, status, date, key);
   }
 
   @Get(':id')
@@ -35,28 +35,27 @@ export class BetsController {
 
   @Post('/user/betstatus/:id')
   async betUpdateLoseWin(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    
-        return await this.betsService.betUpdateLoseWin(id,updateBetDto['status']);
+    return await this.betsService.betUpdateLoseWin(id, updateBetDto['winner']);
   }
 
   @Post('/silver/bet/:id')
   async betSecondSilverUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-        
-        return await this.betsService.betSecondSilverUser(id,updateBetDto['second_user']);
+
+    return await this.betsService.betSecondSilverUser(id, updateBetDto['second_user']);
   }
   @Post('/winner/bet/:id')
   async betUpdateWinUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-      return await this.betsService.betUpdateWinUser(id,updateBetDto['user_id']);
-}
-@Post('/gold/bet/:id')
-async betSecondGoldUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-  
-      return await this.betsService.betSecondGoldUser(id,updateBetDto['second_user']);
-}
+    return await this.betsService.betUpdateWinUser(id, updateBetDto['user_id']);
+  }
+  @Post('/gold/bet/:id')
+  async betSecondGoldUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
 
-@Post('gold/winner/bet/:id')
-async betUpdateWinUserGold(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    return await this.betsService.betUpdateWinUserGold(id,updateBetDto['user_id']);
-}
+    return await this.betsService.betSecondGoldUser(id, updateBetDto['second_user']);
+  }
+
+  @Post('gold/winner/bet/:id')
+  async betUpdateWinUserGold(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
+    return await this.betsService.betUpdateWinUserGold(id, updateBetDto['user_id']);
+  }
 
 }

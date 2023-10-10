@@ -1,24 +1,28 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from 'mongoose';
 import { User } from "src/user/schemas/user.schema";
- 
-export enum Status{
-    approved="approved",
-    pending="pending",
-  
+export enum Type {
+    credit = "credit",
+    debit = "debit",
+
+}
+export enum Status {
+    approved = "approved",
+    pending = "pending",
+
 }
 @Schema({
-        timestamps: true,
+    timestamps: true,
 })
-export class Gold extends Document{
-    @Prop({default:"pending"})
-    status:Status;
+export class Gold extends Document {
+    @Prop({ default: "pending" })
+    status: Status;
     @Prop()
     coins:string;
     @Prop({default:null })
     type:string ;
     @Prop()
-    bal:string;
+    bal: string;
     @Prop()
     remarks:string;
     @Prop()
@@ -30,9 +34,9 @@ export class Gold extends Document{
     @Prop()
     updated_by: string;
     @Prop()
-    userId:string;
+    userId: string;
 
-    
+
 }
 export const GoldSchema = SchemaFactory.createForClass(Gold)
 

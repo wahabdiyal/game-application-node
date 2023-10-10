@@ -19,8 +19,7 @@ export class PurchaseRequestsController {
   )
   //////add  path file save and folder location/////
   async create(@UploadedFile() file: Express.Multer.File, @Body() createBannerDto: CreatePurchaseRequestDto) {
-
-    return await this.purchaseRequestsService.create({ ...createBannerDto, file_url: (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") });
+    return await this.purchaseRequestsService.create({ ...createBannerDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
   }
 
   @Get()

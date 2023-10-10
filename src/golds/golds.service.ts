@@ -5,6 +5,7 @@ import { UpdateGoldDto } from './dto/update-gold.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Gold } from './schemas/gold_coin.schema';
 import mongoose from 'mongoose';
+import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 
 
 @Injectable()
@@ -13,6 +14,7 @@ export class GoldsService {
     @InjectModel(Gold.name)
     private goldModel: mongoose.Model<Gold>,
     private userService: UserService,
+    private adminAccount: AdminAccountsService,
   ) { }
 
   async create(createGoldDto: CreateGoldDto): Promise<any> {
@@ -33,13 +35,45 @@ export class GoldsService {
     return res;
   }
 
+  async rechargeAdminDirectly(createGoldDto: CreateGoldDto): Promise<any> {
+
+    const latestAdminBal = await this.adminAccount.getLatestEntry();
+    if (Number(latestAdminBal?.gold_coin_balance) > Number(createGoldDto['coins'])) {
+      var res = await this.goldModel.create(createGoldDto);
+      const user = await this.userService.findByID(createGoldDto['client_id'].toString()); if (!user)
+        return { status: 'error', message: 'User not found' };
+      else
+        createGoldDto['client_id'] = user._id.toString()
+      const newBalance = (createGoldDto['type'] == "credit") ? parseInt(user.gold_balance) + parseInt(createGoldDto['coins'], 10) : parseInt(user.gold_balance) - parseInt(createGoldDto['coins'], 10);
+      this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
+
+      // handle admin account
+
+      const coins = createGoldDto['type'] == "credit" ? (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(createGoldDto['coins'])
+        :
+        (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createGoldDto['coins']);
+      await this.adminAccount.create({
+        remarks: "coins allot TrD:" + res._id,
+        credit: (createGoldDto['type'] == "debit") ? createGoldDto['coins'] : 0,
+        debit: (createGoldDto['type'] == "credit") ? createGoldDto['coins'] : 0,
+        user_id: null,
+        gold_coin_balance: coins,
+      });
+
+      return res;
+    }
+    else {
+      return { message: 'admin low balance' }
+    }
+  }
+
 
   async createApiRequest(createCoinDto: CreateGoldDto): Promise<any> {
 
-    var res = await this.goldModel.create( createCoinDto );
-     return res;
- 
-   }
+    var res = await this.goldModel.create(createCoinDto);
+    return res;
+
+  }
 
   async adminCreate(createGoldDto: CreateGoldDto): Promise<any> {
 
@@ -134,6 +168,7 @@ export class GoldsService {
       } else {
         data = await this.goldModel.find({ client_id: id }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
       }
+      console.log(id);
     } catch (error) {
       date = [];
     }

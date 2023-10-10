@@ -17,18 +17,18 @@ export class BorrowService {
     private silverService: SilversService,
     private goldService: GoldsService,
     private userService: UserService,
-    private borrowStatusSerivcie : BorrowStatusService
+    private borrowStatusSerivcie: BorrowStatusService
   ) { }
 
   async create(createborrowDto: CreateBorrowDto) {
     const borrowStatus = await this.borrowStatusSerivcie.findOne(1);
-      
-    if(Number(createborrowDto['gold_coin']) !=0 && borrowStatus.gold_status=="false" ){
-      return { check:false,message:"Borrow gold service not available"}
+
+    if (Number(createborrowDto['gold_coin']) != 0 && borrowStatus.gold_status == "false") {
+      return { check: false, message: "Borrow gold service not available" }
     }
     const user = await this.userService.findUserbyId(createborrowDto['sender']);
     const u = user && (Number(user.silver_balance) >= Number(createborrowDto['silver_coin'])) && (Number(user.gold_balance) >= Number(createborrowDto['gold_coin']));
- 
+
     if (!u) {
       return { check: false, message: "Coin are not match with request" };
     }
@@ -46,7 +46,7 @@ export class BorrowService {
     delete createborrowDto['createdAt'];
     delete createborrowDto['updatedAt'];
     var res = await this.borrowModel.create(createborrowDto);
-    return {...res.toObject(),check:true};
+    return { ...res.toObject(), check: true };
   }
 
   async findAll(page = 0, perPage = 20, date = []) {
@@ -69,7 +69,7 @@ export class BorrowService {
 
       const skip = (page - 1) * perPage;
 
-      data =  await this.borrowModel.find({
+      data = await this.borrowModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
       }).skip(skip).limit(perPage).populate('sender')
         .populate('receiver').exec();
@@ -82,7 +82,7 @@ export class BorrowService {
 
       if (page < 1) page = 1; if (page > totalPages) page = totalPages
 
-      const skip = ((page - 1) * perPage)<0 ? 0: ((page - 1) * perPage);
+      const skip = ((page - 1) * perPage) < 0 ? 0 : ((page - 1) * perPage);
 
       data = await this.borrowModel
         .find()
@@ -117,7 +117,7 @@ export class BorrowService {
   async update(id: any, updateborrowDto: UpdateBorrowDto) {
     const borrow = await this.borrowModel.findByIdAndUpdate(id, updateborrowDto);
 
-       
+
     if (!borrow) {
       throw new NotFoundException('borrow request not found.');
     }
@@ -125,17 +125,16 @@ export class BorrowService {
     const object = await this.borrowModel.findOne(borrow._id);
 
     if (object.status != 'pending') {
+      await this.goldService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.gold_coin });
 
-      const a = await this.goldService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow reqeust", type: "debit", status: "success", coins: object.gold_coin });
+      await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.gold_coin });
 
-      await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: object.gold_coin });
+      await this.silverService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.silver_coin });
 
-      await this.silverService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow reqeust", type: "debit", status: "success", coins: object.silver_coin });
-
-      await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: object.silver_coin });
+      await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.silver_coin });
 
     }
-    return   this.userService.getUserRenewTokenForMobile(object.sender) ;
+    return this.userService.getUserRenewTokenForMobile(object.sender);
   }
 
   async remove(id: any) {
@@ -172,17 +171,17 @@ export class BorrowService {
           message: "Request is already in reversed"
         }
       }
-      await this.goldService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow reqeust reverser", type: "credit", status: "success", coins: borrow.gold_coin });
+      await this.goldService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.gold_coin });
 
-      await this.goldService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow reqeust reverser", type: "debit", status: "success", coins: borrow.gold_coin });
+      await this.goldService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.gold_coin });
 
-      await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow reqeust reverser", type: "credit", status: "success", coins: borrow.silver_coin });
+      await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.silver_coin });
 
-      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow reqeust reverser", type: "debit", status: "success", coins: borrow.silver_coin });
+      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin });
       await this.borrowModel.findByIdAndUpdate(borrow_id, { is_reverse: true });
       return {
         status: "success",
-        message: "borrow reqeust reverse progress",
+        message: "borrow request reverse progress",
       }
     } else {
       return {

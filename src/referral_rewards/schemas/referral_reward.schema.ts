@@ -19,9 +19,9 @@ export class ReferralReward  extends Document{
     days_limit:string;
 
     @Prop({default: null,})
-    start_date:Date;
+    start_date:string;
     @Prop({default: null,})
-    end_date:Date;
+    end_date:string;
     
     @Prop({default: null,})
     description:string;

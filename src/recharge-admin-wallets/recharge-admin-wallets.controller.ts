@@ -7,10 +7,14 @@ import { UpdateRechargeAdminWalletDto } from './dto/update-recharge-admin-wallet
 export class RechargeAdminWalletsController {
   constructor(private readonly rechargeAdminWalletsService: RechargeAdminWalletsService) { }
 
+
+  ///by admin
   @Post()
   create(@Body() createRechargeAdminWalletDto: CreateRechargeAdminWalletDto) {
     return this.rechargeAdminWalletsService.create(createRechargeAdminWalletDto);
   }
+
+ 
 
   @Get()
   findAll() {

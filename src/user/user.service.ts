@@ -42,7 +42,8 @@ return users;
       let parsedEndDate = new Date(date[0].end);
       totalCount = await this.userModel.find({
         $or: [
-          { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -64,7 +65,8 @@ return users;
     } else if (search && role) {
       totalCount = await this.userModel.find({
         $or: [
-          { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -79,7 +81,8 @@ return users;
       let parsedEndDate = new Date(date[0].end);
       totalCount = await this.userModel.find({
         $or: [
-          { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -96,7 +99,8 @@ return users;
     else if (search) {
       totalCount = await this.userModel.find({
         $or: [
-          { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -133,7 +137,8 @@ return users;
         let parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           $or: [
-            { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -147,7 +152,8 @@ return users;
         let parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           $or: [
-            { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -159,7 +165,8 @@ return users;
       } else if (search && role) {
         data = await this.userModel.find({
           $or: [
-            { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -180,7 +187,8 @@ return users;
       } else if (search) {
         data = await this.userModel.find({
           $or: [
-            { full_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -234,7 +242,7 @@ return users;
     //     "refereal_code":userobj?.refereal_code?userobj.refereal_code:null
     // }
     // console.log(userobj?.refereal_code?userobj.refereal_code:null);
-     const axiosInstance: AxiosInstance = this.httpService.axiosRef; 
+    const axiosInstance: AxiosInstance = this.httpService.axiosRef;
     let usercheck = await this.userModel.find({ $or: [{ email: user.email }, { phone: user.phone }] });
 
     if (!usercheck.length) {
@@ -249,7 +257,7 @@ return users;
           const refRewardSetting = await this.refrewardService.getRefRewardByDate();
 
           if (refRewardSetting && getRefDetail && userRef) {
-           
+
 
             const daycount = moment(this.getDate()).diff(moment(this.getDate(moment(getRefDetail.use_date) ? getRefDetail.use_date : "2023-01-01 00:00:00")), 'days') + 1;
             if (Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)) {
@@ -257,31 +265,31 @@ return users;
                 await this.UpdateUser(getRefDetail.user_id, Number(userRef['silver_balance']) + Number(refRewardSetting.silver_coin), "silver");
                 const response = await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
                   "coins": refRewardSetting.silver_coin,
-                  "bal":refRewardSetting.silver_coin,
+                  "bal": refRewardSetting.silver_coin,
                   "remarks": "Added by refferal reward",
                   "client_id": getRefDetail.user_id,
                   "type": "credit"
                 }).then((response) => {
                   console.log(JSON.stringify(response.data));
                 })
-                .catch((error) => {
-                  console.log(error);
-                });
+                  .catch((error) => {
+                    console.log(error);
+                  });
               } if (Number(refRewardSetting.gold_coin) > 0) {
                 await this.UpdateUser(getRefDetail.user_id, Number(userRef['gold_balance']) + Number(refRewardSetting.gold_coin), "gold");
-            
-                const response = await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah',{
+
+                const response = await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah', {
                   "coins": refRewardSetting.silver_coin,
-                  "bal":refRewardSetting.silver_coin,
+                  "bal": refRewardSetting.silver_coin,
                   "remarks": "Added by refferal reward",
                   "client_id": getRefDetail.user_id,
                   "type": "credit"
                 }).then((response) => {
                   console.log(JSON.stringify(response.data));
                 })
-                .catch((error) => {
-                  console.log(error);
-                });
+                  .catch((error) => {
+                    console.log(error);
+                  });
               }
               await this.refcodeService.update(getRefDetail.id, { total_use: Number(getRefDetail.total_use) + 1, use_date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss') });
             }
@@ -290,68 +298,68 @@ return users;
         }
       }
       const lastRecords = await this.userModel.find().sort({ createdAt: -1 }).limit(1);
-     
- 
+
+
       const userVal = await this.userModel.create({
         ...user, silver_balance: getCoinValue?.silver_coin,
         gold_balance: getCoinValue?.gold_coin,
         "userId": lastRecords[0] ? Number(lastRecords[0]['userId']) + 1 : 1,
       });
-      if(getCoinValue){
-        if(Number(getCoinValue.gold_coin) !=0 && Number(getCoinValue.silver_coin) !=0 ){
-          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah',{
+      if (getCoinValue) {
+        if (Number(getCoinValue.gold_coin) != 0 && Number(getCoinValue.silver_coin) != 0) {
+          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.silver_coin,
-            "bal":userVal.silver_balance,
+            "bal": userVal.silver_balance,
             "remarks": "Added Signup reward",
             "client_id": userVal._id,
             "type": "credit"
           }).then((response) => {
-            console.log("signupreward-silver",JSON.stringify(response.data));
+            console.log("signupreward-silver", JSON.stringify(response.data));
           })
-          .catch((error) => {
-            console.log(error);
-          });
+            .catch((error) => {
+              console.log(error);
+            });
 
-         
-          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah',{
+
+          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.gold_coin,
-            "bal":userVal.gold_balance,
+            "bal": userVal.gold_balance,
             "remarks": "Added Signup reward",
             "client_id": userVal._id,
             "type": "credit"
           }).then((response) => {
-            console.log("signupreward-gold",JSON.stringify(response.data));
+            console.log("signupreward-gold", JSON.stringify(response.data));
           })
-          .catch((error) => {
-            console.log(error);
-          });
+            .catch((error) => {
+              console.log(error);
+            });
         }
-        else if(Number(getCoinValue.gold_coin) !=0){
-          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah',{
+        else if (Number(getCoinValue.gold_coin) != 0) {
+          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.gold_coin,
-            "bal":userVal.gold_balance,
+            "bal": userVal.gold_balance,
             "remarks": "Added Signup reward",
             "client_id": userVal._id,
             "type": "credit"
           }).then((response) => {
-            console.log("signupreward-gold",JSON.stringify(response.data));
+            console.log("signupreward-gold", JSON.stringify(response.data));
           })
-          .catch((error) => {
-            console.log(error);
-          });
-        }else if(Number(getCoinValue.silver_coin) !=0){
-          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah',{
+            .catch((error) => {
+              console.log(error);
+            });
+        } else if (Number(getCoinValue.silver_coin) != 0) {
+          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.silver_coin,
-            "bal":userVal.silver_balance,
+            "bal": userVal.silver_balance,
             "remarks": "Added Signup reward",
             "client_id": userVal._id,
             "type": "credit"
           }).then((response) => {
-            console.log("signupreward-silver",JSON.stringify(response.data));
+            console.log("signupreward-silver", JSON.stringify(response.data));
           })
-          .catch((error) => {
-            console.log(error);
-          });
+            .catch((error) => {
+              console.log(error);
+            });
         }
       }
       const payload = {

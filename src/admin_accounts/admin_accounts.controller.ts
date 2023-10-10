@@ -11,6 +11,10 @@ export class AdminAccountsController {
   create(@Body() createAdminAccountDto: CreateAdminAccountDto) {
     return this.adminAccountsService.create(createAdminAccountDto);
   }
+  @Post("admin/invest")
+  rechargeAdminInvestments(@Body() createAdminAccountDto: CreateAdminAccountDto) {
+    return this.adminAccountsService.rechargeAdminInvestments(createAdminAccountDto);
+  }
 
   @Get()
   findAll() {
