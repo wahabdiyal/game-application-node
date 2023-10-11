@@ -14,11 +14,24 @@ export class ReferralRewardsService {
   ) { }
 
   async create(createReferralRewardDto: CreateReferralRewardDto) {
-    const referralReward = this.referralModel.find({
-      start_date: { $gte: new Date(createReferralRewardDto['start_date']) },
-      end_date: { $lte: new Date(createReferralRewardDto['end_date']) },
-    });
-    const countReward = (await referralReward).length > 0 ? false : true;
+    const referralReward = await this.referralModel.find();
+    const matchedCollection = [];
+
+    for (const item of referralReward) {
+     
+      const itemStartDate = new Date(item.start_date).getTime();
+      const itemEndDate = new Date(item.end_date).getTime();
+    
+      
+      if (itemStartDate <= new Date(createReferralRewardDto['start_date']).getTime() && itemEndDate >= new Date(createReferralRewardDto['end_date']).getTime()) {
+        
+        matchedCollection.push(item);
+      }else if(itemStartDate >= new Date(createReferralRewardDto['start_date']).getTime() && itemEndDate <= new Date(createReferralRewardDto['end_date']).getTime()){
+        matchedCollection.push(item);
+      }
+    }
+    
+    const countReward =  matchedCollection.length > 0 ? false : true;
 
     if (countReward) {
       const res = await this.referralModel.create(createReferralRewardDto);

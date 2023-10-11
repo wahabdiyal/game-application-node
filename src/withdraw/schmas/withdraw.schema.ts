@@ -32,7 +32,8 @@ export class Withdraw extends Document{
     admin_commission :string;
     @Prop({default: 0,})
     withdraw_amount :string;
-
+    @Prop()
+    transaction_id: string;
     @Prop()
     created_by: string;
     @Prop()

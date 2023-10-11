@@ -9,7 +9,7 @@ export class CryptoWallet  extends Document{
     @Prop({required: true})
     wallet_detail:[string];
     @Prop({required: true})
-    country:string;
+    country:[string];
 
     @Prop()
     created_by: string;
