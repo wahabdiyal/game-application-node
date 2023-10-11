@@ -229,48 +229,6 @@ export class WithdrawService {
       }
     } ///pending//inprogress
 
-
-
-
-    const latestAdminBal = await this.adminAccount.getLatestEntry();
-    const withdrow = await this.findOne(id);
-    
-    if (withdrow && withdrow['status'] == "approved" && withdraw['proved_date']==null){
-      
-      const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
-      await this.adminAccount.create({ 
-        remarks: "Added gold balance from withdrawal", 
-        type:"commission_withdraw",
-        "debit":"0",
-        credit: Number(commission), 
-        user_id: withdrow['client_id'], 
-          });
-          await this.withDrawModel.findByIdAndUpdate(id, {proved_date: new Date().toISOString()});
-     //////////// we need to cut coin when we are create withdraw request //////////////////////
-
-      //    await this.goldService.create({
-      //   client_id:withdrow['client_id'],
-      //   remarks: "Coin is debit withdrawl",
-      //   type:"debit",
-      //   coins:withdrow['coins']
-      //  });
-       
-      }else if(withdrow && updateWithdrawDto['status']=='cancel'){
-        const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
-      // await this.adminAccount.create({ 
-      //   remarks: "Added gold balance from withdrawal", 
-      //   type:"commission_withdraw",
-      //   "debit":Number(commission),
-      //   credit:"0" , 
-      //   user_id: withdrow['client_id'], 
-      //     });
-         await this.goldService.create({
-        client_id:withdrow['client_id'],
-        remarks: "Coin is debit withdrawl",
-        type:"credit",
-        coins:withdrow['coins']
-       }); 
-      }
     return { status: true, message: "Withdraw updated successfully" };
   }
 
