@@ -51,7 +51,7 @@ export class WithdrawService {
         client_id: createWithdrawDto['client_id'], 
         gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
     }
-    var res = await this.withDrawModel.create(createWithdrawDto);
+    var res = await this.withDrawModel.create({...createWithdrawDto,transaction_id:new Date().getTime()+Math.random().toString(36).slice(-8)});
     return res;
   }
 

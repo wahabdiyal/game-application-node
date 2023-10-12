@@ -13,11 +13,24 @@ export class SignupRewardsService {
     private signuprewardModel: mongoose.Model<SignupReward>,
   ){}
  async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
-      const collection = await this.signuprewardModel.find({
-        start_time: { $gte:new Date(createSignupRewardDto.start_time)},
-         end_time: { $lte:new Date(createSignupRewardDto.end_time)},
-      }).select(['country','start_time','end_time']);
-    
+      const collection = await this.signuprewardModel.find(); 
+     
+      const matchedCollection = [];
+
+      for (const item of collection) {
+       
+        const itemStartDate = new Date(item['start_time']).getTime();
+        const itemEndDate = new Date(item['end_time']).getTime();
+      
+        
+        if (itemStartDate <= new Date(createSignupRewardDto['start_time']).getTime() && itemEndDate >= new Date(createSignupRewardDto['end_time']).getTime()) {
+          
+          matchedCollection.push(item);
+        }else if(itemStartDate >= new Date(createSignupRewardDto['start_time']).getTime() && itemEndDate <= new Date(createSignupRewardDto['end_time']).getTime()){
+          matchedCollection.push(item);
+        }
+      }
+   
       // const collection = await this.signuprewardModel.aggregate([{
       //   $match: {
       //     start_time: {
@@ -149,7 +162,7 @@ export class SignupRewardsService {
       const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item.toLowerCase()))];
       
       const searchCriteria = [uniqueLowerCaseArray,createSignupRewardDto.start_time,createSignupRewardDto.end_time];
-      const val  = checkRecordExists(collection,searchCriteria);
+      const val  = checkRecordExists(matchedCollection,searchCriteria);
         //  return a;
           // return val;
     if(!val){

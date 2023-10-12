@@ -12,6 +12,11 @@ export class CryptoWalletsService {
     private cryptoWalletService: mongoose.Model<CryptoWallet>,
   ) { }
   async create(createCryptoWalletDto: CreateCryptoWalletDto) {
+
+   const countries = await this.cryptoWalletService.find({ country: { $in: createCryptoWalletDto['country'] } });
+    if(countries){
+      return {status:false,message:"country is already exist in list."};
+    }
     var res = await this.cryptoWalletService.create(createCryptoWalletDto);
     return res;
   }
@@ -30,7 +35,11 @@ export class CryptoWalletsService {
 
 
   async findOneCountry(country: any) {
-    return await this.cryptoWalletService.findOne({ country: country });
+    return await this.cryptoWalletService.findOne({
+      country: {
+        $in: [country]
+      }
+    });
   }
 
   async update(id: any, updateCryptoWalletDto: UpdateCryptoWalletDto) {
