@@ -133,21 +133,21 @@ export class WithdrawService {
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status
-        }).populate('client_id').skip(skip).limit(perPage).exec();
+        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (status) {
         data = await this.withDrawModel.find({
           status: status
-        }).populate('client_id').skip(skip).limit(perPage).exec();
+        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
       else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).populate('client_id').skip(skip).limit(perPage).exec();
+        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {
-        data = await this.withDrawModel.find().skip(skip).limit(perPage).exec();
+        data = await this.withDrawModel.find().populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       date = [];
