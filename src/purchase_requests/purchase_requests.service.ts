@@ -102,10 +102,33 @@ export class PurchaseRequestsService {
     const user = await this.purchasemModel.find({ user_id: user_id });
     return user;
   }
-  async findByStatus(page = 0, perPage = 20, date = [], status = false) {
+  async findByStatus(page = 0, perPage = 20, date = [], status = false,transaction=false) {
 
     let totalCount = 0
-    if (date.length > 0 && status) {
+    if(date.length > 0 && status && transaction) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.purchasemModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        status: status,
+        transaction_id: transaction
+      }).countDocuments().exec();
+
+    }else if (date.length > 0 && transaction) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+      totalCount = await this.purchasemModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        transaction_id: transaction
+      }).countDocuments().exec();
+
+    } else if (transaction && status) {
+      totalCount = await this.purchasemModel.find({
+        status: status,
+        transaction_id: transaction
+      }).countDocuments().exec();
+    } else if (date.length > 0 && status) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -120,6 +143,10 @@ export class PurchaseRequestsService {
 
       totalCount = await this.purchasemModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
+    } else if (transaction){
+      totalCount = await this.purchasemModel.find({
+        transaction_id: transaction
       }).countDocuments().exec();
     } else if (status) {
       totalCount = await this.purchasemModel.find({
@@ -141,8 +168,30 @@ export class PurchaseRequestsService {
 
     let data = [];
     try {
+      if (date.length > 0 && status && transaction){
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
 
-      if (date.length > 0 && status) {
+        data = await this.purchasemModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          status: status,
+          transaction_id: transaction
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }else if (date.length > 0 && transaction){
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+
+        data = await this.purchasemModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          transaction_id: transaction
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }else if (status && transaction){
+       
+        data = await this.purchasemModel.find({
+          status:status,
+          transaction_id: transaction
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }else if (date.length > 0 && status){
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
@@ -150,19 +199,22 @@ export class PurchaseRequestsService {
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status
         }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else if (status) {
+      }else if (transaction){
+        data = await this.purchasemModel.find({
+          transaction_id: transaction
+        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }else if (status){
         data = await this.purchasemModel.find({
           status: status
         }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }
-      else if (date.length > 0) {
+      }else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
-      } else {
+      }else {
         data = await this.purchasemModel.find().populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {

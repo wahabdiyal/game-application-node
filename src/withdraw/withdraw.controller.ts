@@ -41,9 +41,9 @@ export class WithdrawController {
   }
 
   @Get()
-  findAll(@Query() {page,perpage,start_date,end_date,status}) {
+  findAll(@Query() {page,perpage,start_date,end_date,status,search}) {
     let date = (start_date && end_date)?[{start:start_date,end:end_date}]:[];
-    return this.withdrawService.findAll(page, perpage,date,status);
+    return this.withdrawService.findAll(page, perpage,date,status,search);
   }
   @Get('user-request/:id')
   userRequest(@Param('id') id: any) {
