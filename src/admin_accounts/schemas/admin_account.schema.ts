@@ -14,6 +14,8 @@ export class AdminAccount  extends Document{
     debit:string;
     @Prop({required: true,default:"0"})
     credit:string;
+    @Prop({default:new Date().getTime()+Math.random().toString(36).slice(-8)})
+    transaction_id: string;
     
     @Prop({required: true,default:"0"})
     gold_coin_balance:string;

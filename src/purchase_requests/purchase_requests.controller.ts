@@ -23,9 +23,9 @@ export class PurchaseRequestsController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage, start_date, end_date, status }) {
+  findAll(@Query() { page, perpage, start_date, end_date, status,transaction }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.purchaseRequestsService.findByStatus(page, perpage, date, status);
+    return this.purchaseRequestsService.findByStatus(page, perpage, date, status,transaction);
   }
 
   @Get(':id')
