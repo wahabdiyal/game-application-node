@@ -5,11 +5,11 @@ import { Document } from 'mongoose';
         timestamps: true,
 })
 export class Country extends Document{
-    @Prop({required: true,unique: true})
+    @Prop({required: true})
     code:string;
     @Prop()
     currency:string;
-    @Prop({required: true,unique: true})
+    @Prop({required: true})
     country:string;
     @Prop({default:"true"})
     status:string;

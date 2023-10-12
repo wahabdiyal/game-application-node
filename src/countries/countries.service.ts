@@ -18,7 +18,7 @@ export class CountriesService {
   }
 
   async findAll():Promise<Country[]> {
-    return await this.countryModel.find().where('status','true').exec();
+    return await this.countryModel.find().sort('country').exec();
   }
 
   

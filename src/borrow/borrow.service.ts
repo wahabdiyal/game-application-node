@@ -21,7 +21,7 @@ export class BorrowService {
   ) { }
 
   async create(createborrowDto: CreateBorrowDto) {
-    const borrowStatus = await this.borrowStatusSerivcie.findOne(1);
+    const borrowStatus = await this.borrowStatusSerivcie.findLastTransaction();
 
     if (Number(createborrowDto['gold_coin']) != 0 && borrowStatus.gold_status == "false") {
       return { check: false, message: "Borrow gold service not available" }
