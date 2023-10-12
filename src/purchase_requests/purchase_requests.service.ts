@@ -6,6 +6,7 @@ import { PurchaseRequests } from './schemas/purchase_requests.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 import { GoldsService } from 'src/golds/golds.service';
+import { SilversService } from 'src/silvers/silvers.service';
 
 
 @Injectable()
@@ -15,6 +16,7 @@ export class PurchaseRequestsService {
     private purchasemModel: mongoose.Model<PurchaseRequests>,
     private adminAccountService: AdminAccountsService,
     private goldService: GoldsService,
+    private silverService: SilversService,
   ) { }
   async create(createPurchaseDto: CreatePurchaseRequestDto) {
     var res = await this.purchasemModel.create(createPurchaseDto);
@@ -31,7 +33,7 @@ export class PurchaseRequestsService {
 
   async update(id: any, updatePurchaseDto: UpdatePurchaseRequestDto) {
     const object = await this.purchasemModel.findOne({ _id: id });
-   
+
     ////update object
     await this.purchasemModel.findByIdAndUpdate(id, updatePurchaseDto);
 
@@ -52,17 +54,35 @@ export class PurchaseRequestsService {
         "status": "complete",
         "coins": object['gold_coin'],
       });
+      await this.silverService.create({
+        "client_id": object['user_id'],
+        "entry_by": "admin",
+        "remarks": "purchase approved, TrD:" + id,
+        "type": "credit",
+        "status": "complete",
+        "coins": object['silver_coin'],
+      });
 
     }
     else {
-      if (object.status === 'approved') await this.goldService.create({
-        "client_id": object['user_id'],
-        "entry_by": "admin",
-        "remarks": "purchase reversed, Trd:" + id,
-        "type": "debit",
-        "status": "complete",
-        "coins": object['gold_coin'],
-      });
+      if (object.status === 'approved') {
+        await this.goldService.create({
+          "client_id": object['user_id'],
+          "entry_by": "admin",
+          "remarks": "purchase reversed, Trd:" + id,
+          "type": "debit",
+          "status": "complete",
+          "coins": object['gold_coin'],
+        });
+        await this.silverService.create({
+          "client_id": object['user_id'],
+          "entry_by": "admin",
+          "remarks": "purchase approved, TrD:" + id,
+          "type": "debit",
+          "status": "complete",
+          "coins": object['silver_coin'],
+        });
+      }
     }
     const data = await this.purchasemModel.findById(id);
 
