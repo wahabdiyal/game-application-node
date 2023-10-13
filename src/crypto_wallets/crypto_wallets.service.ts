@@ -13,10 +13,10 @@ export class CryptoWalletsService {
   ) { }
   async create(createCryptoWalletDto: CreateCryptoWalletDto) {
 
-   const countries = await this.cryptoWalletService.find({ country: { $in: createCryptoWalletDto['country'] } });
-    if(countries){
-      return {status:false,message:"country is already exist in list."};
-    }
+    // const countries = await this.cryptoWalletService.find({ country: { $in: createCryptoWalletDto['country'] } });
+    // if (countries) {
+    //   return { status: false, message: "country is already exist in list." };
+    // }
     var res = await this.cryptoWalletService.create(createCryptoWalletDto);
     return res;
   }
@@ -48,8 +48,8 @@ export class CryptoWalletsService {
     if (!crypto) {
       throw new NotFoundException('Wallet not found.');
     }
-
-    return { status: true, message: "Wallet updated successfully" };
+    const data = await this.cryptoWalletService.findOne({ _id: id });
+    return { status: true, data: data, message: "Wallet updated successfully" };
   }
 
   async remove(id: any) {

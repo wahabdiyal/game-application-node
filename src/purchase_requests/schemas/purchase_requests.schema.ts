@@ -10,23 +10,34 @@ export enum Status {
 @Schema({
     timestamps: true,
 })
-export class PurchaseRequests  extends Document{
-   
-    @Prop({default:'0'})
-    amount:string;
-    @Prop({default:'0'})
-    transaction_id:string;
+export class PurchaseRequests extends Document {
+
+    @Prop({ default: '0' })
+    amount: string;
+    @Prop({ default: '0' })
+    transaction_id: string;
     @Prop()
-    remarks:string;
+    remarks: string;
     @Prop()
-    file_url:string;
-    @Prop({ type: Types.ObjectId, ref: 'User'})
-    user_id:string;
-    @Prop({default:0})
-    gold_coin:string;
-    @Prop({default:0})
-    silver_coin:string;
-    @Prop({default:"pending"})
-    status:Status;
+    file_url: string;
+    @Prop({ default: 0 })
+    gold_coin: string;
+    @Prop({ default: 0 })
+    silver_coin: string;
+    @Prop({ default: '0' })
+    silver_coin_amount: string;
+    @Prop({ default: "pending" })
+    status: Status;
+
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    user_id: User;
+    @Prop()
+    country: string;
+    @Prop()
+    first_name: string;
+    @Prop()
+    last_name: string;
+    @Prop()
+    userId: string;
 }
 export const PurchaseRequestsSchema = SchemaFactory.createForClass(PurchaseRequests)

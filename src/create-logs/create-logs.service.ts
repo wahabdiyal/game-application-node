@@ -5,17 +5,27 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User } from "src/user/schemas/user.schema";
 import mongoose from 'mongoose';
 import { CreateLogs } from './schemas/create-logs.schema';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class CreateLogsService {
   constructor(
     @InjectModel(CreateLogs.name)
     private createLogsModal: mongoose.Model<CreateLogs>,
+    private userService: UserService,
   ) { }
   async create(createCreateLogDto: CreateCreateLogDto) {
+    const user = await this.userService.findUserbyId(createCreateLogDto['user']);
+
+    if (!user) {
+      return new NotFoundException("User not found");
+    }
+
+    createCreateLogDto['operator_name'] = user.first_name + ' ' + user.last_name;
+    createCreateLogDto['country'] = user.country;
     return await this.createLogsModal.create(createCreateLogDto);
   }
-  async findAll(page = 0, perPage = 20, date = []) {
+  async findAll(page = 0, perPage = 20, date = [], search = false, countryName) {
     let totalCount = 0
     if (date.length > 0) {
       const parsedStartDate = new Date(date[0].start);
@@ -24,8 +34,15 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).populate('user').countDocuments().exec();
-    } else {
-      totalCount = await this.createLogsModal.find().populate('user').countDocuments().exec();
+    }
+    else {
+      totalCount = await this.createLogsModal.find({
+        $or: [
+          { operator_name: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } },
+          { country: { $regex: countryName, $options: 'i' } },
+        ],
+      }).populate('user').countDocuments().exec();
     }
 
     const totalPages = Math.ceil(totalCount / perPage);
@@ -48,9 +65,17 @@ export class CreateLogsService {
         data = await this.createLogsModal.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
         }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else {
-        data = await this.createLogsModal.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
+      else {
+        data = await this.createLogsModal.find({
+          $or: [
+            { operator_name: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } },
+            { country: { $regex: countryName, $options: 'i' } },
+          ],
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
+
     } catch (error) {
       date = [];
     }

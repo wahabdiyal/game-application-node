@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 import { GoldsService } from 'src/golds/golds.service';
 import { SilversService } from 'src/silvers/silvers.service';
+import { UserService } from 'src/user/user.service';
 
 
 @Injectable()
@@ -15,10 +16,19 @@ export class PurchaseRequestsService {
     @InjectModel(PurchaseRequests.name)
     private purchasemModel: mongoose.Model<PurchaseRequests>,
     private adminAccountService: AdminAccountsService,
+    private userService: UserService,
     private goldService: GoldsService,
     private silverService: SilversService,
   ) { }
   async create(createPurchaseDto: CreatePurchaseRequestDto) {
+    const user = await this.userService.findUserbyId(createPurchaseDto['user_id']);
+    if (!user) {
+      return new NotFoundException("User not found");
+    }
+    createPurchaseDto['country'] = user.country;
+    createPurchaseDto['first_name'] = user.first_name;
+    createPurchaseDto['last_name'] = user.last_name;
+    createPurchaseDto['userId'] = user.userId;
     var res = await this.purchasemModel.create(createPurchaseDto);
     return res;
   }
@@ -102,31 +112,49 @@ export class PurchaseRequestsService {
     const user = await this.purchasemModel.find({ user_id: user_id });
     return user;
   }
-  async findByStatus(page = 0, perPage = 20, date = [], status = false,transaction=false) {
+  async findByStatus(page = 0, perPage = 20, date = [], status = false, search = false) {
 
     let totalCount = 0
-    if(date.length > 0 && status && transaction) {
+    if (date.length > 0 && status && search) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
       totalCount = await this.purchasemModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         status: status,
-        transaction_id: transaction
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ],
       }).countDocuments().exec();
 
-    }else if (date.length > 0 && transaction) {
+    } else if (date.length > 0 && search) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
       totalCount = await this.purchasemModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        transaction_id: transaction
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ],
       }).countDocuments().exec();
 
-    } else if (transaction && status) {
+    } else if (search && status) {
       totalCount = await this.purchasemModel.find({
         status: status,
-        transaction_id: transaction
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ],
       }).countDocuments().exec();
     } else if (date.length > 0 && status) {
       const parsedStartDate = new Date(date[0].start);
@@ -144,9 +172,15 @@ export class PurchaseRequestsService {
       totalCount = await this.purchasemModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).countDocuments().exec();
-    } else if (transaction){
+    } else if (search) {
       totalCount = await this.purchasemModel.find({
-        transaction_id: transaction
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ],
       }).countDocuments().exec();
     } else if (status) {
       totalCount = await this.purchasemModel.find({
@@ -168,54 +202,78 @@ export class PurchaseRequestsService {
 
     let data = [];
     try {
-      if (date.length > 0 && status && transaction){
+      if (date.length > 0 && status && search) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status,
-          transaction_id: transaction
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (date.length > 0 && transaction){
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } },
+            { transaction_id: { $regex: search, $options: 'i' } },
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (date.length > 0 && search) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-          transaction_id: transaction
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (status && transaction){
-       
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } },
+            { transaction_id: { $regex: search, $options: 'i' } },
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (status && search) {
+
         data = await this.purchasemModel.find({
-          status:status,
-          transaction_id: transaction
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (date.length > 0 && status){
+          status: status,
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } },
+            { transaction_id: { $regex: search, $options: 'i' } },
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (date.length > 0 && status) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (transaction){
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (search) {
         data = await this.purchasemModel.find({
-          transaction_id: transaction
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (status){
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } },
+            { transaction_id: { $regex: search, $options: 'i' } },
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (status) {
         data = await this.purchasemModel.find({
           status: status
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (date.length > 0) {
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
-      }else {
-        data = await this.purchasemModel.find().populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else {
+        data = await this.purchasemModel.find().sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       date = [];

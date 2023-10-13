@@ -6,8 +6,6 @@ import { User } from "src/user/schemas/user.schema";
     timestamps: true,
 })
 export class CreateLogs extends Document {
-    @Prop({ type: Types.ObjectId, ref: 'User' })
-    user: User;
     @Prop()
     url: string;
 
@@ -19,6 +17,15 @@ export class CreateLogs extends Document {
 
     @Prop({ type: mongoose.Schema.Types.Mixed }) // Specify the type as Mixed
     body: JSON;
+
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    user: User;
+
+    @Prop()
+    operator_name: string;
+    @Prop()
+    country: string;
+
 
 }
 export const CreateLogsSchema = SchemaFactory.createForClass(CreateLogs)
