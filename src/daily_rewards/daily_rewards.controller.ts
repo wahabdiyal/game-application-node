@@ -13,9 +13,12 @@ export class DailyRewardsController {
   }
 
   @Get("get-all/:type")
-  findAll(@Param() type: string) {
- 
+  findAll(@Param() type: string) { 
     return this.dailyRewardsService.findAll(type['type']);
+  }
+  @Get("get-all-types/all")
+  findAllTypes() { 
+    return this.dailyRewardsService.findAllTypes();
   }
 
   @Get(':id')

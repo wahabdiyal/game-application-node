@@ -14,9 +14,9 @@ export class SignupReward extends Document {
     @Prop({ required: true })
     gold_coin: string;
     @Prop({ required: true, })
-    start_time: Date;
+    start_date: string;
     @Prop({ required: true, })
-    end_time: Date;
+    end_date: string;
     @Prop()
     description: string;
     @Prop({ default: "all_countries", required: true })

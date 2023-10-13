@@ -42,6 +42,8 @@ return users;
       let parsedEndDate = new Date(date[0].end);
       totalCount = await this.userModel.find({
         $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
@@ -65,13 +67,14 @@ return users;
     } else if (search && role) {
       totalCount = await this.userModel.find({
         $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
           // Add more fields here
         ], role: role,
       }).countDocuments().exec();
@@ -81,12 +84,14 @@ return users;
       let parsedEndDate = new Date(date[0].end);
       totalCount = await this.userModel.find({
         $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
 
         ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).countDocuments().exec();
@@ -99,13 +104,14 @@ return users;
     else if (search) {
       totalCount = await this.userModel.find({
         $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
           // Add more fields here
         ],
       }).countDocuments().exec();
@@ -137,12 +143,14 @@ return users;
         let parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-            { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           role: role,
@@ -152,26 +160,28 @@ return users;
         let parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-            { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && role) {
         data = await this.userModel.find({
           $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-            { role: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], role: role
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
@@ -187,12 +197,14 @@ return users;
       } else if (search) {
         data = await this.userModel.find({
           $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
             { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-            { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
 
             // Add more fields here
           ],
@@ -595,9 +607,9 @@ return users;
     } catch (e) {
       return false;
     }
-    
-    const user = await this.userModel.findOne({_id:id});
- 
+
+    const user = await this.userModel.findOne({ _id: id });
+
     if (!user) {
       return false;
     }
@@ -752,12 +764,12 @@ return users;
   }
 
   async UpdateUserPassword(user_id, data) {
-      const user =  await this.userModel.updateOne({ _id: user_id }, { password: data });
-      if(user){
-          return {status:true,message:"User update Successfully"}
-      }else{
-        return {status:false,"message":"Some went wrong."};
-      }
+    const user = await this.userModel.updateOne({ _id: user_id }, { password: data });
+    if (user) {
+      return { status: true, message: "User update Successfully" }
+    } else {
+      return { status: false, "message": "Some went wrong." };
+    }
   }
 
 }
