@@ -57,5 +57,8 @@ export class BetsController {
   async betUpdateWinUserGold(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
     return await this.betsService.betUpdateWinUserGold(id, updateBetDto['user_id']);
   }
-
+  @Post('/ignore/update/:id')
+  async ignoreUpdate(@Param('id') id:string){
+    return await this.betsService.ignore_count(id);
+  }
 }
