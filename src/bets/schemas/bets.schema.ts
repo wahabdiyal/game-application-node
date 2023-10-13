@@ -16,9 +16,10 @@ export class Bets  extends Document{
     first_name:string;
     @Prop()
     first_user_id:string;
-
+    @Prop({default:new Date().getTime()+Math.random().toString(36).slice(-8)})
+    transaction_id: string;
+    
     @Prop({ type: Types.ObjectId, ref: 'User'})
-
     second_player:string;
     @Prop()
     second_email:string;

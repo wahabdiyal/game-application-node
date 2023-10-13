@@ -12,6 +12,10 @@ export class WithdrawLimitsService {
     private Withdraw_limitsModel: mongoose.Model<Withdraw_limits>
   ) { }
   async create(createWithdrawLimitDto: CreateWithdrawLimitDto) {
+    const countries =  await this.Withdraw_limitsModel.findOne({ countries: { $in: createWithdrawLimitDto['countries'] } });
+      if(countries){
+        return {status:false,message:"country is already exist in list."};
+      }
     var res = await this.Withdraw_limitsModel.create(createWithdrawLimitDto);
     return res;
   }
