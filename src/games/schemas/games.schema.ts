@@ -37,6 +37,8 @@ export class Games extends Document {
     created_by: string;
     @Prop()
     updated_by: string;
+    @Prop({default:5})
+    ignore_bet:string;
 
     @Prop({ default: '0' })
     bet_expires_sec: string;

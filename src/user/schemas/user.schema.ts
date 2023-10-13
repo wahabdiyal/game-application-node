@@ -66,8 +66,8 @@ export class User extends Document {
     @Prop()
     updated_by: string;
 
-    @Prop({ required: true, default: false })
-    bet_block: boolean;
+    @Prop({ default: [] })
+    bet_block: [string];
      
 
 }
