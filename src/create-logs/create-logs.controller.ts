@@ -13,9 +13,9 @@ export class CreateLogsController {
   }
 
   @Get('/')
-  async getUser(@Query() { page, perpage, search, start_date, end_date }) {
+  async getUser(@Query() { page, perpage, search, start_date, end_date,countryName }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.createLogsService.findAll(page, perpage, date,);
+    return this.createLogsService.findAll(page, perpage, date, search,countryName);
   }
 
   @Get(':id')

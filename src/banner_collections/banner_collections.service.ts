@@ -26,7 +26,7 @@ export class BannerCollectionsService {
   }
 
   async findAll() {
-    return await this.bannerCollectionModel.find();
+    return await this.bannerCollectionModel.find().sort({ createdAt: -1 });
   }
 
   async findBannerbyId(id: any) {

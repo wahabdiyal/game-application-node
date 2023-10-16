@@ -32,6 +32,10 @@ export class UserRightsService {
     return await this.userRightsModel.find({ role: role });
   }
 
+  async findByRoleByController(ctrl: string, role: string) {
+    return await this.userRightsModel.find({  controller: ctrl,role:role });
+  }
+
 
   async update(id: any, body: UpdateUserRightDto) {
     const userright = await this.userRightsModel.findByIdAndUpdate(id, body);

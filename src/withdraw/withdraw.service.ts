@@ -18,13 +18,13 @@ export class WithdrawService {
     private userService: UserService,
     private goldService: GoldsService,
     private adminAccount: AdminAccountsService,
-    private readonly withdrawlimitService:WithdrawLimitsService
+    private readonly withdrawlimitService: WithdrawLimitsService
 
   ) { }
 
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-     
+
     if (!userCoin) {
       return new NotFoundException("User not found");
     }
@@ -34,37 +34,42 @@ export class WithdrawService {
 
 
     await this.goldService.create({
-      client_id:createWithdrawDto['client_id'],
+      client_id: createWithdrawDto['client_id'],
       remarks: "Coin is debit withdrawl",
-      type:"debit",
-      coins:createWithdrawDto['coins']
-     });
+      type: "debit",
+      coins: createWithdrawDto['coins']
+    });
 
     await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
 
     if (createWithdrawDto['status'] == "approved") {
       const latestAdminBal = await this.adminAccount.getLatestEntry();
 
-      await this.adminAccount.create({ 
-        remarks: "Added gold balance from withdrawal", 
-        credit: Number(createWithdrawDto['coins']), 
-        client_id: createWithdrawDto['client_id'], 
-        gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins']) });
+      await this.adminAccount.create({
+        remarks: "Added gold balance from withdrawal",
+        credit: Number(createWithdrawDto['coins']),
+        client_id: createWithdrawDto['client_id'],
+        gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins'])
+      });
     }
-    var res = await this.withDrawModel.create({...createWithdrawDto,transaction_id:new Date().getTime()+Math.random().toString(36).slice(-8)});
+    createWithdrawDto['client_country'] = userCoin.country;
+    createWithdrawDto['client_first_name'] = userCoin.first_name;
+    createWithdrawDto['client_last_name'] = userCoin.last_name;
+    createWithdrawDto['client_userId'] = userCoin.userId;
+    var res = await this.withDrawModel.create({ ...createWithdrawDto, transaction_id: new Date().getTime() + Math.random().toString(36).slice(-8) });
     return res;
   }
 
   ///////////mobile///////////////
 
-  async getLimitWithdraw(country:string){
+  async getLimitWithdraw(country: string) {
     const valueWithdrawLimit = await this.withdrawlimitService.findOneByCountry(country);
     return valueWithdrawLimit;
   }
 
   async createWithdrawRequest(createWithdrawDto: CreateWithdrawDto): Promise<any> {
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-     
+
     if (!userCoin) {
       return new NotFoundException("User not found");
     }
@@ -74,11 +79,11 @@ export class WithdrawService {
     }
 
     await this.goldService.create({
-      client_id:createWithdrawDto['client_id'],
+      client_id: createWithdrawDto['client_id'],
       remarks: "Coin is debit withdrawl",
-      type:"debit",
-      coins:createWithdrawDto['coins']
-     });
+      type: "debit",
+      coins: createWithdrawDto['coins']
+    });
 
     await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
 
@@ -87,10 +92,11 @@ export class WithdrawService {
     return res;
   }
 
-  async findAll(page = 0, perPage = 20, date = [], status = false , search=false) {
-     
+  async findAll(page = 0, perPage = 20, date = [], status = false, search = false) {
+
+
     let totalCount = 0
-    if(date.length > 0 && status && search){
+    if (date.length > 0 && status && search) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -102,7 +108,7 @@ export class WithdrawService {
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         status: status
       }).countDocuments().exec();
-    }else if (date.length > 0 && search) {
+    } else if (date.length > 0 && search) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -113,7 +119,7 @@ export class WithdrawService {
           { client_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
-    }else if (date.length > 0 && status) {
+    } else if (date.length > 0 && status) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -121,21 +127,27 @@ export class WithdrawService {
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         status: status
       }).countDocuments().exec();
-    }else if (search && status) {
-     
+    } else if (search && status) {
+
       totalCount = await this.withDrawModel.find({
         $or: [
+          { client_country: { $regex: search, $options: 'i' } },
+          { client_first_name: { $regex: search, $options: 'i' } },
+          { client_last_name: { $regex: search, $options: 'i' } },
+          { client_userId: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
-          { client_id: { $regex: search, $options: 'i' } },
         ],
         status: status
       }).countDocuments().exec();
-    }else if (search) {
+    } else if (search) {
       totalCount = await this.withDrawModel.find({
         $or: [
+          { client_country: { $regex: search, $options: 'i' } },
+          { client_first_name: { $regex: search, $options: 'i' } },
+          { client_last_name: { $regex: search, $options: 'i' } },
+          { client_userId: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
-          { client_id: { $regex: search, $options: 'i' } },
-        ] 
+        ],
       }).countDocuments().exec();
     } else if (date.length > 0) {
 
@@ -173,58 +185,72 @@ export class WithdrawService {
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status,
           $or: [
+            { client_country: { $regex: search, $options: 'i' } },
+            { client_first_name: { $regex: search, $options: 'i' } },
+            { client_last_name: { $regex: search, $options: 'i' } },
+            { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-            { client_id: { $regex: search, $options: 'i' } },
-          ] 
-        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (date.length > 0 && status) {
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (date.length > 0 && status) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           status: status
-        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (date.length > 0 && search) {
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (date.length > 0 && search) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
           $or: [
+            { client_country: { $regex: search, $options: 'i' } },
+            { client_first_name: { $regex: search, $options: 'i' } },
+            { client_last_name: { $regex: search, $options: 'i' } },
+            { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-            { client_id: { $regex: search, $options: 'i' } },
-          ] 
-        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (search && status) {
-         data = await this.withDrawModel.find({
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (search && status) {
+        data = await this.withDrawModel.find({
           $or: [
+            { client_country: { $regex: search, $options: 'i' } },
+            { client_first_name: { $regex: search, $options: 'i' } },
+            { client_last_name: { $regex: search, $options: 'i' } },
+            { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-            { client_id: { $regex: search, $options: 'i' } },
           ],
           status: status
-        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (search) {
+        })
+          .sort({ createdAt: -1 }).skip(skip).limit(perPage)
+          .exec();
+        console.log(search)
+      } else if (search) {
         data = await this.withDrawModel.find({
-         $or: [
-           { transaction_id: { $regex: search, $options: 'i' } },
-           { client_id: { $regex: search, $options: 'i' } },
-         ],
-        
-       }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (status) {
+          $or: [
+            { client_country: { $regex: search, $options: 'i' } },
+            { client_first_name: { $regex: search, $options: 'i' } },
+            { client_last_name: { $regex: search, $options: 'i' } },
+            { client_userId: { $regex: search, $options: 'i' } },
+            { transaction_id: { $regex: search, $options: 'i' } },
+          ],
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (status) {
         data = await this.withDrawModel.find({
           status: status
-        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }else if (date.length > 0) {
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
         data = await this.withDrawModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {
-        data = await this.withDrawModel.find().populate('client_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+        data = await this.withDrawModel.find().sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
       date = [];
@@ -311,9 +337,9 @@ export class WithdrawService {
 
   //   const latestAdminBal = await this.adminAccount.getLatestEntry();
   //   const withdrow = await this.findOne(id);
-    
+
   //   if (withdrow && withdrow['status'] == "approved" && withdraw['proved_date']==null){
-      
+
   //     const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
   //     await this.adminAccount.create({ 
   //       remarks: "Added gold balance from withdrawal", 
@@ -331,7 +357,7 @@ export class WithdrawService {
   //     //   type:"debit",
   //     //   coins:withdrow['coins']
   //     //  });
-       
+
   //     }else if(withdrow && updateWithdrawDto['status']=='cancel'){
   //       const commission = Math.ceil((Number(withdrow.admin_commission) /100)*Number(withdrow['coins']));
   //     // await this.adminAccount.create({ 
@@ -427,7 +453,7 @@ export class WithdrawService {
   }
 
   async userRequest(id: any) {
-    const withdraw = await this.withDrawModel.find();
+    const withdraw = await this.withDrawModel.find({ client_id: id });
 
     if (withdraw.length == 0) {
       throw new NotFoundException('Withdraw not found.');

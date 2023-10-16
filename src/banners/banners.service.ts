@@ -19,7 +19,7 @@ export class BannersService {
   }
 
   async findAll() {
-    return await this.bannerModel.find();
+    return await this.bannerModel.find().sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {
