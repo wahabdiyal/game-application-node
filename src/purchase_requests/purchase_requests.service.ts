@@ -25,10 +25,13 @@ export class PurchaseRequestsService {
     if (!user) {
       return new NotFoundException("User not found");
     }
+    const getOperator = await this.userService.findOperatorWithCountry(user.country);
     createPurchaseDto['country'] = user.country;
     createPurchaseDto['first_name'] = user.first_name;
     createPurchaseDto['last_name'] = user.last_name;
     createPurchaseDto['userId'] = user.userId;
+    createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
+
     var res = await this.purchasemModel.create(createPurchaseDto);
     return res;
   }

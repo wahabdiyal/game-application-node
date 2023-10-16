@@ -28,7 +28,7 @@ export class PurchaseRequests extends Document {
     silver_coin_amount: string;
     @Prop({ default: "pending" })
     status: Status;
-
+    
     @Prop({ type: Types.ObjectId, ref: 'User' })
     user_id: User;
     @Prop()

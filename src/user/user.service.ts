@@ -771,5 +771,10 @@ return users;
       return { status: false, "message": "Some went wrong." };
     }
   }
+  async findOperatorWithCountry(country){
+        return await this.userModel.find(
+          {country:country,role:"operator"}
+        );
+  }
 
 }

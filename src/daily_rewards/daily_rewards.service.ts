@@ -117,6 +117,15 @@ export class DailyRewardsService {
       country: {
         $in: [country]
       }
-    })
+    });
   }
+  async findUserCountry(country) {
+    const now = new Date();
+    return await this.dailyReward.findOne({
+      country: { $in: [country] },
+      start_date: { $lte: now.toISOString() },
+      end_date: { $gte: now.toISOString() },
+    });
+  }
+
 }
