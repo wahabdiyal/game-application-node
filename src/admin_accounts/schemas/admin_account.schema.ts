@@ -14,7 +14,7 @@ export class AdminAccount  extends Document{
     debit:string;
     @Prop({required: true,default:"0"})
     credit:string;
-    @Prop({default:new Date().getTime()+Math.random().toString(36).slice(-8)})
+    @Prop({default:0})
     transaction_id: string;
     
     @Prop({required: true,default:"0"})

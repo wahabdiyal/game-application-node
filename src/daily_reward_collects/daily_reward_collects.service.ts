@@ -24,8 +24,11 @@ export class DailyRewardCollectsService {
     
   ){}
   async create(user) {
-      const rewardDetail = await this.dailyRewardService.findByCountry(user.country.toLowerCase());
-     
+
+      // return await this.dailyRewardService.findUserCountry(user.country.toLowerCase());
+    
+      const rewardDetail = await this.dailyRewardService.findUserCountry(user.country.toLowerCase());
+      
       if(!rewardDetail){
         return {status:false, message:"Country is not available for this user."};
       }
@@ -70,7 +73,8 @@ export class DailyRewardCollectsService {
         }
 
       const dailyre =   await this.dailyRewardCollectionModel.create({user_id:user.id,total_reward:rewardDetail.inactive_day,reward_count:1,date:moment(),country:user.country});
-      return {...await this.userService.getUserRenewTokenForMobile(user['id']),dailyReward:dailyre,
+      
+      return {...await this.userService.getUserRenewTokenForMobile(user['id']),dailyReward:{...dailyre.toObject(),silver:rewardDetail.silver_coin,gold:rewardDetail.gold_coin},message:"Added User Daily reward"
 
     };
     }else{
@@ -91,7 +95,7 @@ export class DailyRewardCollectsService {
      
     const dailyCollection =  await this.dailyRewardCollectionModel.findOne({user_id:user.id});
             if(dailyCollection){
-              return {status:true,reward:dailyCollection};
+              return {status:true,message:"User Daily reward collection",reward:dailyCollection};
             }else{
               return {status:false,message:"User not found in reward collection"};
             }

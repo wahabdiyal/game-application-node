@@ -31,4 +31,9 @@ export class ContactsController {
   remove(@Param('id') id: string) {
     return this.contactsService.remove(id);
   }
+
+  @Get('/find/country/:country')
+  findUserCountry(@Param('country') country: string) {
+    return this.contactsService.findCountry(country);
+  }
 }

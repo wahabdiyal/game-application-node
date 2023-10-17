@@ -27,7 +27,8 @@ export class AdminAccountsService {
       var res = await this.acoountModel.create({
         ...createAdminAccountDto,
         gold_coin_balance: userbal,
-        email: player ? player.email : ''
+        email: player ? player.email : '',
+        transaction_id:Math.random().toString(36).slice(-5),
       });
       return res;
     }

@@ -12,7 +12,7 @@ export class DailyRewardCollectsController {
   async create(@Request() req) {
     const value = await this.dailyRewardCollectsService.checkCollectUser(req.user);
       if(value) { 
-         return this.dailyRewardCollectsService.create(req.user);
+         return await this.dailyRewardCollectsService.create(req.user);
       }else{
         return {status:false,message:"Already reward taken."};
       }

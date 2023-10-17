@@ -20,7 +20,7 @@ export class Borrow extends Document {
     remarks: string;
     @Prop({ required: true, default: false })
     is_reverse: boolean;
-    @Prop({default:new Date().getTime()+Math.random().toString(36).slice(-8)})
+    @Prop({default:0})
     transaction_id: string;
     @Prop()
     created_by: string;

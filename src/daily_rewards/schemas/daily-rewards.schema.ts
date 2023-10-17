@@ -20,7 +20,7 @@ export class DailyReward  extends Document{
     inactive_day:string;
     @Prop({required: true,default:0})
     description:string;
-    @Prop({required: true,default:0})
+    @Prop({required: true })
     country:[string];
     @Prop({required: true,default:0})
     silver_coin:string;

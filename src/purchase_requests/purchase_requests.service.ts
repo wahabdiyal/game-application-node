@@ -25,10 +25,17 @@ export class PurchaseRequestsService {
     if (!user) {
       return new NotFoundException("User not found");
     }
+    const getOperator = await this.userService.findOperatorWithCountry(user.country);
+    const singleArrayValue = getOperator.reduce((acc, item) => {
+      acc.push(item._id);
+      return acc;
+    }, []);
     createPurchaseDto['country'] = user.country;
     createPurchaseDto['first_name'] = user.first_name;
     createPurchaseDto['last_name'] = user.last_name;
     createPurchaseDto['userId'] = user.userId;
+    createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
+    createPurchaseDto['operator'] =singleArrayValue;
     var res = await this.purchasemModel.create(createPurchaseDto);
     return res;
   }
@@ -199,7 +206,7 @@ export class PurchaseRequestsService {
     }
 
     const skip = (page - 1) * perPage;
-
+ 
     let data = [];
     try {
       if (date.length > 0 && status && search) {
@@ -260,6 +267,9 @@ export class PurchaseRequestsService {
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
           ],
+        }).populate({
+          path: 'operator',
+          populate: { path: 'operator' }
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (status) {
         data = await this.purchasemModel.find({
@@ -270,6 +280,10 @@ export class PurchaseRequestsService {
         const parsedEndDate = new Date(date[0].end);
         data = await this.purchasemModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).populate({
+          path: 'operator',
+          
+          populate: { path: 'operator' }
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {

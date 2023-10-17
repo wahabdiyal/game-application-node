@@ -16,7 +16,7 @@ export class Bets  extends Document{
     first_name:string;
     @Prop()
     first_user_id:string;
-    @Prop({default:new Date().getTime()+Math.random().toString(36).slice(-8)})
+    @Prop({default:0})
     transaction_id: string;
     @Prop({default:0})
     ignore_count:string;
