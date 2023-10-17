@@ -5,7 +5,7 @@ import { UpdateBorrowDto } from './dto/update-borrow.dto';
 
 @Controller('borrow')
 export class BorrowController {
-  constructor(private readonly borrowService: BorrowService) {}
+  constructor(private readonly borrowService: BorrowService) { }
 
   @Post()
   create(@Body() createBorrowDto: CreateBorrowDto) {
@@ -13,9 +13,9 @@ export class BorrowController {
   }
 
   @Get()
-  findAll(@Query() {page,perpage,start_date,end_date}) {
-    let date = (start_date && end_date)?[{start:start_date,end:end_date}]:[];
-    return this.borrowService.findAll(page, perpage,date);
+  findAll(@Query() { page, perpage, start_date, end_date, search }) {
+    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
+    return this.borrowService.findAll(page, perpage, date, search);
   }
 
   @Get(':id')
@@ -34,17 +34,17 @@ export class BorrowController {
   }
   @Post("/reverse/:id")
   reverseBorrowByAdmin(@Param('id') id: string) {
-        return this.borrowService.reverseBorrow(id);
+    return this.borrowService.reverseBorrow(id);
   }
 
   @Get("/sender/:id")
   borrowReqeustBySender(@Param('id') id: string) {
-        return this.borrowService.borrowReqeustBySender(id);
+    return this.borrowService.borrowReqeustBySender(id);
   }
 
   @Get("/receiver/:id")
   borrowReqeustByReceive(@Param('id') id: string) {
-        return this.borrowService.borrowReqeustByReceive(id);
+    return this.borrowService.borrowReqeustByReceive(id);
   }
 
 }
