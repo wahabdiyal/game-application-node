@@ -59,7 +59,7 @@ export class BetsService {
 
     }
     /////////////////////////silver coin//////////////////////
-    if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0 && first_user['bet_block'].includes(game.game_id)) {
+    if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0) {
       if (!first_user['bet_block'].includes(game.game_id)) {
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
         const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId });
@@ -307,6 +307,34 @@ export class BetsService {
       return { status: false, message: "No bet found." }
     }
 
+  }
+  async reverseBet(id){
+   const bet = await this.betsModel.findOne({ _id: id});
+   if(bet && bet.status!='cancel'){
+
+     
+   const first_user = await this.userService.findUserbyId(bet.first_player);
+   
+   if(bet.silver!='0'){
+    await this.userService.UpdateUser(first_user['id'], Number(first_user['silver_balance']) + Number(bet['silver']), 'silver');
+   }if(bet.gold!='0'){
+    await this.userService.UpdateUser(first_user['id'], Number(first_user['gold_balance']) + Number(bet['gold']), 'gold');
+   }
+
+   if(bet.second_player){
+   const second_user = await this.userService.findUserbyId(bet.second_player);
+    if(bet.silver!='0'){
+      await this.userService.UpdateUser(second_user['id'], Number(second_user['silver_balance']) + Number(bet['silver']), 'silver');
+     }if(bet.gold!='0'){
+      await this.userService.UpdateUser(second_user['id'], Number(second_user['gold_balance']) + Number(bet['gold']), 'gold');
+     }
+   }
+     await this.betsModel.findByIdAndUpdate(id, { status: "cancel"});
+     return {status:true,message:"Bet reverse successfully."};
+
+   }else{
+    return {status:false,message:"Bet Cancel already."};
+   }
   }
 
 }
