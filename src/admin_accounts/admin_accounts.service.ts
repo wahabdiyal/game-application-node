@@ -28,7 +28,7 @@ export class AdminAccountsService {
         ...createAdminAccountDto,
         gold_coin_balance: userbal,
         email: player ? player.email : '',
-        transaction_id:Math.random().toString(36).slice(-5),
+        transaction_id: Math.random().toString(36).slice(-5),
       });
       return res;
     }
@@ -56,8 +56,95 @@ export class AdminAccountsService {
     return { status: false, data: res, message: "Admin mail not found" };
   }
 
-  async findAll() {
-    return await this.acoountModel.find().populate('user_id');
+  async findAll(page = 0, perPage = 20, search = false, date = []) {
+    let totalCount = 0
+    if (date.length > 0 && search) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      totalCount = await this.acoountModel.find({
+        $or: [
+          { transaction_id: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { remarks: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { country: { $regex: search, $options: 'i' } },
+        ],
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).countDocuments().exec();
+    }
+    else if (search) {
+      totalCount = await this.acoountModel.find({
+        $or: [
+          { transaction_id: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { remarks: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { country: { $regex: search, $options: 'i' } },
+        ]
+      }).countDocuments().exec();
+    }
+    else if (date.length > 0) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      totalCount = await this.acoountModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).countDocuments().exec();
+    }
+    else {
+      totalCount = await this.acoountModel.find().countDocuments().exec();
+    }
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const skip = (page - 1) * perPage;
+    let data = [];
+
+
+    ////collect data
+    if (date.length > 0) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      data = await this.acoountModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+    }
+    else if (search) {
+      data = await this.acoountModel.find({
+        $or: [
+          { transaction_id: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { remarks: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { country: { $regex: search, $options: 'i' } },
+        ]
+      }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();;
+    }
+    else if (date.length > 0 && search) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      data = await this.acoountModel.find({
+        $or: [
+          { transaction_id: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { remarks: { $regex: search, $options: 'i' } },// Case-insensitive search
+          { country: { $regex: search, $options: 'i' } },
+        ],
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();;
+    }
+    else {
+      data = await this.acoountModel.find().populate('user_id').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();;
+    }
+
+
+    return {
+      data: data,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+
+
   }
   async findAllCommission(page = 0, perPage = 20, filter = '') {
     let query = {};
