@@ -28,7 +28,7 @@ export class AdminAccountsService {
         ...createAdminAccountDto,
         gold_coin_balance: userbal,
         email: player ? player.email : '',
-        transaction_id:new Date().getTime()+Math.random().toString(36).slice(-8),
+        transaction_id:Math.random().toString(36).slice(-5),
       });
       return res;
     }
