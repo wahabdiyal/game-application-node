@@ -37,94 +37,98 @@ return users;
    }*/
   async findAll(page = 0, perPage = 20, search = false, date = [], role = false) {
     let totalCount = 0
-    if (search && date.length > 0 && role) {
-      let parsedStartDate = new Date(date[0].start);
-      let parsedEndDate = new Date(date[0].end);
-      totalCount = await this.userModel.find({
-        $or: [
-          { userId: { $regex: search, $options: 'i' } },
-          { phone: { $regex: search, $options: 'i' } },
-          { first_name: { $regex: search, $options: 'i' } },
-          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+    try {
+      if (search && date.length > 0 && role) {
+        let parsedStartDate = new Date(date[0].start);
+        let parsedEndDate = new Date(date[0].end);
+        totalCount = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
 
-          // Add more fields here
-        ],
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        role: role,
-      }).countDocuments().exec();
-    } else if (date.length > 0 && role) {
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
+            // Add more fields here
+          ],
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          role: role,
+        }).countDocuments().exec();
+      } else if (date.length > 0 && role) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
 
-      totalCount = await this.userModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        role: role
-      }).countDocuments().exec();
-    } else if (search && role) {
-      totalCount = await this.userModel.find({
-        $or: [
-          { userId: { $regex: search, $options: 'i' } },
-          { phone: { $regex: search, $options: 'i' } },
-          { first_name: { $regex: search, $options: 'i' } },
-          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          // Add more fields here
-        ], role: role,
-      }).countDocuments().exec();
-    } else if (search && date.length > 0) {
+        totalCount = await this.userModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          role: role
+        }).countDocuments().exec();
+      } else if (search && role) {
+        totalCount = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            // Add more fields here
+          ], role: role,
+        }).countDocuments().exec();
+      } else if (search && date.length > 0) {
 
-      let parsedStartDate = new Date(date[0].start);
-      let parsedEndDate = new Date(date[0].end);
-      totalCount = await this.userModel.find({
-        $or: [
-          { userId: { $regex: search, $options: 'i' } },
-          { phone: { $regex: search, $options: 'i' } },
-          { first_name: { $regex: search, $options: 'i' } },
-          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
+        let parsedStartDate = new Date(date[0].start);
+        let parsedEndDate = new Date(date[0].end);
+        totalCount = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
 
-        ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).countDocuments().exec();
-    } else if (role) {
+          ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).countDocuments().exec();
+      } else if (role) {
 
-      totalCount = await this.userModel.find({
-        role: role,
-      }).countDocuments().exec();
-    }
-    else if (search) {
-      totalCount = await this.userModel.find({
-        $or: [
-          { userId: { $regex: search, $options: 'i' } },
-          { phone: { $regex: search, $options: 'i' } },
-          { first_name: { $regex: search, $options: 'i' } },
-          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
-          { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
-          // Add more fields here
-        ],
-      }).countDocuments().exec();
-    } else if (date.length > 0) {
+        totalCount = await this.userModel.find({
+          role: role,
+        }).countDocuments().exec();
+      }
+      else if (search) {
+        totalCount = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { country: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
+            // Add more fields here
+          ],
+        }).countDocuments().exec();
+      } else if (date.length > 0) {
 
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
 
-      totalCount = await this.userModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).countDocuments().exec();
-    } else {
-      totalCount = await this.userModel.countDocuments().exec();
+        totalCount = await this.userModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).countDocuments().exec();
+      } else {
+        totalCount = await this.userModel.countDocuments().exec();
+      }
+    } catch (error) {
+      totalCount = 0;
     }
 
     const totalPages = Math.ceil(totalCount / perPage);
@@ -771,10 +775,10 @@ return users;
       return { status: false, "message": "Some went wrong." };
     }
   }
-  async findOperatorWithCountry(country){
-        return await this.userModel.find(
-          {country:country,role:"operator"}
-        ).select('_id');
+  async findOperatorWithCountry(country) {
+    return await this.userModel.find(
+      { country: country, role: "operator" }
+    ).select('_id');
   }
 
 }

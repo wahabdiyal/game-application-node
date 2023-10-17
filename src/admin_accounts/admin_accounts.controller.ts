@@ -5,7 +5,7 @@ import { UpdateAdminAccountDto } from './dto/update-admin_account.dto';
 
 @Controller('admin-accounts')
 export class AdminAccountsController {
-  constructor(private readonly adminAccountsService: AdminAccountsService) {}
+  constructor(private readonly adminAccountsService: AdminAccountsService) { }
 
   @Post()
   create(@Body() createAdminAccountDto: CreateAdminAccountDto) {
@@ -16,20 +16,21 @@ export class AdminAccountsController {
     return this.adminAccountsService.rechargeAdminInvestments(createAdminAccountDto);
   }
 
-  @Get()
-  findAll() {
-    return this.adminAccountsService.findAll();
+  @Get('admin/getAll')
+  findAll(@Query() { page, perpage, search, start_date, end_date }) {
+    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
+    return this.adminAccountsService.findAll(page, perpage, search, date);
   }
 
   @Get("commission")
-  getAllCommission(@Query() { page, perpage, game_id}) {
-    return this.adminAccountsService.findAllCommission(page,perpage,game_id);
+  getAllCommission(@Query() { page, perpage, game_id }) {
+    return this.adminAccountsService.findAllCommission(page, perpage, game_id);
   }
 
   @Get("sale/report")
-  getAdminSale(@Query() { page, perpage, start_date, end_date,country}) {
+  getAdminSale(@Query() { page, perpage, start_date, end_date, country }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.adminAccountsService.getAdminSale(page,perpage,date, country?country.toLowerCase():country);
+    return this.adminAccountsService.getAdminSale(page, perpage, date, country);
   }
 
   @Get(':id')
