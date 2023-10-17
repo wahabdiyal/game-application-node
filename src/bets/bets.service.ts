@@ -23,6 +23,7 @@ export class BetsService {
     private silverService: SilversService,
   ) { }
   async create(createbetDto: CreateBetDto) {
+    const transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
     const today = new Date();
     const userBet = await this.betsModel.find({
@@ -49,7 +50,7 @@ export class BetsService {
       if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "ai") {
 
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
-        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'] });
+        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId, });
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       }
       else {
@@ -58,10 +59,10 @@ export class BetsService {
 
     }
     /////////////////////////silver coin//////////////////////
-    if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0 && first_user['bet_block'].includes(game.game_id)) {
+    if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0) {
       if (!first_user['bet_block'].includes(game.game_id)) {
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
-        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'] });
+        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId });
 
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       } else {
@@ -71,14 +72,15 @@ export class BetsService {
     ////// gold/////////////
     else if (Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold']) != 0) {
       if (!first_user['bet_block'].includes(game.game_id)) {
-       
-      /////playing with gold /////
-      await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
-      const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'] });
-      return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
-    } else {
-      return { status: false, message: "User is blocked for this game." }
-    }
+
+        
+        /////playing with gold /////
+        await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
+        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId });
+        return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
+      } else {
+        return { status: false, message: "User is blocked for this game." }
+      }
     }
     else {
       return { status: false, message: "Invalid inputs try again" };
@@ -305,6 +307,34 @@ export class BetsService {
       return { status: false, message: "No bet found." }
     }
 
+  }
+  async reverseBet(id){
+   const bet = await this.betsModel.findOne({ _id: id});
+   if(bet && bet.status!='cancel'){
+
+     
+   const first_user = await this.userService.findUserbyId(bet.first_player);
+   
+   if(bet.silver!='0'){
+    await this.userService.UpdateUser(first_user['id'], Number(first_user['silver_balance']) + Number(bet['silver']), 'silver');
+   }if(bet.gold!='0'){
+    await this.userService.UpdateUser(first_user['id'], Number(first_user['gold_balance']) + Number(bet['gold']), 'gold');
+   }
+
+   if(bet.second_player){
+   const second_user = await this.userService.findUserbyId(bet.second_player);
+    if(bet.silver!='0'){
+      await this.userService.UpdateUser(second_user['id'], Number(second_user['silver_balance']) + Number(bet['silver']), 'silver');
+     }if(bet.gold!='0'){
+      await this.userService.UpdateUser(second_user['id'], Number(second_user['gold_balance']) + Number(bet['gold']), 'gold');
+     }
+   }
+     await this.betsModel.findByIdAndUpdate(id, { status: "cancel"});
+     return {status:true,message:"Bet reverse successfully."};
+
+   }else{
+    return {status:false,message:"Bet Cancel already."};
+   }
   }
 
 }

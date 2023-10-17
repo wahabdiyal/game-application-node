@@ -44,4 +44,17 @@ async  remove(id: any) {
 
   return {status: true,message: "contact Delete successfully"};
   }
+  async  findCountry(country: any) {
+    const contact = await this.contactModel.findOne({ 
+      country: {
+      $in: [country]
+    }});
+  
+    if (!contact) {
+      throw new NotFoundException('contact not found.');
+    }
+  
+    return {status: true,message: "contact detail",data:contact};
+    }
+
 }

@@ -45,7 +45,9 @@ export class BorrowService {
     delete createborrowDto['_id'];
     delete createborrowDto['createdAt'];
     delete createborrowDto['updatedAt'];
-    var res = await this.borrowModel.create(createborrowDto);
+
+        
+        var res = await this.borrowModel.create({...createborrowDto,transaction_id:Math.random().toString(36).slice(-5),});
     return { ...res.toObject(), check: true };
   }
 
