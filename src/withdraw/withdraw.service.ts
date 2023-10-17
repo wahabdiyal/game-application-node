@@ -389,6 +389,7 @@ export class WithdrawService {
         await this.adminAccount.create({
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: 0,
+          type: "commission_withdraw",
           debit: Number(previous['coins']),
           user_id: previous['client_id'],
           gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(previous['coins'])
@@ -399,6 +400,7 @@ export class WithdrawService {
         await this.adminAccount.create({
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: 0,
+          type: "commission_withdraw",
           debit: Number(previous['coins']),
           user_id: previous['client_id'],
           gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(previous['coins'])
@@ -415,6 +417,7 @@ export class WithdrawService {
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: Number(previous['coins']),
           debit: 0,
+          type: "commission_withdraw",
           user_id: previous['client_id'],
           gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
         });
@@ -431,6 +434,7 @@ export class WithdrawService {
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: Number(previous['coins']),
           debit: 0,
+          type: "commission_withdraw",
           user_id: previous['client_id'],
           gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
         });
