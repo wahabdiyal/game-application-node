@@ -39,5 +39,7 @@ export class PurchaseRequests extends Document {
     last_name: string;
     @Prop()
     userId: string;
+    @Prop({ type: Types.ObjectId, ref: 'User' })
+    operator: [User];
 }
 export const PurchaseRequestsSchema = SchemaFactory.createForClass(PurchaseRequests)
