@@ -35,6 +35,34 @@ export class CreateLogsService {
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).populate('user').countDocuments().exec();
     }
+    else if (date.length > 0 && search) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+      totalCount = await this.createLogsModal.find({
+        $or: [
+          { operator_name: { $regex: search, $options: 'i' } },
+          { country: { $regex: countryName, $options: 'i' } }
+        ],
+        createdAt: {
+          $gte: parsedStartDate, $lte: parsedEndDate
+        }
+      }).populate('user').countDocuments().exec();;
+
+    }
+    else if (date.length > 0 && search && countryName) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+      totalCount = await this.createLogsModal.find({
+        $or: [
+          { operator_name: { $regex: search, $options: 'i' } },
+          { country: { $regex: countryName, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } }
+        ],
+        createdAt: {
+          $gte: parsedStartDate, $lte: parsedEndDate
+        }
+      }).populate('user').countDocuments().exec();;
+    }
     else {
       totalCount = await this.createLogsModal.find({
         $or: [
@@ -64,6 +92,34 @@ export class CreateLogsService {
 
         data = await this.createLogsModal.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
+      else if (date.length > 0 && search) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.createLogsModal.find({
+          $or: [
+            { operator_name: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } }
+          ],
+          createdAt: {
+            $gte: parsedStartDate, $lte: parsedEndDate
+          }
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+
+      }
+      else if (date.length > 0 && search && countryName) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.createLogsModal.find({
+          $or: [
+            { operator_name: { $regex: search, $options: 'i' } },
+            { country: { $regex: countryName, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } }
+          ],
+          createdAt: {
+            $gte: parsedStartDate, $lte: parsedEndDate
+          }
         }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
       else {
