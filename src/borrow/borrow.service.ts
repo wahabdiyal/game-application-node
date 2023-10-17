@@ -180,7 +180,7 @@ export class BorrowService {
       await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.silver_coin });
 
       await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin });
-      await this.borrowModel.findByIdAndUpdate(borrow_id, { is_reverse: true });
+      await this.borrowModel.findByIdAndUpdate(borrow_id, { is_reverse: true, status: 'reversed' });
       return {
         status: "success",
         message: "borrow request reverse progress",
