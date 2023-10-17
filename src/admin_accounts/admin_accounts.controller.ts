@@ -16,9 +16,10 @@ export class AdminAccountsController {
     return this.adminAccountsService.rechargeAdminInvestments(createAdminAccountDto);
   }
 
-  @Get()
-  findAll() {
-    return this.adminAccountsService.findAll();
+  @Get('admin/getAll')
+  findAll(@Query() { page, perpage, search, start_date, end_date }) {
+    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
+    return this.adminAccountsService.findAll(page, perpage, search, date);
   }
 
   @Get("commission")
