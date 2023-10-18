@@ -25,15 +25,30 @@ export class CreateLogsService {
     createCreateLogDto['country'] = user.country;
     return await this.createLogsModal.create(createCreateLogDto);
   }
-  async findAll(page = 0, perPage = 20, date = [], search = false, countryName) {
+  async findAll(page = 0, perPage = 20, date = [], search = false, countryName = false) {
     let totalCount = 0
+
+
+
     if (date.length > 0) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
       totalCount = await this.createLogsModal.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).populate('user').countDocuments().exec();
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).countDocuments().exec();
+    }
+    else if (search) {
+      totalCount = await this.createLogsModal.find({
+        $or: [
+          { operator_name: { $regex: search, $options: 'i' } },
+          { url: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } }
+        ],
+      }).countDocuments().exec();
+    }
+    else if (countryName) {
+      totalCount = await this.createLogsModal.find({ country: countryName }).countDocuments().exec();
     }
     else if (date.length > 0 && search) {
       const parsedStartDate = new Date(date[0].start);
@@ -41,13 +56,27 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         $or: [
           { operator_name: { $regex: search, $options: 'i' } },
-          { country: { $regex: countryName, $options: 'i' } }
+          { country: { $regex: search, $options: 'i' } }
         ],
-        createdAt: {
-          $gte: parsedStartDate, $lte: parsedEndDate
-        }
-      }).populate('user').countDocuments().exec();;
-
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
+    }
+    else if (date.length > 0 && countryName) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+      totalCount = await this.createLogsModal.find({
+        country: countryName,
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
+    }
+    else if (search && countryName) {
+      totalCount = await this.createLogsModal.find({
+        $or: [
+          { operator_name: { $regex: search, $options: 'i' } },
+          { country: { $regex: search, $options: 'i' } }
+        ],
+        country: countryName,
+      }).countDocuments().exec();
     }
     else if (date.length > 0 && search && countryName) {
       const parsedStartDate = new Date(date[0].start);
@@ -55,22 +84,14 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         $or: [
           { operator_name: { $regex: search, $options: 'i' } },
-          { country: { $regex: countryName, $options: 'i' } },
           { country: { $regex: search, $options: 'i' } }
         ],
-        createdAt: {
-          $gte: parsedStartDate, $lte: parsedEndDate
-        }
-      }).populate('user').countDocuments().exec();;
+        country: countryName,
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
     }
     else {
-      totalCount = await this.createLogsModal.find({
-        $or: [
-          { operator_name: { $regex: search, $options: 'i' } },
-          { country: { $regex: search, $options: 'i' } },
-          { country: { $regex: countryName, $options: 'i' } },
-        ],
-      }).populate('user').countDocuments().exec();
+      totalCount = await this.createLogsModal.find().countDocuments().exec();
     }
 
     const totalPages = Math.ceil(totalCount / perPage);
@@ -94,6 +115,18 @@ export class CreateLogsService {
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
         }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
+      else if (search) {
+        data = await this.createLogsModal.find({
+          $or: [
+            { operator_name: { $regex: search, $options: 'i' } },
+            { url: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } }
+          ],
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
+      else if (countryName) {
+        data = await this.createLogsModal.find({ country: countryName }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
       else if (date.length > 0 && search) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
@@ -102,11 +135,25 @@ export class CreateLogsService {
             { operator_name: { $regex: search, $options: 'i' } },
             { country: { $regex: search, $options: 'i' } }
           ],
-          createdAt: {
-            $gte: parsedStartDate, $lte: parsedEndDate
-          }
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-
+      }
+      else if (date.length > 0 && countryName) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.createLogsModal.find({
+          country: countryName,
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
+      else if (search && countryName) {
+        data = await this.createLogsModal.find({
+          $or: [
+            { operator_name: { $regex: search, $options: 'i' } },
+            { country: { $regex: search, $options: 'i' } }
+          ],
+          country: countryName,
+        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
       else if (date.length > 0 && search && countryName) {
         const parsedStartDate = new Date(date[0].start);
@@ -114,22 +161,14 @@ export class CreateLogsService {
         data = await this.createLogsModal.find({
           $or: [
             { operator_name: { $regex: search, $options: 'i' } },
-            { country: { $regex: countryName, $options: 'i' } },
             { country: { $regex: search, $options: 'i' } }
           ],
-          createdAt: {
-            $gte: parsedStartDate, $lte: parsedEndDate
-          }
+          country: countryName,
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
       else {
-        data = await this.createLogsModal.find({
-          $or: [
-            { operator_name: { $regex: search, $options: 'i' } },
-            { country: { $regex: search, $options: 'i' } },
-            { country: { $regex: countryName, $options: 'i' } },
-          ],
-        }).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+        data = await this.createLogsModal.find().populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
 
     } catch (error) {

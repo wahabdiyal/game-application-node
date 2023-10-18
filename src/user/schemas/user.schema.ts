@@ -11,7 +11,7 @@ export enum UserType {
 })
 export class User extends Document {
     @Prop({ unique: true })
-    userId: number;
+    userId: string;
     @Prop()
     full_name: string;
     @Prop()

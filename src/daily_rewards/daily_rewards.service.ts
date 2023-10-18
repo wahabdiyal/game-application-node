@@ -13,27 +13,25 @@ export class DailyRewardsService {
   ) { }
 
   async create(createDailyRewardDto: CreateDailyRewardDto) {
-
-
-
     let collection = await this.dailyReward.find({});
+    const startinput = new Date(createDailyRewardDto['start_date']).getTime();
+    const endinput =  new Date(createDailyRewardDto['end_date']).getTime();
     const matchedCollection = [];
-
     for (const item of collection) {
-
-      const itemStartDate = new Date(item.start_date).getTime();
-      const itemEndDate = new Date(item.end_date).getTime();
-
-
-      if (itemStartDate <= new Date(createDailyRewardDto['start_date']).getTime() && itemEndDate >= new Date(createDailyRewardDto['end_date']).getTime()) {
-
-        matchedCollection.push(item);
-      } else if (itemStartDate >= new Date(createDailyRewardDto['start_date']).getTime() && itemEndDate <= new Date(createDailyRewardDto['end_date']).getTime()) {
-        matchedCollection.push(item);
-      }
+      const startdb = new Date(item['start_date']).getTime();
+      const enddb = new Date(item['end_date']).getTime();
+if(
+  (startinput >= startdb && startinput <= enddb)
+  ||
+   (endinput >= startdb && endinput <= enddb)
+  ||
+   (startinput <= startdb && endinput >= startdb )
+  ||
+   (startinput <= enddb && endinput >= enddb)
+){
+    matchedCollection.push(item);
+}
     }
-
-
     function checkRecordExists(records, criteria) {
       const [countries, startTime, endTime] = criteria;
       const isInRange = function (date, start, end) {

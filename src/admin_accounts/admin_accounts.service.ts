@@ -176,10 +176,10 @@ export class AdminAccountsService {
     };
   }
 
-  async getAdminSale(page = 0, perPage = 20, date = [], status = false) {
+  async getAdminSale(page = 0, perPage = 20, date = [], country = false) {
 
     let totalCount = 0
-    if (date.length > 0 && status) {
+    if (date.length > 0 && country) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -189,7 +189,7 @@ export class AdminAccountsService {
           { type: "commission_withdraw" }
         ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        country: status
+        country: country
       }).countDocuments().exec();
     } else if (date.length > 0) {
 
@@ -203,9 +203,9 @@ export class AdminAccountsService {
         ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).countDocuments().exec();
-    } else if (status) {
+    } else if (country) {
       totalCount = await this.acoountModel.find({
-        country: status,
+        country: country,
       }).countDocuments().exec();
     } else {
       totalCount = await this.acoountModel.find({
@@ -230,7 +230,7 @@ export class AdminAccountsService {
     let sumTotal = 0;
     try {
 
-      if (date.length > 0 && status) {
+      if (date.length > 0 && country) {
         const parsedStartDate = new Date(date[0].start);
         const parsedEndDate = new Date(date[0].end);
 
@@ -240,12 +240,12 @@ export class AdminAccountsService {
             { type: "commission_withdraw" }
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-          country: status
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
-      } else if (status) {
+          country: country
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').sort({ createdAt: -1 }).exec();
+      } else if (country) {
         data = await this.acoountModel.find({
-          country: status
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
+          country: country
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').sort({ createdAt: -1 }).exec();
       }
       else if (date.length > 0) {
         const parsedStartDate = new Date(date[0].start);
@@ -256,7 +256,7 @@ export class AdminAccountsService {
             { type: "commission_withdraw" }
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').sort({ createdAt: -1 }).exec();
 
       } else {
         data = await this.acoountModel.find({
@@ -264,7 +264,7 @@ export class AdminAccountsService {
             { type: "commission_bet" },
             { type: "commission_withdraw" }
           ],
-        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').exec();
+        }).skip(skip).limit(perPage).populate('first_player').populate('second_player').populate('game_id').populate('user_id').sort({ createdAt: -1 }).exec();
       }
     } catch (error) {
       date = [];

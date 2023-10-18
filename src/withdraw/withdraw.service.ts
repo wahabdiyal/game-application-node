@@ -395,6 +395,7 @@ export class WithdrawService {
   // }
   async update(id: any, updateWithdrawDto: UpdateWithdrawDto) {
     const previous = await this.withDrawModel.findOne({ _id: id });
+    const player = await this.userService.findByID(previous['client_id'].toString());
     const userCoin = await this.userService.findUserbyId(previous['client_id'].toString());
 
     ///update entity
@@ -406,6 +407,7 @@ export class WithdrawService {
         await this.adminAccount.create({
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: 0,
+          country: player.country,
           type: "commission_withdraw",
           debit: Number(previous['coins']),
           user_id: previous['client_id'],
@@ -417,6 +419,7 @@ export class WithdrawService {
         await this.adminAccount.create({
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: 0,
+          country: player.country,
           type: "commission_withdraw",
           debit: Number(previous['coins']),
           user_id: previous['client_id'],
@@ -434,6 +437,7 @@ export class WithdrawService {
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: Number(previous['coins']),
           debit: 0,
+          country: player.country,
           type: "commission_withdraw",
           user_id: previous['client_id'],
           gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])
@@ -451,6 +455,7 @@ export class WithdrawService {
           remarks: "withdrawal: " + previous.status + " to " + updateWithdrawDto['status'] + ", TrD:" + previous._id,
           credit: Number(previous['coins']),
           debit: 0,
+          country: player.country,
           type: "commission_withdraw",
           user_id: previous['client_id'],
           gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(previous['coins'])

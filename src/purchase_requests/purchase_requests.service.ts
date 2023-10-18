@@ -34,7 +34,7 @@ export class PurchaseRequestsService {
     createPurchaseDto['first_name'] = user.first_name;
     createPurchaseDto['last_name'] = user.last_name;
     createPurchaseDto['userId'] = user.userId;
-    createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
+    // createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
     createPurchaseDto['operator'] =singleArrayValue;
     var res = await this.purchasemModel.create(createPurchaseDto);
     return res;

@@ -14,42 +14,33 @@ export class SignupRewardsService {
   ) { }
   async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
     const collection = await this.signuprewardModel.find();
-
+    const startinput = new Date(createSignupRewardDto['start_date']).getTime();
+    const endinput =  new Date(createSignupRewardDto['end_date']).getTime();
     const matchedCollection = [];
-
     for (const item of collection) {
-
-      const itemStartDate = new Date(item['start_time']).getTime();
-      const itemEndDate = new Date(item['end_time']).getTime();
-
-
-      if (itemStartDate <= new Date(createSignupRewardDto['start_time']).getTime() && itemEndDate >= new Date(createSignupRewardDto['end_time']).getTime()) {
-
-        matchedCollection.push(item);
-      } else if (itemStartDate >= new Date(createSignupRewardDto['start_time']).getTime() && itemEndDate <= new Date(createSignupRewardDto['end_time']).getTime()) {
-        matchedCollection.push(item);
-      }
+      const startdb = new Date(item['start_date']).getTime();
+      const enddb = new Date(item['end_date']).getTime();
+if(
+  (startinput >= startdb && startinput <= enddb)
+  ||
+   (endinput >= startdb && endinput <= enddb)
+  ||
+   (startinput <= startdb && endinput >= startdb )
+  ||
+   (startinput <= enddb && endinput >= enddb)
+){
+    matchedCollection.push(item);
+}
     }
-
-    // const collection = await this.signuprewardModel.aggregate([{
-    //   $match: {
-    //     start_time: {
-    //       $lte: createSignupRewardDto.start_time,   // Check if start_time is less than or equal to endDate
-    //     },
-    //     end_time: {
-    //       $gte: createSignupRewardDto.end_time, // Check if end_time is greater than or equal to startDate
-    //     },
-    //   },
-    // }]) ;
-    //  let a=[];
+ 
     function checkRecordExists(records, criteria) {
 
       //         const [countries, startTime, endTime] = criteria;
 
       // for (const record of records) {
       //   if (record.country.some(ctry => countries.includes(ctry))) {
-      //     const start = moment(record.start_time);
-      //     const end = moment(record.end_time);
+      //     const start = moment(record.start_date);
+      //     const end = moment(record.end_date);
       //     const start2 = moment(startTime);
       //     const end2 = moment(endTime);
 
@@ -81,9 +72,9 @@ export class SignupRewardsService {
           for (let usrcty = 0; usrcty < countries.length; usrcty++) {
             const element = countries[usrcty];
             if (element == ctry) {
-              //  a.push({usrcty:[record.start_time,record.end_time,startTime,endTime]})
-              // const start = moment(new Date(record.start_time));
-              // const end = moment(new Date(record.end_time));
+              //  a.push({usrcty:[record.start_date,record.end_date,startTime,endTime]})
+              // const start = moment(new Date(record.start_date));
+              // const end = moment(new Date(record.end_date));
 
               // const start2 = moment(new Date(startTime));
               // const end2 = moment(new Date(endTime));
@@ -115,8 +106,8 @@ export class SignupRewardsService {
       //   if(countryMatches) {
 
 
-      //   const start = moment(new Date(record.start_time));
-      //   const end = moment(new Date(record.end_time));
+      //   const start = moment(new Date(record.start_date));
+      //   const end = moment(new Date(record.end_date));
       //   const start2 = moment(new Date(startTime));
       //   const end2 = moment(new Date(endTime));
 
@@ -139,10 +130,10 @@ export class SignupRewardsService {
       // return records.some(record => {
       //   const countryMatches = countries.every(country => record.country.includes(country));
 
-      //   // const dateMatches = record.start_time === startTime && record.end_time === endTime;
-      //   return [record.start_time,startTime,record.end_time,endTime];
-      //   const start = moment(record.start_time);
-      //   const end = moment(record.end_time);
+      //   // const dateMatches = record.start_date === startTime && record.end_date === endTime;
+      //   return [record.start_date,startTime,record.end_date,endTime];
+      //   const start = moment(record.start_date);
+      //   const end = moment(record.end_date);
       //   const start2 = moment(startTime);
       //   const end2 = moment(endTime);
 
@@ -161,7 +152,7 @@ export class SignupRewardsService {
 
     const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item.toLowerCase()))];
 
-    const searchCriteria = [uniqueLowerCaseArray, createSignupRewardDto.start_time, createSignupRewardDto.end_time];
+    const searchCriteria = [uniqueLowerCaseArray, createSignupRewardDto['start_date'], createSignupRewardDto['end_date']];
     const val = checkRecordExists(matchedCollection, searchCriteria);
     //  return a;
     // return val;
