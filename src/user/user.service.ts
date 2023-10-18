@@ -35,7 +35,7 @@ created_at: { $gte: startDate, $lte: endDate },
 }).exec();
 return users;
    }*/
-  async findAll(page = 0, perPage = 20, search = false, date = [], role = false) {
+  async findAll(page = 0, perPage = 20, search = false, date = [], role = false,operator=false) {
     let totalCount = 0
     try {
       if (search && date.length > 0 && role) {

@@ -14,34 +14,25 @@ export class SignupRewardsService {
   ) { }
   async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
     const collection = await this.signuprewardModel.find();
-
+    const startinput = new Date(createSignupRewardDto['start_date']).getTime();
+    const endinput =  new Date(createSignupRewardDto['end_date']).getTime();
     const matchedCollection = [];
-
     for (const item of collection) {
-
-      const itemStartDate = new Date(item['start_date']).getTime();
-      const itemEndDate = new Date(item['end_date']).getTime();
-
-
-      if (itemStartDate <= new Date(createSignupRewardDto['start_date']).getTime() && itemEndDate >= new Date(createSignupRewardDto['end_date']).getTime()) {
-
-        matchedCollection.push(item);
-      } else if (itemStartDate >= new Date(createSignupRewardDto['start_date']).getTime() && itemEndDate <= new Date(createSignupRewardDto['end_date']).getTime()) {
-        matchedCollection.push(item);
-      }
+      const startdb = new Date(item['start_date']).getTime();
+      const enddb = new Date(item['end_date']).getTime();
+if(
+  (startinput >= startdb && startinput <= enddb)
+  ||
+   (endinput >= startdb && endinput <= enddb)
+  ||
+   (startinput <= startdb && endinput >= startdb )
+  ||
+   (startinput <= enddb && endinput >= enddb)
+){
+    matchedCollection.push(item);
+}
     }
-
-    // const collection = await this.signuprewardModel.aggregate([{
-    //   $match: {
-    //     start_date: {
-    //       $lte: createSignupRewardDto.start_date,   // Check if start_date is less than or equal to endDate
-    //     },
-    //     end_date: {
-    //       $gte: createSignupRewardDto.end_date, // Check if end_date is greater than or equal to startDate
-    //     },
-    //   },
-    // }]) ;
-    //  let a=[];
+ 
     function checkRecordExists(records, criteria) {
 
       //         const [countries, startTime, endTime] = criteria;

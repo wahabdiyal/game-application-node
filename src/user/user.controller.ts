@@ -31,9 +31,9 @@ export class UserController {
   ) { }
 
   @Get('/')
-  async getUser(@Query() { page, perpage, search, start_date, end_date, role }) {
+  async getUser(@Query() { page, perpage, search, start_date, end_date, role,operator }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.userService.findAll(page, perpage, search, date, role);
+    return this.userService.findAll(page, perpage, search, date, role, operator);
   }
 
   @Get(':id')
