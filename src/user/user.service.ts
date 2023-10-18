@@ -100,8 +100,7 @@ return users;
       totalCount = await this.userModel.find({
         role: role,
       }).countDocuments().exec();
-    }
-    else if (search) {
+    } else if (search) {
       totalCount = await this.userModel.find({
         $or: [
           { userId: { $regex: search, $options: 'i' } },
@@ -771,10 +770,10 @@ return users;
       return { status: false, "message": "Some went wrong." };
     }
   }
-  async findOperatorWithCountry(country){
-        return await this.userModel.find(
-          {country:country,role:"operator"}
-        ).select('_id');
+  async findOperatorWithCountry(country) {
+    return await this.userModel.find(
+      { country: country, role: "operator" }
+    ).select('_id');
   }
 
 }

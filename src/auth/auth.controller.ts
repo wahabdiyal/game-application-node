@@ -98,7 +98,7 @@ export class AuthController {
   @Post('login/admin')
   loginadmin(@Body()
   user) {
-    return this.authService.loginAdmin(user.email, user.password, user.ip);
+    return this.authService.loginAdmin(user.email, user.password, user.ip, user.deviceToken);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -111,7 +111,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
-   return  this.userService.fetchUserProfile(req.user.email);
+    return this.userService.fetchUserProfile(req.user.email);
 
   }
 
