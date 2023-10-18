@@ -68,7 +68,10 @@ export class User extends Document {
 
     @Prop({ default: [] })
     bet_block: [string];
-     
+
+    @Prop()
+    deviceToken: string;
+
 
 }
 

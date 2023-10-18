@@ -8,27 +8,19 @@ import * as admin from 'firebase-admin';
 import firebase from 'firebase/app'
 @Injectable()
 export class GamesService {
-  private firestore: FirebaseFirestore.Firestore;
+ 
   constructor(
     @InjectModel(Games.name)
     private gameModel: mongoose.Model<Games>,
 
   ) {
-    this.firestore = admin.firestore();
+   
   }
 
   async create(createGameDto: CreateGameDto) {
     try {
 
-      await admin.messaging().send({
-        notification: { title: "new title", body: "game added" },
-        webpush: {
-          headers: {
-            Urgency: "high", // Set high priority for web
-          },
-        },
-        token: "d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
-      });
+     
       return await this.gameModel.create(createGameDto);
     } catch (error) {
       if (error.code === 11000 || error.code === 11001) {

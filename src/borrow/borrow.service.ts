@@ -51,13 +51,43 @@ export class BorrowService {
     return { ...res.toObject(), check: true };
   }
 
-  async findAll(page = 0, perPage = 20, date = []) {
+  async findAll(page = 0, perPage = 20, date = [], search = false) {
 
     let data: any = [];
     let totalCount: number = 0;
     let totalPages: number = 0;
 
-    if (date.length > 0) {
+    if (date.length > 0 && search) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+      totalCount = await this.borrowModel.find({
+        $or: [
+          { type: { $regex: search, $options: 'i' } },
+          { status: { $regex: search, $options: 'i' } },
+          { remarks: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ],
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).countDocuments().exec();
+
+      totalPages = Math.ceil(totalCount / perPage);
+
+      if (page < 1) page = 1; if (page > totalPages) page = totalPages
+
+      const skip = (page - 1) * perPage;
+
+      data = await this.borrowModel.find({
+        $or: [
+          { type: { $regex: search, $options: 'i' } },
+          { status: { $regex: search, $options: 'i' } },
+          { remarks: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ],
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      }).skip(skip).limit(perPage).populate('sender')
+        .populate('receiver').exec();
+    }
+    else if (date.length > 0) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);
 
@@ -73,6 +103,32 @@ export class BorrowService {
 
       data = await this.borrowModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
+      }).skip(skip).limit(perPage).populate('sender')
+        .populate('receiver').exec();
+    }
+    else if (search) {
+      totalCount = await this.borrowModel.find({
+        $or: [
+          { type: { $regex: search, $options: 'i' } },
+          { status: { $regex: search, $options: 'i' } },
+          { remarks: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ]
+      }).countDocuments().exec();
+
+      totalPages = Math.ceil(totalCount / perPage);
+
+      if (page < 1) page = 1; if (page > totalPages) page = totalPages
+
+      const skip = (page - 1) * perPage;
+
+      data = await this.borrowModel.find({
+        $or: [
+          { type: { $regex: search, $options: 'i' } },
+          { status: { $regex: search, $options: 'i' } },
+          { remarks: { $regex: search, $options: 'i' } },
+          { transaction_id: { $regex: search, $options: 'i' } },
+        ]
       }).skip(skip).limit(perPage).populate('sender')
         .populate('receiver').exec();
     }

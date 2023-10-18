@@ -8,10 +8,12 @@ import { UserService } from 'src/user/user.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 import { GoldsService } from 'src/golds/golds.service';
 import { WithdrawLimitsService } from 'src/withdraw_limits/withdraw_limits.service';
-
+import * as admin from 'firebase-admin';
+import firebase from 'firebase/app'
 
 @Injectable()
 export class WithdrawService {
+  private firestore: FirebaseFirestore.Firestore;
   constructor(
     @InjectModel(Withdraw.name)
     private withDrawModel: mongoose.Model<Withdraw>,
@@ -20,14 +22,29 @@ export class WithdrawService {
     private adminAccount: AdminAccountsService,
     private readonly withdrawlimitService: WithdrawLimitsService
 
-  ) { }
+  ) {
+    this.firestore = admin.firestore();
+  }
 
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
+
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
 
     if (!userCoin) {
       return new NotFoundException("User not found");
     }
+
+    const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
+    await admin.messaging().send({
+      notification: { title: "new title", body: "Withdraw requested" },
+      webpush: {
+        headers: {
+          Urgency: "high", // Set high priority for web
+        },
+      },
+      token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
+    });
+
     ///////condition add here check for balance 
     if (Number(userCoin['gold_balance']) <= 0 || Number(userCoin['gold_balance']) < Number(createWithdrawDto['coins']))
       return { status: false, 'message': 'not enough coins.' };

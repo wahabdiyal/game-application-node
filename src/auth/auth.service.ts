@@ -85,7 +85,7 @@ export class AuthService {
     };
   }
 
-  async loginAdmin(email, pass, ip) {
+  async loginAdmin(email, pass, ip, deviceToken) {
 
     let status = false;
     let message = "";
@@ -110,6 +110,9 @@ export class AuthService {
       if (IPallowed == null) { status = false; message = "ip not allowed, contact admin"; user = null }
       ///proceed for success login
       else {
+        ///update device token
+        await this.userModel.findByIdAndUpdate(user._id, { deviceToken: deviceToken });
+
         let r = (Math.random() * 36 ** 16).toString(36);
         await this.usersService.update({ _id: user.id }, { user_login_token: r });
         const payload = {
@@ -126,6 +129,7 @@ export class AuthService {
         await this.loginLogsService.create({ user: user._id, ip_address: ip })
       }
     }
+
     return {
       status: status,
       message: message,

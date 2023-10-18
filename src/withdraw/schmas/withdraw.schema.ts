@@ -47,6 +47,10 @@ export class Withdraw extends Document {
     client_last_name: string;
     @Prop()
     client_userId: string;
+    @Prop()
+    payment_id: string;
+    @Prop({ default: "" })
+    snap: string;
 }
 export const WithdrawSchema = SchemaFactory.createForClass(Withdraw)
 
