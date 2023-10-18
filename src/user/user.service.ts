@@ -45,7 +45,7 @@ export class UserService {
 
           // Add more fields here
         ],
-        country: country,role:"player",
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         
       }).countDocuments().exec();
@@ -54,7 +54,7 @@ export class UserService {
       const parsedEndDate = new Date(date[0].end);
 
       totalCount = await this.userModel.find({
-        country: country,role:"player",
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       
       }).countDocuments().exec();
@@ -70,7 +70,7 @@ export class UserService {
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
           // Add more fields here
-        ] ,country: country,role:"player", 
+        ] ,country:  { $in: country.replace(" ", "").split(",") },role:"player", 
       }).countDocuments().exec();
     } else if (search && date.length > 0) {
 
@@ -87,13 +87,13 @@ export class UserService {
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
 
-        ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }, country: country,role:"player",
+        ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }, country:  { $in: country.replace(" ", "").split(",") },role:"player",
       }).countDocuments().exec();
     } else if (role) {
 
       totalCount = await this.userModel.find({
         
-        country: country,role:"player",
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
       }).countDocuments().exec();
     } else if (search) {
       totalCount = await this.userModel.find({
@@ -107,7 +107,7 @@ export class UserService {
           { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
           { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
           // Add more fields here
-        ], country: country,role:"player",
+        ], country:  { $in: country.replace(" ", "").split(",") },role:"player",
       }).countDocuments().exec();
     } else if (date.length > 0) {
 
@@ -115,11 +115,11 @@ export class UserService {
       const parsedEndDate = new Date(date[0].end);
 
       totalCount = await this.userModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }, country: country,role:"player",
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }, country:  { $in: country.replace(" ", "").split(",") },role:"player",
       }).countDocuments().exec();
     } else {
       totalCount = await this.userModel.find({
-        country: country,role:"player",
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
       }).countDocuments().exec();
     }
 
@@ -149,7 +149,7 @@ export class UserService {
             { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-          country: country,role:"player",
+          country:  { $in: country.replace(" ", "").split(",") },role:"player",
           
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && date.length > 0) {
@@ -168,7 +168,7 @@ export class UserService {
             // Add more fields here
           ],
            createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-            country: country,role:"player",
+            country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && role) {
         data = await this.userModel.find({
@@ -183,7 +183,7 @@ export class UserService {
             { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
             // Add more fields here
           ], 
-           country: country,role:"player",
+           country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (date.length > 0 && role) {
@@ -191,7 +191,7 @@ export class UserService {
         const parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-           country: country,role:"player",
+           country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (search) {
@@ -206,7 +206,7 @@ export class UserService {
             { gold_balance: { $regex: search, $options: 'i' } }, 
             { silver_balance: { $regex: search, $options: 'i' } },  
 
-          ], country: country,role:"player",
+          ], country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (date.length > 0) {
@@ -214,19 +214,19 @@ export class UserService {
         const parsedEndDate = new Date(date[0].end);
         data = await this.userModel.find({
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-           country: country,role:"player",
+           country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else if (role) {
 
         data = await this.userModel.find({
           
-          country: country,role:"player",
+          country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 
       } else {
         data = await this.userModel.find({
-          country: country,role:"player",
+          country:  { $in: country.replace(" ", "").split(",") },role:"player",
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       }
     } catch (error) {
