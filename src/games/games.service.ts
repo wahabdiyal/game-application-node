@@ -8,23 +8,26 @@ import * as admin from 'firebase-admin';
 import firebase from 'firebase/app'
 @Injectable()
 export class GamesService {
- 
+
   constructor(
     @InjectModel(Games.name)
     private gameModel: mongoose.Model<Games>,
 
   ) {
-   
+
   }
 
   async create(createGameDto: CreateGameDto) {
     try {
-
-     
       return await this.gameModel.create(createGameDto);
     } catch (error) {
       if (error.code === 11000 || error.code === 11001) {
-        return 'Duplicate entry'; // Return a custom error message
+        return {
+          data: null,
+          status: false,
+          message: "game title already exist"
+        }
+        return ''; // Return a custom error message
       }
       throw error;
     }
