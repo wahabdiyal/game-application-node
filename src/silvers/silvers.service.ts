@@ -44,7 +44,7 @@ export class SilversService {
   }
 
   async adminCreate(createCoinDto: CreateSilverDto): Promise<any> {
-    const user = await this.usersService.findByUserId(createCoinDto['userId']);
+    const user = await this.usersService.findByID(createCoinDto['client_id']);
     if (!user)
       return { status: 'error', message: 'User not found' }; //////custom generated userId is used
 
