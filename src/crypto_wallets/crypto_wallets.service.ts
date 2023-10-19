@@ -13,10 +13,10 @@ export class CryptoWalletsService {
   ) { }
   async create(createCryptoWalletDto: CreateCryptoWalletDto) {
 
-    // const countries = await this.cryptoWalletService.find({ country: { $in: createCryptoWalletDto['country'] } });
-    // if (countries) {
-    //   return { status: false, message: "country is already exist in list." };
-    // }
+    const countries = await this.cryptoWalletService.findOne({ country: { $in: createCryptoWalletDto['country'] } });
+    if (countries) {
+      return { status: false, message: "country is already exist in list." };
+    }
     var res = await this.cryptoWalletService.create(createCryptoWalletDto);
     return res;
   }
