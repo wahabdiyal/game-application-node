@@ -26,6 +26,7 @@ export class UserService {
     private readonly httpService: HttpService
 
   ) { }
+ 
 
   async findAllForOperator(page = 0, perPage = 20, search = false, date = [], role = false,country) {
     let totalCount = 0
@@ -602,7 +603,11 @@ export class UserService {
 
     }
     else {
-      return 'use unique email & password'
+      return {
+        status: false,
+        message: 'use unique email*'
+
+      }
     }
     throw new BadRequestException('User already exists');
   }
