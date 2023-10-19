@@ -107,9 +107,9 @@ export class AuthService {
     else {
       ///check for allowed ip
       const IPallowed = await this.listIpService.findUserIp(ip, user._id.toString());
-      const operatorIP = await this.listIpService.findUserIpByUser(user._id.toString());
       if (IPallowed == null && user.role == 'admin') { status = false; message = "ip not allowed, contact admin"; user = null }
-      ///special check for operator
+
+      const operatorIP = await this.listIpService.findUserIpByUser(user._id.toString());
       if (operatorIP != null && IPallowed == null && user.role == 'operator') { status = false; message = "ip not allowed, contact admin"; user = null }
       ///proceed for success login
       else {
@@ -127,9 +127,13 @@ export class AuthService {
           user_login_token: r
         };
         access_token = await this.jwtService.signAsync(payload)
+
+
+
         ///destroy the token
+        
         if (user.role == 'admin') { }
-        // const destroy = true;
+        // user.user_login_token;
 
         await this.usersService.update({ _id: user.id }, { user_login_token: access_token });
         status = true; message = "success"
