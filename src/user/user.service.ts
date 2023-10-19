@@ -35,7 +35,7 @@ created_at: { $gte: startDate, $lte: endDate },
 }).exec();
 return users;
    }*/
-  async findAll(page = 0, perPage = 20, search = false, date = [], role = false,operator=false) {
+  async findAll(page = 0, perPage = 20, search = false, date = [], role = false, operator = false) {
     let totalCount = 0
     if (search && date.length > 0 && role) {
       let parsedStartDate = new Date(date[0].start);
@@ -394,7 +394,11 @@ return users;
 
     }
     else {
-      return 'use unique email & password'
+      return {
+        status: false,
+        message: 'use unique email*'
+
+      }
     }
     throw new BadRequestException('User already exists');
   }
