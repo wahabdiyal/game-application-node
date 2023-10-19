@@ -26,16 +26,225 @@ export class UserService {
     private readonly httpService: HttpService
 
   ) { }
-  /*
-  date for start and end date
+ 
 
-   async searchByDateRange(startDate: Date, endDate: Date): Promise<User[]> {
-const users = await this.userModel.find({
-created_at: { $gte: startDate, $lte: endDate },
-}).exec();
-return users;
-   }*/
-  async findAll(page = 0, perPage = 20, search = false, date = [], role = false, operator = false) {
+  async findAllForOperator(page = 0, perPage = 20, search = false, date = [], role = false,country) {
+    let totalCount = 0
+    if (search && date.length > 0 && role) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      totalCount = await this.userModel.find({
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+         
+          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+
+          // Add more fields here
+        ],
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+        
+      }).countDocuments().exec();
+    } else if (date.length > 0 && role) {
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.userModel.find({
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+      
+      }).countDocuments().exec();
+    } else if (search && role) {
+      totalCount = await this.userModel.find({
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          
+          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          // Add more fields here
+        ] ,country:  { $in: country.replace(" ", "").split(",") },role:"player", 
+      }).countDocuments().exec();
+    } else if (search && date.length > 0) {
+
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      totalCount = await this.userModel.find({
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+           
+          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
+
+        ], createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }, country:  { $in: country.replace(" ", "").split(",") },role:"player",
+      }).countDocuments().exec();
+    } else if (role) {
+
+      totalCount = await this.userModel.find({
+        
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
+      }).countDocuments().exec();
+    } else if (search) {
+      totalCount = await this.userModel.find({
+        $or: [
+          { userId: { $regex: search, $options: 'i' } },
+          { phone: { $regex: search, $options: 'i' } },
+          { first_name: { $regex: search, $options: 'i' } },
+          { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+           
+          { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+          { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
+          // Add more fields here
+        ], country:  { $in: country.replace(" ", "").split(",") },role:"player",
+      }).countDocuments().exec();
+    } else if (date.length > 0) {
+
+      const parsedStartDate = new Date(date[0].start);
+      const parsedEndDate = new Date(date[0].end);
+
+      totalCount = await this.userModel.find({
+        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }, country:  { $in: country.replace(" ", "").split(",") },role:"player",
+      }).countDocuments().exec();
+    } else {
+      totalCount = await this.userModel.find({
+        country:  { $in: country.replace(" ", "").split(",") },role:"player",
+      }).countDocuments().exec();
+    }
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const skip = (page - 1) * perPage;
+    let data = [];
+    try {
+      if (search && date.length > 0 && role) {
+        let parsedStartDate = new Date(date[0].start);
+        let parsedEndDate = new Date(date[0].end);
+        data = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } },  // Case-insensitive search
+          ],
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+          country:  { $in: country.replace(" ", "").split(",") },role:"player",
+          
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (search && date.length > 0) {
+        let parsedStartDate = new Date(date[0].start);
+        let parsedEndDate = new Date(date[0].end);
+        data = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+           
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            // Add more fields here
+          ],
+           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+            country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      } else if (search && role) {
+        data = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } }, // Case-insensitive search
+             
+            { email: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { gold_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            { silver_balance: { $regex: search, $options: 'i' } }, // Case-insensitive search
+            // Add more fields here
+          ], 
+           country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+
+      } else if (date.length > 0 && role) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.userModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+           country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+
+      } else if (search) {
+        data = await this.userModel.find({
+          $or: [
+            { userId: { $regex: search, $options: 'i' } },
+            { phone: { $regex: search, $options: 'i' } },
+            { first_name: { $regex: search, $options: 'i' } },
+            { last_name: { $regex: search, $options: 'i' } },
+             
+            { email: { $regex: search, $options: 'i' } }, 
+            { gold_balance: { $regex: search, $options: 'i' } }, 
+            { silver_balance: { $regex: search, $options: 'i' } },  
+
+          ], country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+
+      } else if (date.length > 0) {
+        const parsedStartDate = new Date(date[0].start);
+        const parsedEndDate = new Date(date[0].end);
+        data = await this.userModel.find({
+          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
+           country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+
+      } else if (role) {
+
+        data = await this.userModel.find({
+          
+          country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+
+      } else {
+        data = await this.userModel.find({
+          country:  { $in: country.replace(" ", "").split(",") },role:"player",
+        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
+      }
+    } catch (error) {
+      data = [];
+    }
+
+    return {
+      data: data,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+
+  }
+
+  async findAll(page = 0, perPage = 20, search = false, date = [], role = false) {
     let totalCount = 0
     if (search && date.length > 0 && role) {
       let parsedStartDate = new Date(date[0].start);
