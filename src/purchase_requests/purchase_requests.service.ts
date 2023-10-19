@@ -27,7 +27,7 @@ export class PurchaseRequestsService {
     }
     const getOperator = await this.userService.findOperatorWithCountry(user.country);
     const singleArrayValue = getOperator.reduce((acc, item) => {
-      acc.push(item._id);
+      acc.push(item.userId);
       return acc;
     }, []);
     createPurchaseDto['country'] = user.country;
@@ -35,7 +35,7 @@ export class PurchaseRequestsService {
     createPurchaseDto['last_name'] = user.last_name;
     createPurchaseDto['userId'] = user.userId;
     // createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
-    createPurchaseDto['operator'] =singleArrayValue;
+    createPurchaseDto['operator'] = singleArrayValue;
     var res = await this.purchasemModel.create(createPurchaseDto);
     return res;
   }
@@ -116,7 +116,7 @@ export class PurchaseRequestsService {
     return { status: true, message: "request Delete successfully" };
   }
   async findByUser(user_id) {
-    const user = await this.purchasemModel.find({ user_id: user_id });
+    const user = await this.purchasemModel.find({ user_id: user_id }).sort({ createdAt: -1 });
     return user;
   }
   async findByStatus(page = 0, perPage = 20, date = [], status = false, search = false) {
@@ -206,7 +206,7 @@ export class PurchaseRequestsService {
     }
 
     const skip = (page - 1) * perPage;
- 
+
     let data = [];
     try {
       if (date.length > 0 && status && search) {
@@ -282,7 +282,7 @@ export class PurchaseRequestsService {
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         }).populate({
           path: 'operator',
-          
+
           populate: { path: 'operator' }
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
 

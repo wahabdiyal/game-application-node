@@ -54,4 +54,10 @@ export class AllowedIpsService {
       ip_address: ip,
     });
   }
+
+  async findUserIpByUser(user) {
+    return await this.allowedIPService.findOne({
+      user: user,
+    });
+  }
 }
