@@ -55,8 +55,6 @@ export class User extends Document {
     @Prop({ default: '' })
     restriction_end_at: string; ///minutes
 
-    @Prop()
-    user_login_token: string;
 
     @Prop({ default: 0 })
     attempts: number;
@@ -71,6 +69,9 @@ export class User extends Document {
 
     @Prop()
     deviceToken: string;
+
+    @Prop()
+    user_login_token: string;
 
 
 }
