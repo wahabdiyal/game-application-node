@@ -1,3 +1,4 @@
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLoginLogDto } from './dto/create-login_log.dto';
 import { UpdateLoginLogDto } from './dto/update-login_log.dto';
@@ -10,6 +11,7 @@ export class LoginLogsService {
   constructor(
     @InjectModel(LoginLogs.name)
     private loginLogsModal: mongoose.Model<LoginLogs>,
+ 
   ) { }
 
   async create(createLoginLogDto: CreateLoginLogDto) {
@@ -71,5 +73,7 @@ export class LoginLogsService {
     ])
       .exec()
   }
+
+
 }
 

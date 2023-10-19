@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { CreateAdminBankDto } from './dto/create-admin_bank.dto';
 import { UpdateAdminBankDto } from './dto/update-admin_bank.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,7 +13,12 @@ export class AdminBankService {
     ){}
 
   async create(createAdminBankDto: CreateAdminBankDto) {
-    var res = await this.adminBankService.create(createAdminBankDto);
+     const adminCountry = createAdminBankDto['country'].toLowerCase();
+      const country = await this.adminBankService.findOne({ country: adminCountry});
+    if(country){
+      throw new  NotAcceptableException('admin bank already exist.');
+    }
+    var res = await this.adminBankService.create({...createAdminBankDto,country:adminCountry});
     return res;
   }
   async findByCountry(country:string){
