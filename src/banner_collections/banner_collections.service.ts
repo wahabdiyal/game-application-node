@@ -49,7 +49,7 @@ export class BannerCollectionsService {
       };
       return {
         status: true,
-        country: newCollectionBanner,
+        countries: newCollectionBanner,
       };
     } else {
       return {
@@ -72,7 +72,7 @@ export class BannerCollectionsService {
       }
       return {
         status: true,
-        countries: bannerlist,
+        country: bannerlist,
       };
     } else {
 
