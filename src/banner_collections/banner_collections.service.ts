@@ -72,7 +72,7 @@ export class BannerCollectionsService {
       }
       return {
         status: true,
-        country: bannerlist,
+        countries: bannerlist,
       };
     } else {
 
