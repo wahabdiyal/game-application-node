@@ -36,7 +36,7 @@ export class WithdrawService {
 
     const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
     await admin.messaging().send({
-      notification: { title: "new title", body: "Withdraw requested" },
+      notification: { title: "withdraw", body: "Withdraw requested" },
       webpush: {
         headers: {
           Urgency: "high", // Set high priority for web
