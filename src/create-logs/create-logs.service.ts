@@ -2,17 +2,22 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCreateLogDto } from './dto/create-create-log.dto';
 import { UpdateCreateLogDto } from './dto/update-create-log.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from "src/user/schemas/user.schema";
+ 
 import mongoose from 'mongoose';
 import { CreateLogs } from './schemas/create-logs.schema';
 import { UserService } from 'src/user/user.service';
-
+ 
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Cron,CronExpression } from '@nestjs/schedule/dist';
+ import { OnEvent } from '@nestjs/event-emitter/dist/decorators'; 
+import { DailyRewardCollect } from 'src/daily_reward_collects/daily_reward_collects.event';
 @Injectable()
 export class CreateLogsService {
   constructor(
     @InjectModel(CreateLogs.name)
     private createLogsModal: mongoose.Model<CreateLogs>,
     private userService: UserService,
+    private readonly eventEmitter:EventEmitter2  
   ) { }
   async create(createCreateLogDto: CreateCreateLogDto) {
     const user = await this.userService.findUserbyId(createCreateLogDto['user']);
@@ -212,4 +217,25 @@ export class CreateLogsService {
 
     return { status: true, message: "Delete" };
   }
+
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT,{name:"action-log-del"})
+  async sendRequest(){
+     
+     this.eventEmitter.emit(
+       'del.logs',
+       new DailyRewardCollect(),
+     );
+       console.log("Delete logs send request.....");
+   }
+   @OnEvent("del.logs")
+  async eventDailyReward(payload:DailyRewardCollect){
+    const sixMonthsAgo = new Date(Date.now() -  6 * 30 * 24 * 60 * 60 * 1000); // delete last 6 months records in collection
+    const query = { createdAt: { $lt: sixMonthsAgo } };
+     const del = await this.createLogsModal.deleteMany(query);
+     console.log(del);
+       ///////this getUserDailyReward belongs to daily_reward_collects.event.ts//////////////
+      ///// just print action finished /////////////////
+        return payload.getUserDailyReward();
+         
+   }
 }
