@@ -13,6 +13,8 @@ export class BannerCollection  extends Document{
     collection_name:string;
     @Prop({required: true})
     country:[string];
+    @Prop({required: true})
+    country_mobile:[string];
     @Prop({required: true,})
     banner_id:[string];
 
