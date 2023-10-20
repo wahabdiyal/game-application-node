@@ -7,7 +7,7 @@ import { storage } from './../config/storage.config';
 
 @Controller('packages')
 export class PackagesController {
-  constructor(private readonly packagesService: PackagesService) {}
+  constructor(private readonly packagesService: PackagesService) { }
 
   @Post()
   // @UseInterceptors(FileInterceptor('file'))
@@ -18,9 +18,9 @@ export class PackagesController {
     )
   )
   //////add  path file save and folder location/////
-  async create(@UploadedFile() file: Express.Multer.File,@Body() createPackageDto: CreatePackageDto) {
-     
-    return await this.packagesService.create({...createPackageDto,file_url:(file.path.replace("public\\", "")).replace("\\","/").replace("public/","")});
+  async create(@UploadedFile() file: Express.Multer.File, @Body() createPackageDto: CreatePackageDto) {
+
+    return await this.packagesService.create({ ...createPackageDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : '' });
   }
 
   @Get()
@@ -52,12 +52,12 @@ export class PackagesController {
   ) {
     // You can implement your logic here, e.g., finding the existing game by id and updating it
     // Then, you can update the file_url property similar to how you did in the create method
-  
+
     const updatedGame = await this.packagesService.update(id, {
       ...updatePackageDto,
-      file_url: file ? (file.path.replace("public\\", "")).replace("\\","/").replace("public/","") : undefined
+      file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined
     });
-  
+
     return updatedGame;
   }
 

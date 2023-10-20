@@ -120,6 +120,7 @@ export class WithdrawService {
       totalCount = await this.withDrawModel.find({
         $or: [
           { transaction_id: { $regex: search, $options: 'i' } },
+          { payment_id: { $regex: search, $options: 'i' } },
           { client_id: { $regex: search, $options: 'i' } },
         ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
@@ -133,6 +134,7 @@ export class WithdrawService {
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
         $or: [
           { transaction_id: { $regex: search, $options: 'i' } },
+          { payment_id: { $regex: search, $options: 'i' } },
           { client_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
@@ -153,6 +155,7 @@ export class WithdrawService {
           { client_last_name: { $regex: search, $options: 'i' } },
           { client_userId: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
+          { payment_id: { $regex: search, $options: 'i' } },
         ],
         status: status
       }).countDocuments().exec();
@@ -164,6 +167,7 @@ export class WithdrawService {
           { client_last_name: { $regex: search, $options: 'i' } },
           { client_userId: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
+          { payment_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
     } else if (date.length > 0) {
@@ -207,6 +211,7 @@ export class WithdrawService {
             { client_last_name: { $regex: search, $options: 'i' } },
             { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+            { payment_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (date.length > 0 && status) {
@@ -229,6 +234,7 @@ export class WithdrawService {
             { client_last_name: { $regex: search, $options: 'i' } },
             { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+            { payment_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (search && status) {
@@ -239,6 +245,7 @@ export class WithdrawService {
             { client_last_name: { $regex: search, $options: 'i' } },
             { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+            { payment_id: { $regex: search, $options: 'i' } },
           ],
           status: status
         })
@@ -253,6 +260,7 @@ export class WithdrawService {
             { client_last_name: { $regex: search, $options: 'i' } },
             { client_userId: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+            { payment_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (status) {
