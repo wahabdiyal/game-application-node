@@ -33,8 +33,9 @@ export class BetsService {
         $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
       },
     }).countDocuments().exec();
+    
     const game = await this.gameService.findbyId(createbetDto['game_id']);
-    if (game && Number(game.maximum_challenges) < userBet) {
+    if (game && Number(game.maximum_challenges) < userBet && createbetDto['second_player'] != "ai") {
       return { status: false, message: "Challenges exceeded" };
     }
 
