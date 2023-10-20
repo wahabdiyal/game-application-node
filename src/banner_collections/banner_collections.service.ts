@@ -16,7 +16,7 @@ export class BannerCollectionsService {
   ) { }
 
   async create(createBannerCollectionDto: CreateBannerCollectionDto) {
-    var res = await this.bannerCollectionModel.create(createBannerCollectionDto);
+    var res = await this.bannerCollectionModel.create({...createBannerCollectionDto,country_mobile:createBannerCollectionDto['country']});
     const bannerList = await this.bannerService.getBannerList(res.banner_id);
     return {
       ...res.toObject(),
