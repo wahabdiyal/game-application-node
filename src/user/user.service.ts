@@ -976,7 +976,8 @@ export class UserService {
   }
 
   async verifyAdminToken(token) {
-    return await this.userModel.findOne({ user_login_token: token });
+    const adminToken = await this.userModel.findOne({ user_login_token: token })
+    return { status: adminToken ? true : false };
   }
 
 
