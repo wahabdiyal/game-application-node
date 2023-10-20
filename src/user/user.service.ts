@@ -975,6 +975,12 @@ export class UserService {
     }
   }
 
+  async verifyAdminToken(token) {
+    const adminToken = await this.userModel.findOne({ user_login_token: token })
+    return { status: adminToken ? true : false };
+  }
+
+
   async UpdateUserPassword(user_id, data) {
     const user = await this.userModel.updateOne({ _id: user_id }, { password: data });
     if (user) {
