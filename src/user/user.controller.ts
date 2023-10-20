@@ -31,24 +31,24 @@ export class UserController {
   ) { }
 
   @Get('/')
-  async getUser(@Request() req ,@Query() { page, perpage, search, start_date, end_date, role }) {
+  async getUser(@Request() req, @Query() { page, perpage, search, start_date, end_date, role }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
- 
-    if(req.user.role=='operator'){ 
-       
-      return this.userService.findAllForOperator(page, perpage, search, date, role,req.user.country);
-    }else if(req.user.role=='admin'){
+
+    if (req.user.role == 'operator') {
+
+      return this.userService.findAllForOperator(page, perpage, search, date, role, req.user.country);
+    } else if (req.user.role == 'admin') {
       return this.userService.findAll(page, perpage, search, date, role);
-    }else{
+    } else {
       return {
         data: [],
         currentPage: 0,
 
         total_count: 0,
-        message:"user not allowed"
+        message: "user not allowed"
       };
     }
-    
+
   }
 
   @Get(':id')
@@ -135,18 +135,18 @@ export class UserController {
 
   @Post('mobile/update/password')
   @UseInterceptors(FileInterceptor("form-data"))
- async updatepasswordmobile( @Body() body: any, @Request() req) {
-    if(!body['newpassword'] || !body['oldpassword']){
-       return {status:false,message:"Field not found"};
+  async updatepasswordmobile(@Body() body: any, @Request() req) {
+    if (!body['newpassword'] || !body['oldpassword']) {
+      return { status: false, message: "Field not found" };
     }
     const user = await this.userService.findByID(req.user.id);
-    if(user && user['password'] === body['oldpassword']) {
-      return this.userService.UpdateUserPassword(req.user.id,body['newpassword']);
-  }else{
-    return {status:false,message:"Password is not valid."}
-  }
+    if (user && user['password'] === body['oldpassword']) {
+      return this.userService.UpdateUserPassword(req.user.id, body['newpassword']);
+    } else {
+      return { status: false, message: "Password is not valid." }
+    }
 
-}
+  }
 
   @Get('mobile/search/emailorid/:role') // for chart
   findUserByIdOrEmail(@Param('role') role: any) {
@@ -156,5 +156,9 @@ export class UserController {
   @Patch('update-play-status/player') // The endpoint for updating play status
   updatePlayStatus(@Query() { id, bet_block }) {
     return this.userService.updatePlayStatus(id, bet_block);
+  }
+  @Get('admin/verify-token/:token') // The endpoint for updating play status
+  verifyAdminToken(@Param('token') token: any) {
+    return this.userService.verifyAdminToken(token);
   }
 }
