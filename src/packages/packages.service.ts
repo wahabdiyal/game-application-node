@@ -30,11 +30,12 @@ export class PackagesService {
 
   async findbyCountry(country: any) {
     let packageValue = await this.packagesModel.find({country: country});
+    
      const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
 
     if (getcountry) {
-      let countryCurrency = await this.currencyService.findAll(getcountry.currency);
-      const crnc = getcountry.currency;
+      let countryCurrency = await this.currencyService.findAll(getcountry.code);
+      const crnc = getcountry.code;
 
       const exchangeRate = countryCurrency[0].data[crnc].value;
 
@@ -83,5 +84,44 @@ export class PackagesService {
     }
 
     return { status: true, message: "Package Delete successfully" };
+  }
+
+  async findbyCountryForMobile(country: any) {
+    let packageValue = await this.packagesModel.find({country: country});
+    
+     const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
+
+    if (getcountry) {
+      let countryCurrency = await this.currencyService.findAll(getcountry.code);
+      const crnc = getcountry.code;
+      if(!countryCurrency){
+        return {status:false,message:"Currency not found"};
+      }
+       const exchangeRate = countryCurrency[0].data[crnc].value;
+
+      const updatedPackageValue = [];
+
+      for (const item of packageValue) {
+
+        const newAmount = parseFloat(item.amount_usd) * exchangeRate;
+
+        const updatedItem = {
+          ...item.toObject(),
+          amount: newAmount,
+          user_country: country,
+          currency: crnc,
+        };
+
+        // delete updatedItem.amount_usd;
+        delete updatedItem.country;
+
+        updatedPackageValue.push(updatedItem);
+      }
+      return {status:true,message:"Shop detail country",shopdata:updatedPackageValue};
+   
+
+    } else {
+      return {status:false,message:"Country shop not found"};
+    }
   }
 }

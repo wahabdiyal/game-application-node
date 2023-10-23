@@ -65,4 +65,9 @@ export class PackagesController {
   remove(@Param('id') id: string) {
     return this.packagesService.remove(id);
   }
+
+  @Get('/country/mobile/:country')
+  findByCountryMobile(@Param('country') country: string) {
+    return this.packagesService.findbyCountryForMobile(country);
+  }
 }
