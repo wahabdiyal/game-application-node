@@ -36,4 +36,9 @@ export class CryptoWalletsController {
   remove(@Param('id') id: string) {
     return this.cryptoWalletsService.remove(id);
   }
+  @Get('/country/mobile/:country')
+  findByCountryForMobile(@Param('country') country: string) {
+    return this.cryptoWalletsService.findByCountryForMobile(country);
+  }
+
 }

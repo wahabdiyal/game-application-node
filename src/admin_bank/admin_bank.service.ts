@@ -53,4 +53,15 @@ export class AdminBankService {
     return {status: true,message: "admin bank Delete successfully"};
      
   }
+
+  async findOneCountryForMobile(country: any) {
+    const getCountry = await this.adminBankService.findOne({country : country});
+        if(getCountry){
+          return {status:true,message:"Admin country bank accounts",data:getCountry}
+        }else{
+          return {status:false,message:"Not Acount Found." }
+
+        }
+  }
+
 }

@@ -1,5 +1,5 @@
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreateBannerCollectionDto } from './dto/create-banner_collection.dto';
 import { UpdateBannerCollectionDto } from './dto/update-banner_collection.dto';
 import { BannerCollection } from './schemas/banner_collection.schema';
@@ -16,6 +16,11 @@ export class BannerCollectionsService {
   ) { }
 
   async create(createBannerCollectionDto: CreateBannerCollectionDto) {
+   
+    const bannerCollection = await this.bannerCollectionModel.findOne({country:{$in:createBannerCollectionDto['country']}});
+      if(bannerCollection){
+        throw new NotAcceptableException('Country is already exist.');
+      }
     var res = await this.bannerCollectionModel.create({...createBannerCollectionDto,country_mobile:createBannerCollectionDto['country']});
     const bannerList = await this.bannerService.getBannerList(res.banner_id);
     return {
