@@ -36,4 +36,9 @@ export class AdminBankController {
   remove(@Param('id') id: string) {
     return this.adminBankService.remove(id);
   }
+
+  @Get('/country/mobile/:country')
+  findOneCountryForMobile(@Param('country') country: string) {
+    return this.adminBankService.findOneCountryForMobile(country);
+  }
 }

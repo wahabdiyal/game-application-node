@@ -61,4 +61,13 @@ export class CryptoWalletsService {
 
     return { status: true, message: "Wallet Delete successfully" };
   }
+
+  async findByCountryForMobile(ctry: string) {
+    const getCountry = await this.cryptoWalletService.find({ country: { $in: [ctry] } });
+     if(getCountry.length > 0){
+        return {status:true,message:"Crypt Wallet for country",walletdata:getCountry};
+     }else{
+      return {status:false,message:"Crypto wallet not found."};
+     }
+  }
 }
