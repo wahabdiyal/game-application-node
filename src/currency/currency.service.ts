@@ -62,9 +62,9 @@ export class CurrencyService {
   @Cron(CronExpression.EVERY_9_HOURS)     ///0 0-23/9 * * *
   async handleCron() {
     console.log('cron of currency');
-      await this.currencyService.deleteMany({}).exec();
-      console.log("currency delete")
+      // await this.currencyService.deleteMany({}).exec();
     const reqeust = await this.httpService.axiosRef.get('https://api.currencyapi.com/v3/latest?apikey=cur_live_o8N1Z4mSxwJEpDfYiJzwFR0UPTQs79sySWeEAgHO&base_currency=USD');
-     return this.currencyService.create(reqeust.data);
+    console.log("request proccess....");
+  await this.currencyService.updateMany({}, { $set: reqeust.data })
   }
   }
