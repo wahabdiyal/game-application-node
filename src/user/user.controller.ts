@@ -43,7 +43,6 @@ export class UserController {
       return {
         data: [],
         currentPage: 0,
-
         total_count: 0,
         message: "user not allowed"
       };
