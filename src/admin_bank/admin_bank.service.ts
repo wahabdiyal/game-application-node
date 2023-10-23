@@ -57,7 +57,7 @@ export class AdminBankService {
   async findOneCountryForMobile(country: any) {
     const getCountry = await this.adminBankService.findOne({country : country});
         if(getCountry){
-          return {status:true,message:"Admin country bank accounts",data:getCountry}
+          return {status:true,message:"Admin country bank accounts",banksdata:getCountry}
         }else{
           return {status:false,message:"Not Acount Found." }
 

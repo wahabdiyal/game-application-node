@@ -65,7 +65,7 @@ export class CryptoWalletsService {
   async findByCountryForMobile(ctry: string) {
     const getCountry = await this.cryptoWalletService.find({ country: { $in: [ctry] } });
      if(getCountry.length > 0){
-        return {status:true,message:"Crypt Wallet for country",data:getCountry};
+        return {status:true,message:"Crypt Wallet for country",walletdata:getCountry};
      }else{
       return {status:false,message:"Crypto wallet not found."};
      }
