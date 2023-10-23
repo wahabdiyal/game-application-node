@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from 'mongoose';
 
-export enum UserType {
-    admin = "admin",
-    operator = "operator",
-    player = "player"
-}
+// export enum UserType {
+//     admin = "admin",
+//     operator = "operator",
+//     player = "player"
+// }
 @Schema({
     timestamps: true,
 })
@@ -16,7 +16,7 @@ export class UserRights extends Document {
     @Prop({ required: true })
     controller: string;
     @Prop({ required: true })
-    role: UserType;
+    role: string;
     @Prop()
     access: number;
 

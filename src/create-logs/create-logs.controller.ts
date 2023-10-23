@@ -33,5 +33,11 @@ export class CreateLogsController {
     return this.createLogsService.remove(id);
   }
 
+ 
+  @Get('operator/verify-hour-events/:id') // The endpoint for updating play status
+  verifyOperatorsHourEvents(@Param('id') id: any) {
+    return this.createLogsService.verifyOperatorsHourEvents(id);
+  }
+
 
 }

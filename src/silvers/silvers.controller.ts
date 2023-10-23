@@ -20,7 +20,7 @@ export class SilversController {
   }
   @Post('create/admin-panel')
   adminCreate(@Body() createSilverDto: CreateSilverDto) {
-    return this.silversService.adminCreate(createSilverDto);
+    return this.silversService.create(createSilverDto);
   }
 
   @Post('/apirequest/server/jk_y97wah')

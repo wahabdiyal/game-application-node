@@ -39,14 +39,8 @@ export class GoldsService {
 
     const latestAdminBal = await this.adminAccount.getLatestEntry();
     if (Number(latestAdminBal?.gold_coin_balance) > Number(createGoldDto['coins'])) {
-      var res = await this.goldModel.create(createGoldDto);
-      const user = await this.userService.findByID(createGoldDto['client_id'].toString()); if (!user)
-        return { status: 'error', message: 'User not found' };
-      else
-        createGoldDto['client_id'] = user._id.toString()
-      const newBalance = (createGoldDto['type'] == "credit") ? parseInt(user.gold_balance) + parseInt(createGoldDto['coins'], 10) : parseInt(user.gold_balance) - parseInt(createGoldDto['coins'], 10);
-      this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
-
+      var res = await this.create(createGoldDto);
+     
       // handle admin account
 
       const coins = createGoldDto['type'] == "credit" ? (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(createGoldDto['coins'])
