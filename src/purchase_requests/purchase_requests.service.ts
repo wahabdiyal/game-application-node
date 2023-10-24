@@ -154,6 +154,7 @@ export class PurchaseRequestsService {
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
 
@@ -168,6 +169,7 @@ export class PurchaseRequestsService {
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
 
@@ -180,6 +182,7 @@ export class PurchaseRequestsService {
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
     } else if (date.length > 0 && status) {
@@ -206,6 +209,7 @@ export class PurchaseRequestsService {
           { first_name: { $regex: search, $options: 'i' } },
           { last_name: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
         ],
       }).countDocuments().exec();
     } else if (status) {
@@ -241,6 +245,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (date.length > 0 && search) {
@@ -255,6 +260,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (status && search) {
@@ -267,6 +273,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (date.length > 0 && status) {
@@ -285,6 +292,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
+          { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).populate({
           path: 'operator',

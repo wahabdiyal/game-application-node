@@ -108,36 +108,38 @@ export class AuthService {
       ///check for allowed ip
       const IPallowed = await this.listIpService.findUserIp(ip, user._id.toString());
       if (IPallowed == null && user.role == 'admin') { status = false; message = "ip not allowed, contact admin"; user = null }
-
-      const operatorIP = await this.listIpService.findUserIpByUser(user._id.toString());
-      if (operatorIP != null && IPallowed == null && user.role == 'operator') { status = false; message = "ip not allowed, contact admin"; user = null }
-      ///proceed for success login
       else {
-        ///update device token
-        await this.userModel.findByIdAndUpdate(user._id, { deviceToken: deviceToken });
 
-        let r = (Math.random() * 36 ** 16).toString(36);
-        const payload = {
-          id: user._id,
-          name: user.first_name + user.last_name,
-          country: user.country,
-          email: user.email,
-          status: user.status,
-          role: user.role,
-          user_login_token: r
-        };
-        access_token = await this.jwtService.signAsync(payload)
+        const operatorIP = await this.listIpService.findUserIpByUser(user._id.toString());
+        if (operatorIP != null && IPallowed == null && user.role == 'operator') { status = false; message = "ip not allowed, contact admin"; user = null }
+        ///proceed for success login
+        else {
+          ///update device token
+          await this.userModel.findByIdAndUpdate(user._id, { deviceToken: deviceToken });
+
+          let r = (Math.random() * 36 ** 16).toString(36);
+          const payload = {
+            id: user._id,
+            name: user.first_name + user.last_name,
+            country: user.country,
+            email: user.email,
+            status: user.status,
+            role: user.role,
+            user_login_token: r
+          };
+          access_token = await this.jwtService.signAsync(payload)
 
 
 
-        ///destroy the token
-        
-        if (user.role == 'admin') { }
-        // user.user_login_token;
+          ///destroy the token
 
-        await this.usersService.update({ _id: user.id }, { user_login_token: access_token });
-        status = true; message = "success"
-        await this.loginLogsService.create({ user: user._id, ip_address: ip })
+          if (user.role == 'admin')
+          // user.user_login_token;
+
+          await this.usersService.update({ _id: user.id }, { user_login_token: access_token });
+          status = true; message = "success"
+          await this.loginLogsService.create({ user: user._id, ip_address: ip })
+        }
       }
     }
 

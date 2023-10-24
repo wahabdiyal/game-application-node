@@ -10,58 +10,59 @@ export class AdminBankService {
   constructor(
     @InjectModel(AdminBank.name)
     private adminBankService: mongoose.Model<AdminBank>,
-    ){}
+  ) { }
 
   async create(createAdminBankDto: CreateAdminBankDto) {
-     const adminCountry = createAdminBankDto['country'].toLowerCase();
-      const country = await this.adminBankService.findOne({ country: adminCountry});
-    if(country){
-      throw new  NotAcceptableException('admin bank already exist.');
+    const adminCountry = createAdminBankDto['country'].toLowerCase();
+    const country = await this.adminBankService.findOne({ country: adminCountry });
+    if (country) {
+      throw new NotAcceptableException('admin bank already exist.');
     }
-    var res = await this.adminBankService.create({...createAdminBankDto,country:adminCountry});
+    var res = await this.adminBankService.create({ ...createAdminBankDto, country: adminCountry });
     return res;
   }
-  async findByCountry(country:string){
-    return await this.adminBankService.find({ country: country});
+  async findByCountry(country: string) {
+    return await this.adminBankService.find({ country: country });
   }
   async findAll() {
     return await this.adminBankService.find();
   }
- async findOne(id: any) {
-    return await this.adminBankService.findOne({_id : id});
+  async findOne(id: any) {
+    return await this.adminBankService.findOne({ _id: id });
   }
   async findOneCountry(country: any) {
-    return await this.adminBankService.findOne({country : country});
+    return await this.adminBankService.findOne({ country: country });
   }
- async update(id: any, updateAdminBankDto: UpdateAdminBankDto) {
-  const admin_bank = await this.adminBankService.findByIdAndUpdate(id,updateAdminBankDto);
+  async update(id: any, updateAdminBankDto: UpdateAdminBankDto) {
+    const admin_bank = await this.adminBankService.findByIdAndUpdate(id, updateAdminBankDto);
 
-  if (!admin_bank) {
-    throw new NotFoundException('admin bank not found.');
-  }
+    if (!admin_bank) {
+      throw new NotFoundException('admin bank not found.');
+    }
+    const data = await this.adminBankService.findOne({ _id: id });
 
-  return {status: true,message: "admin bank updated successfully"};
+    return { status: true, data: data, message: "admin bank updated successfully" };
   }
 
   async remove(id: any) {
     const admin_bank = await this.adminBankService.findByIdAndDelete(id);
 
-    if (!admin_bank){
+    if (!admin_bank) {
       throw new NotFoundException('admin bank not found.');
     }
-  
-    return {status: true,message: "admin bank Delete successfully"};
-     
+
+    return { status: true, message: "admin bank Delete successfully" };
+
   }
 
   async findOneCountryForMobile(country: any) {
-    const getCountry = await this.adminBankService.findOne({country : country});
-        if(getCountry){
-          return {status:true,message:"Admin country bank accounts",banksdata:getCountry}
-        }else{
-          return {status:false,message:"Not Acount Found." }
+    const getCountry = await this.adminBankService.findOne({ country: country });
+    if (getCountry) {
+      return { status: true, message: "Admin country bank accounts", banksdata: getCountry }
+    } else {
+      return { status: false, message: "Not Acount Found." }
 
-        }
+    }
   }
 
 }

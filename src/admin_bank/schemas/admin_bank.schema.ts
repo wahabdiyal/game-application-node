@@ -10,6 +10,8 @@ export class AdminBank  extends Document{
     @Prop({required: true})
     bank_detail:[string];
     @Prop({required: true})
+    bank_name:[string];
+    @Prop({required: true})
     country:string;
 
     @Prop()
