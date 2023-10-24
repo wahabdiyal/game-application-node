@@ -22,6 +22,19 @@ export class PurchaseRequestsController {
     return await this.purchaseRequestsService.create({ ...createBannerDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
   }
 
+  @Post("mobile/reqeust/")
+  // @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor(
+      "file", // name of the field being passed
+      { storage }
+    )
+  )
+ 
+  async createForMobile(@UploadedFile() file: Express.Multer.File, @Body() createBannerDto: CreatePurchaseRequestDto) {
+    return await this.purchaseRequestsService.createForMobile({ ...createBannerDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
+  }
+
   @Get()
   findAll(@Query() { page, perpage, start_date, end_date, status,search }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];

@@ -87,7 +87,8 @@ export class PackagesService {
   }
 
   async findbyCountryForMobile(country: any) {
-    let packageValue = await this.packagesModel.find({country: country});
+    let packageValue = await this.packagesModel.find({country:  { "$regex": country, "$options": "i" }});
+ 
     
      const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
 
