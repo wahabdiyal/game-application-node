@@ -28,6 +28,7 @@ export class CreateLogsService {
 
     createCreateLogDto['operator_name'] = user.first_name + ' ' + user.last_name;
     createCreateLogDto['country'] = user.country;
+    createCreateLogDto['operator_email'] = user.email;
     return await this.createLogsModal.create(createCreateLogDto);
   }
   async findAll(page = 0, perPage = 20, date = [], search = false, countryName = false) {
@@ -47,6 +48,7 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         $or: [
           { operator_name: { $regex: search, $options: 'i' } },
+          { operator_email: { $regex: search, $options: 'i' } },
           { url: { $regex: search, $options: 'i' } },
           { country: { $regex: search, $options: 'i' } }
         ],
@@ -61,6 +63,8 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         $or: [
           { operator_name: { $regex: search, $options: 'i' } },
+          { url: { $regex: search, $options: 'i' } },
+          { operator_email: { $regex: search, $options: 'i' } },
           { country: { $regex: search, $options: 'i' } }
         ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
@@ -78,6 +82,8 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         $or: [
           { operator_name: { $regex: search, $options: 'i' } },
+          { url: { $regex: search, $options: 'i' } },
+          { operator_email: { $regex: search, $options: 'i' } },
           { country: { $regex: search, $options: 'i' } }
         ],
         country: countryName,
@@ -89,6 +95,8 @@ export class CreateLogsService {
       totalCount = await this.createLogsModal.find({
         $or: [
           { operator_name: { $regex: search, $options: 'i' } },
+          { url: { $regex: search, $options: 'i' } },
+          { operator_email: { $regex: search, $options: 'i' } },
           { country: { $regex: search, $options: 'i' } }
         ],
         country: countryName,
@@ -124,6 +132,7 @@ export class CreateLogsService {
         data = await this.createLogsModal.find({
           $or: [
             { operator_name: { $regex: search, $options: 'i' } },
+            { operator_email: { $regex: search, $options: 'i' } },
             { url: { $regex: search, $options: 'i' } },
             { country: { $regex: search, $options: 'i' } }
           ],
@@ -138,6 +147,8 @@ export class CreateLogsService {
         data = await this.createLogsModal.find({
           $or: [
             { operator_name: { $regex: search, $options: 'i' } },
+            { operator_email: { $regex: search, $options: 'i' } },
+            { url: { $regex: search, $options: 'i' } },
             { country: { $regex: search, $options: 'i' } }
           ],
           createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
@@ -155,6 +166,8 @@ export class CreateLogsService {
         data = await this.createLogsModal.find({
           $or: [
             { operator_name: { $regex: search, $options: 'i' } },
+            { operator_email: { $regex: search, $options: 'i' } },
+            { url: { $regex: search, $options: 'i' } },
             { country: { $regex: search, $options: 'i' } }
           ],
           country: countryName,
@@ -166,6 +179,8 @@ export class CreateLogsService {
         data = await this.createLogsModal.find({
           $or: [
             { operator_name: { $regex: search, $options: 'i' } },
+            { operator_email: { $regex: search, $options: 'i' } },
+            { url: { $regex: search, $options: 'i' } },
             { country: { $regex: search, $options: 'i' } }
           ],
           country: countryName,

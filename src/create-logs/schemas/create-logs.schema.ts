@@ -24,6 +24,8 @@ export class CreateLogs extends Document {
     @Prop()
     operator_name: string;
     @Prop()
+    operator_email: string;
+    @Prop()
     country: string;
 
 
