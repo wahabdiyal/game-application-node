@@ -9,8 +9,8 @@ export class AdminBank  extends Document{
     status:string;
     @Prop({required: true})
     bank_detail:[string];
-    @Prop({required: true})
-    bank_name:[string];
+    // @Prop({required: true})
+    // bank_name:[string];
     @Prop({required: true})
     country:string;
 
