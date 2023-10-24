@@ -23,7 +23,7 @@ export class PurchaseRequestsService {
   async create(createPurchaseDto: CreatePurchaseRequestDto) {
     const user = await this.userService.findUserbyId(createPurchaseDto['user_id']);
     if (!user) {
-      return new NotFoundException("User not found");
+     return {status:false,message:"User not found"};
     }
     const getOperator = await this.userService.findOperatorWithCountry(user.country);
     const singleArrayValue = getOperator.reduce((acc, item) => {
