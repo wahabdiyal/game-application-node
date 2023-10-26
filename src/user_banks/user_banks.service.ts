@@ -59,15 +59,15 @@ export class UserBanksService {
   }
 
   async findOneUser(user_id: any) {
-   return await this.userBankService.find({ user_id: user_id });
-      }
+    return await this.userBankService.find({ user_id: user_id }).sort({ createdAt: 1 }).exec();
+  }
 
   async update(id: any, updateUserBankDto: UpdateUserBankDto) {
 
     ///clear all selected wallet and banks
     if (updateUserBankDto['is_selected'] === true) await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());
-    
-    if (updateUserBankDto['is_selected'] == '1'){ await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());}
+
+    if (updateUserBankDto['is_selected'] == '1') { await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString()); }
 
     const user_bank = await this.userBankService.findByIdAndUpdate(id, updateUserBankDto);
 
