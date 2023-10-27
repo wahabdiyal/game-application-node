@@ -86,15 +86,16 @@ export class AuthService {
   }
 
   async loginAdmin(email, pass, ip, deviceToken) {
-
     let status = false;
     let message = "";
     let access_token = "";
 
     let user = await this.userModel.findOne({ email: email, password: pass });
-
+    let checkBlock = await this.userModel.findOne({ email: email });
+    // check for block directly
+    if (checkBlock && (checkBlock.attempts > 5 || checkBlock.status !== 'active')) { status = false; message = "user blocked, contact admin"; user = null }
     /////handle invalid,player & wrong attempts attempts increments
-    if (!user || user.role == "player") {
+    else if (!user || user.role == "player") {
       await this.userModel.updateOne({ email: email }, { $inc: { attempts: 1 } });
       status = false; message = "invalid user"
     }
@@ -134,9 +135,9 @@ export class AuthService {
           ///destroy the token
 
           if (user.role == 'admin')
-          // user.user_login_token;
+            // user.user_login_token;
 
-          await this.usersService.update({ _id: user.id }, { user_login_token: access_token });
+            await this.usersService.update({ _id: user.id }, { user_login_token: access_token });
           status = true; message = "success"
           await this.loginLogsService.create({ user: user._id, ip_address: ip })
         }

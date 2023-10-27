@@ -54,6 +54,10 @@ export class UserController {
   async singleUser(@Param('id') id: any): Promise<User> {
     return this.userService.findwithUserId(id);
   }
+  @Get('find/user_id/:id')
+  async singleUserByUserId(@Param('id') userId: any): Promise<User> {
+    return this.userService.singleUserByUserId(userId);
+  }
 
   @Patch(':id')
   @UseInterceptors(

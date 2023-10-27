@@ -698,6 +698,22 @@ export class UserService {
 
     return user;
   }
+  async singleUserByUserId(userId: any) {
+
+    try {
+      const user = await this.userModel.findOne({ userId: userId });
+
+      if (!user) {
+        throw new NotFoundException('User not found.');
+      }
+
+      return user;
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
 
   async findwithUserRole(role: any) {
 
