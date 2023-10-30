@@ -84,7 +84,7 @@ export class BetsService {
       }
     }
     else {
-      return { status: false, message: "Invalid inputs try again" };
+      return { status: false, message: "user low balance" };
     }
   }
   async findOne(id: any) {
@@ -346,17 +346,23 @@ export class BetsService {
         $or: [{ first_player: _id }, { second_player: _id }]
       };
       if (game !== "") query.game_id = new mongoose.Types.ObjectId(game);
-  
+
       ///////////////////////////////////////////////////////////////////// counter search
       let totalCount = 0
       totalCount = await this.betsModel.find(query).countDocuments().exec();
       const totalPages = Math.ceil(totalCount / perPage);
       let message = "not history found"
-  
-      if (page < 1) page = 1; else if (page > totalPages) page = totalPages
-      const skip = (page) * perPage;
+
+
+      if (page < 1) {
+        page = 1;
+      } else if (page > totalPages) {
+        page = totalPages;
+      }
+
+      const skip = (page - 1) * perPage;
       ///////////////////////////////////////////////////////////////////// counter search
-  
+
       const data = await this.betsModel
         .find(query)
         // .select('transaction_id gold winner createdAt')
@@ -364,14 +370,14 @@ export class BetsService {
         .skip(skip)
         .limit(perPage)
         .exec();
-  
+
       const modifiedData = data.map((item: any) => ({
         transaction_id: item.transaction_id,
         gold: item.gold,
         createdAt: item.createdAt,
         status: item.winner == _id ? 'won' : 'lost',
       }));
-  
+
       if (data.length > 0) message = "game history found"
       return {
         status: true,
@@ -383,19 +389,19 @@ export class BetsService {
         total_count: totalCount,
       };
     } catch (error) {
-      
+
       return {
         status: true,
         message: "not history found",
         gamehistory: [],
         currentPage: page,
-        totalPages:1,
+        totalPages: 1,
         perPage,
         total_count: 1,
       };
       console.log(error)
     }
-  
+
   }
 
 
