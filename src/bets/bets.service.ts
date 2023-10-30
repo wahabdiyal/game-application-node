@@ -235,7 +235,7 @@ export class BetsService {
         'game_id': bet.game_id,
         "coins": userprice
       });
-      await this.update(id, { status: "complete", winner: user['_id'] });
+      await this.update(id, { status: "complete", winner: user['_id'], admin_commission: commission, user_coins: userprice });
 
       ////////////admin commumation///////////////
       return await this.userService.getUserRenewTokenForMobile(user['id']);
@@ -396,6 +396,7 @@ export class BetsService {
         transaction_id: item.transaction_id,
         gold: item.gold,
         gamedetail: item.game_id,
+        user_coins: item.user_coins,
         createdAt: item.createdAt,
         status: item.winner == _id ? 'won' : 'lost',
       }));
