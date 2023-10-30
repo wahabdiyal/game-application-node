@@ -395,7 +395,7 @@ export class BetsService {
       const modifiedData = data.map((item: any) => ({
         transaction_id: item.transaction_id,
         gold: item.gold,
-        game_id: item.game_id,
+        gamedetail: item.game_id,
         createdAt: item.createdAt,
         status: item.winner == _id ? 'won' : 'lost',
       }));
