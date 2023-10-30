@@ -85,4 +85,8 @@ export class WithdrawController {
   getRecordWithStatus(@Param('status') status) {
     return this.withdrawService.getRecordWithStatus(status);
   }
+  @Get('/mobile/history')
+  game_history(@Query() { page, perpage, player_id }) {
+    return this.withdrawService.history(page, perpage, player_id);
+  }
 }

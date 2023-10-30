@@ -542,5 +542,63 @@ export class WithdrawService {
     }
     return { status: true, message: `Withdraw User ${status}`, "Requests": withdraw };
   }
+  async history(page = 1, perPage = 20, _id: string) {
+    try {
+      let query: any = {
+        client_id: _id,
+      };
+
+      ///////////////////////////////////////////////////////////////////// counter search
+      let totalCount = 0
+      totalCount = await this.withDrawModel.find(query).countDocuments().exec();
+      const totalPages = Math.ceil(totalCount / perPage);
+      let message = "not history found"
+
+
+      if (page < 1) {
+        page = 1;
+      } else if (page > totalPages) {
+        page = totalPages;
+      }
+
+      const skip = (page - 1) * perPage;
+      ///////////////////////////////////////////////////////////////////// counter search
+
+      const data = await this.withDrawModel
+        .find(query)
+        .select('transaction_id coins status withdraw_amount createdAt')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(perPage)
+        .exec();
+
+
+
+      if (data.length > 0) message = "withdraw history found"
+      return {
+        status: true,
+        message: message,
+        gamehistory: data,
+        currentPage: page,
+        totalPages,
+        perPage,
+        total_count: totalCount,
+      };
+    } catch (error) {
+
+      return {
+        status: true,
+        message: "not history found",
+        gamehistory: [],
+        currentPage: page,
+        totalPages: 1,
+        perPage,
+        total_count: 1,
+      };
+    }
+
+  }
+
+
 
 }
