@@ -41,6 +41,7 @@ export class GamesService {
   async getActiveGamesCount() {
     return await this.gameModel.countDocuments({ status: 'active' });
   }
+
   async findbyId(id: string) {
     return await this.gameModel.findOne({ game_id: id });
   }

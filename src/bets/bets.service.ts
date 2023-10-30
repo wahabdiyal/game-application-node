@@ -33,7 +33,7 @@ export class BetsService {
         $lt: new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1),
       },
     }).countDocuments().exec();
-    
+
     const game = await this.gameService.findbyId(createbetDto['game_id']);
     if (game && Number(game.maximum_challenges) < userBet && createbetDto['second_player'] != "ai") {
       return { status: false, message: "Challenges exceeded" };
@@ -74,7 +74,7 @@ export class BetsService {
     else if (Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold']) != 0) {
       if (!first_user['bet_block'].includes(game.game_id)) {
 
-        
+
         /////playing with gold /////
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
         const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId });
@@ -309,33 +309,79 @@ export class BetsService {
     }
 
   }
-  async reverseBet(id){
-   const bet = await this.betsModel.findOne({ _id: id});
-   if(bet && bet.status!='cancel'){
+  async reverseBet(id) {
+    const bet = await this.betsModel.findOne({ _id: id });
+    if (bet && bet.status != 'cancel') {
 
-     
-   const first_user = await this.userService.findUserbyId(bet.first_player);
-   
-   if(bet.silver!='0'){
-    await this.userService.UpdateUser(first_user['id'], Number(first_user['silver_balance']) + Number(bet['silver']), 'silver');
-   }if(bet.gold!='0'){
-    await this.userService.UpdateUser(first_user['id'], Number(first_user['gold_balance']) + Number(bet['gold']), 'gold');
-   }
 
-   if(bet.second_player){
-   const second_user = await this.userService.findUserbyId(bet.second_player);
-    if(bet.silver!='0'){
-      await this.userService.UpdateUser(second_user['id'], Number(second_user['silver_balance']) + Number(bet['silver']), 'silver');
-     }if(bet.gold!='0'){
-      await this.userService.UpdateUser(second_user['id'], Number(second_user['gold_balance']) + Number(bet['gold']), 'gold');
-     }
-   }
-     await this.betsModel.findByIdAndUpdate(id, { status: "cancel"});
-     return {status:true,message:"Bet reverse successfully."};
+      const first_user = await this.userService.findUserbyId(bet.first_player);
 
-   }else{
-    return {status:false,message:"Bet Cancel already."};
-   }
+      if (bet.silver != '0') {
+        await this.userService.UpdateUser(first_user['id'], Number(first_user['silver_balance']) + Number(bet['silver']), 'silver');
+      } if (bet.gold != '0') {
+        await this.userService.UpdateUser(first_user['id'], Number(first_user['gold_balance']) + Number(bet['gold']), 'gold');
+      }
+
+      if (bet.second_player) {
+        const second_user = await this.userService.findUserbyId(bet.second_player);
+        if (bet.silver != '0') {
+          await this.userService.UpdateUser(second_user['id'], Number(second_user['silver_balance']) + Number(bet['silver']), 'silver');
+        } if (bet.gold != '0') {
+          await this.userService.UpdateUser(second_user['id'], Number(second_user['gold_balance']) + Number(bet['gold']), 'gold');
+        }
+      }
+      await this.betsModel.findByIdAndUpdate(id, { status: "cancel" });
+      return { status: true, message: "Bet reverse successfully." };
+
+    } else {
+      return { status: false, message: "Bet Cancel already." };
+    }
   }
+
+  async game_history(page = 0, perPage = 20, _id: string, game = "") {
+    let query: any = {
+      gold: { $ne: '0' },
+      status: "complete",
+      $or: [{ first_player: _id }, { second_player: _id }]
+    };
+    if (game !== "") query.game_id = new mongoose.Types.ObjectId(game);
+
+    ///////////////////////////////////////////////////////////////////// counter search
+    let totalCount = 0
+    totalCount = await this.betsModel.find(query).countDocuments().exec();
+    const totalPages = Math.ceil(totalCount / perPage);
+    let message = "not history found"
+
+    if (page < 1) page = 1; else if (page > totalPages) page = totalPages
+    const skip = (page - 1) * perPage;
+    ///////////////////////////////////////////////////////////////////// counter search
+
+    const data = await this.betsModel
+      .find(query)
+      // .select('transaction_id gold winner createdAt')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(perPage)
+      .exec();
+
+    const modifiedData = data.map((item: any) => ({
+      transaction_id: item.transaction_id,
+      gold: item.gold,
+      createdAt: item.createdAt,
+      status: item.winner == _id ? 'won' : 'lost',
+    }));
+
+    if (data.length > 0) message = "game history found"
+    return {
+      status: true,
+      message: message,
+      gamehistory: modifiedData,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+  }
+
 
 }
