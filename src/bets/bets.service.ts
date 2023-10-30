@@ -339,13 +339,32 @@ export class BetsService {
   }
 
   async game_history(page = 1, perPage = 20, _id: string, game = "") {
+
     try {
       let query: any = {
         gold: { $ne: '0' },
         status: "complete",
         $or: [{ first_player: _id }, { second_player: _id }]
       };
-      if (game !== "") query.game_id = new mongoose.Types.ObjectId(game);
+      if (game !== "") {
+        const gameObj = await this.gameService.findbyId(game);
+        if (!gameObj)
+          return {
+            status: true,
+            message: "not history found",
+            gamehistory: [],
+            currentPage: page,
+            totalPages: 1,
+            perPage,
+            total_count: 1,
+          };
+        else {
+          game = gameObj['_id']
+
+          query.game_id = new mongoose.Types.ObjectId(game);
+        }
+
+      }
 
       ///////////////////////////////////////////////////////////////////// counter search
       let totalCount = 0
@@ -366,6 +385,8 @@ export class BetsService {
       const data = await this.betsModel
         .find(query)
         // .select('transaction_id gold winner createdAt')
+        .populate('game_id')
+        .populate('first_player')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(perPage)

@@ -30,8 +30,8 @@ export class Bets  extends Document{
     second_user_id:string;
     @Prop()
     second_join_time:string;
+    
     @Prop({default:"0", type: Types.ObjectId, ref: 'Games'})
-
     game_id:string;
     @Prop({default:""})
        

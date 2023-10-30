@@ -566,7 +566,7 @@ export class WithdrawService {
 
       const data = await this.withDrawModel
         .find(query)
-        .select('transaction_id coins status withdraw_amount createdAt')
+        // .select('transaction_id coins status withdraw_amount total_amount createdAt')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(perPage)
@@ -574,11 +574,18 @@ export class WithdrawService {
 
 
 
+      const modifiedData = data.map((item: any) => ({
+        ...item,
+        status: item.status = 'approved' ? 'approved'
+          : item.status = 'canceled' ? "disapproved" : 'awaiting',
+      }));
+
+
       if (data.length > 0) message = "withdraw history found"
       return {
         status: true,
         message: message,
-        gamehistory: data,
+        gamehistory: modifiedData,
         currentPage: page,
         totalPages,
         perPage,
