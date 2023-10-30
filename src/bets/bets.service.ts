@@ -338,49 +338,64 @@ export class BetsService {
     }
   }
 
-  async game_history(page = 0, perPage = 20, _id: string, game = "") {
-    let query: any = {
-      gold: { $ne: '0' },
-      status: "complete",
-      $or: [{ first_player: _id }, { second_player: _id }]
-    };
-    if (game !== "") query.game_id = new mongoose.Types.ObjectId(game);
-
-    ///////////////////////////////////////////////////////////////////// counter search
-    let totalCount = 0
-    totalCount = await this.betsModel.find(query).countDocuments().exec();
-    const totalPages = Math.ceil(totalCount / perPage);
-    let message = "not history found"
-
-    if (page < 1) page = 1; else if (page > totalPages) page = totalPages
-    const skip = (page) * perPage;
-    ///////////////////////////////////////////////////////////////////// counter search
-
-    const data = await this.betsModel
-      .find(query)
-      // .select('transaction_id gold winner createdAt')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(perPage)
-      .exec();
-
-    const modifiedData = data.map((item: any) => ({
-      transaction_id: item.transaction_id,
-      gold: item.gold,
-      createdAt: item.createdAt,
-      status: item.winner == _id ? 'won' : 'lost',
-    }));
-
-    if (data.length > 0) message = "game history found"
-    return {
-      status: true,
-      message: message,
-      gamehistory: modifiedData,
-      currentPage: page,
-      totalPages,
-      perPage,
-      total_count: totalCount,
-    };
+  async game_history(page = 1, perPage = 20, _id: string, game = "") {
+    try {
+      let query: any = {
+        gold: { $ne: '0' },
+        status: "complete",
+        $or: [{ first_player: _id }, { second_player: _id }]
+      };
+      if (game !== "") query.game_id = new mongoose.Types.ObjectId(game);
+  
+      ///////////////////////////////////////////////////////////////////// counter search
+      let totalCount = 0
+      totalCount = await this.betsModel.find(query).countDocuments().exec();
+      const totalPages = Math.ceil(totalCount / perPage);
+      let message = "not history found"
+  
+      if (page < 1) page = 1; else if (page > totalPages) page = totalPages
+      const skip = (page) * perPage;
+      ///////////////////////////////////////////////////////////////////// counter search
+  
+      const data = await this.betsModel
+        .find(query)
+        // .select('transaction_id gold winner createdAt')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(perPage)
+        .exec();
+  
+      const modifiedData = data.map((item: any) => ({
+        transaction_id: item.transaction_id,
+        gold: item.gold,
+        createdAt: item.createdAt,
+        status: item.winner == _id ? 'won' : 'lost',
+      }));
+  
+      if (data.length > 0) message = "game history found"
+      return {
+        status: true,
+        message: message,
+        gamehistory: modifiedData,
+        currentPage: page,
+        totalPages,
+        perPage,
+        total_count: totalCount,
+      };
+    } catch (error) {
+      
+      return {
+        status: true,
+        message: "not history found",
+        gamehistory: [],
+        currentPage: page,
+        totalPages:1,
+        perPage,
+        total_count: 1,
+      };
+      console.log(error)
+    }
+  
   }
 
 
