@@ -353,7 +353,7 @@ export class BetsService {
     let message = "not history found"
 
     if (page < 1) page = 1; else if (page > totalPages) page = totalPages
-    const skip = (page - 1) * perPage;
+    const skip = (page) * perPage;
     ///////////////////////////////////////////////////////////////////// counter search
 
     const data = await this.betsModel
