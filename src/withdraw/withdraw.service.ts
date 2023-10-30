@@ -575,8 +575,10 @@ export class WithdrawService {
 
 
       const modifiedData = data.map((item: any) => ({
-        ...item,
-        status: item.status = 'approved' ? 'approved'
+        coins: item.coins,
+        withdraw_amount: item.withdraw_amount,
+        createdAt: item.createdAt,
+        withdrawalstatus: item.status = 'approved' ? 'approved'
           : item.status = 'canceled' ? "disapproved" : 'awaiting',
       }));
 
@@ -585,7 +587,7 @@ export class WithdrawService {
       return {
         status: true,
         message: message,
-        gamehistory: modifiedData,
+        withdrawhistory: modifiedData,
         currentPage: page,
         totalPages,
         perPage,
@@ -596,7 +598,7 @@ export class WithdrawService {
       return {
         status: true,
         message: "not history found",
-        gamehistory: [],
+        withdrawhistory: [],
         currentPage: page,
         totalPages: 1,
         perPage,
