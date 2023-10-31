@@ -350,7 +350,7 @@ export class BetsService {
         const gameObj = await this.gameService.findbyId(game);
         if (!gameObj)
           return {
-            status: true,
+            status: false,
             message: "not history found",
             gamehistory: [],
             currentPage: page,
@@ -414,7 +414,7 @@ export class BetsService {
     } catch (error) {
 
       return {
-        status: true,
+        status: false,
         message: "not history found",
         gamehistory: [],
         currentPage: page,

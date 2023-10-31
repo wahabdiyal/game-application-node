@@ -85,28 +85,63 @@ export class WithdrawService {
   }
 
   async createWithdrawRequest(createWithdrawDto: CreateWithdrawDto): Promise<any> {
-    const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
+    try {
+      const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
 
-    if (!userCoin) {
-      return new NotFoundException("User not found");
+      if (!userCoin) {
+        return new NotFoundException("User not found");
+      }
+      ///////condition add here check for balance 
+      if (Number(userCoin['gold_balance']) <= 0) {
+        return { status: false, message: 'Request not processed because user not have enough coins.' };
+      }
+
+      await this.goldService.create({
+        client_id: createWithdrawDto['client_id'],
+        remarks: "Coin is debit withdrawl",
+        type: "debit",
+        coins: createWithdrawDto['coins']
+      });
+
+      await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
+
+
+      var res = await this.withDrawModel.create(createWithdrawDto);
+      return {
+        status: true,
+        message: "withdrawal request successfully submitted",
+        withdrawalstatus: res['status'],
+        coins: res['coins'],
+        proved_date: res['proved_date'],
+        remarks: res['remarks'],
+        proved_by: res['proved_by'],
+        total_amount: res['total_amount'],
+        admin_commission: res['admin_commission'],
+        withdraw_amount: res['withdraw_amount'],
+        transaction_id: res['transaction_id'],
+        client_id: res['client_id'],
+        client_country: res['client_country'],
+        client_first_name: res['client_first_name'],
+      }
+    } catch (error) {
+      return {
+        status: false,
+        message: "withdrawal request successfully submitted",
+        withdrawalstatus: res['status'],
+        coins: res['coins'],
+        proved_date: res['proved_date'],
+        remarks: res['remarks'],
+        proved_by: res['proved_by'],
+        total_amount: res['total_amount'],
+        admin_commission: res['admin_commission'],
+        withdraw_amount: res['withdraw_amount'],
+        transaction_id: res['transaction_id'],
+        client_id: res['client_id'],
+        client_country: res['client_country'],
+        client_first_name: res['client_first_name'],
+      }
     }
-    ///////condition add here check for balance 
-    if (Number(userCoin['gold_balance']) <= 0) {
-      return { status: false, 'message': 'Request not processed because user not have enough coins.' };
-    }
 
-    await this.goldService.create({
-      client_id: createWithdrawDto['client_id'],
-      remarks: "Coin is debit withdrawl",
-      type: "debit",
-      coins: createWithdrawDto['coins']
-    });
-
-    await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
-
-
-    var res = await this.withDrawModel.create(createWithdrawDto);
-    return res;
   }
 
   async findAll(page = 0, perPage = 20, date = [], status = false, search = false) {

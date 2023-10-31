@@ -7,10 +7,15 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { storage } from './../config/storage.config';
 import * as admin from 'firebase-admin';
 import firebase from 'firebase/app'
+import { SignupRewardsService } from 'src/signup_rewards/signup_rewards.service';
+import { UserService } from 'src/user/user.service';
 @Controller('withdraw')
 export class WithdrawController {
   private firestore: FirebaseFirestore.Firestore;
-  constructor(private readonly withdrawService: WithdrawService,
+
+  constructor(
+    private readonly withdrawService: WithdrawService,
+    private userService: UserService
   ) {
     this.firestore = admin.firestore();
   }
@@ -25,26 +30,40 @@ export class WithdrawController {
 
   @UseInterceptors(FileInterceptor("form-data"))
   async mobilerequest(@Body() createWithdrawDto: CreateWithdrawDto, @Request() req) {
+    try {
+      const user = await this.userService.findByID(createWithdrawDto['client_id'].toString());
 
-    const requestwithdraw = await this.withdrawService.getLimitWithdraw(req.user.country);
+      if (user) {
+        const requestwithdraw = await this.withdrawService.getLimitWithdraw(user['country']);
+        if (requestwithdraw && Number(requestwithdraw['max_gold_coin']) >= Number(createWithdrawDto['coins']) && Number(requestwithdraw['min_gold_coin']) <= Number(createWithdrawDto['coins'])) {
+          return await this.withdrawService.createWithdrawRequest({
+            "status": "pending",
+            "client_id": req.user.id,
+            "coins": createWithdrawDto['coins'],
+            "remarks": "Request for withdraw coins",
+            "total_amount": requestwithdraw['min_gold_coin'],
+            "admin_commission": requestwithdraw['percentage'],
+            "withdraw_amount": requestwithdraw['max_gold_coin']
 
-    if (requestwithdraw && Number(requestwithdraw['max_gold_coin']) >= Number(createWithdrawDto['coins']) && Number(requestwithdraw['min_gold_coin']) <= Number(createWithdrawDto['coins'])) {
-      const withDraw = await this.withdrawService.createWithdrawRequest({
-        "status": "pending",
-        "client_id": req.user.id,
-        "coins": createWithdrawDto['coins'],
-        "remarks": "Request for withdraw coins",
-        "total_amount": requestwithdraw['min_gold_coin'],
-        "admin_commission": requestwithdraw['percentage'],
-        "withdraw_amount": requestwithdraw['max_gold_coin']
-
-      });
-      return { status: true, message: "Withdrawal request completed successfully", data: withDraw };
-    } else {
-      return { status: false, message: "Country is not available" };
+          });
+        } else {
+          return { status: false, message: "Limitations not matched" };
+        }
+      }
+      else {
+        return { status: false, message: "Country is not available" };
+      }
+    } catch (error) {
+      return { status: false, message: error.message };
     }
 
+
+
+
+
   }
+
+
 
   @Get()
   findAll(@Query() { page, perpage, start_date, end_date, status, search }) {
