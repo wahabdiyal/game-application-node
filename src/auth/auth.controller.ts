@@ -7,7 +7,7 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards, Ip, Query
+  UseGuards, Ip, Query, Param
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -113,6 +113,20 @@ export class AuthController {
   getProfile(@Request() req) {
     return this.userService.fetchUserProfile(req.user.email);
 
+  }
+
+
+
+  @UseGuards(AuthGuard)
+  @Get('forgot-password/:phone_no')
+  forgotPasswordMobile(@Param('phone_no') phone_no: string) {
+    return this.userService.forgotPasswordMobile(phone_no);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update-password')
+  updatePasswordMobile(@Body() details) {
+    return this.userService.updatePasswordMobile(details.phone_no, details.new_password);
   }
 
 

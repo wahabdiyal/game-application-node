@@ -950,6 +950,43 @@ export class UserService {
 
     return { "status": true, "user": user, "access_token": access_token };
   }
+  async forgotPasswordMobile(phone_no: string) {
+    const user = await this.userModel.findOne({ phone: phone_no });
+
+    if (user)
+      return {
+        status: true,
+        message: "we successfully sent otp on given number",
+        otpNumber: "9999",
+
+      }
+    else
+      return {
+        status: false,
+        message: "phone number not matched",
+        otpNumber: "9999",
+
+      }
+  }
+  async updatePasswordMobile(phone_no: string, new_password: string) {
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { phone: phone_no },
+      { password: new_password }
+    );
+
+    if (updatedUser)
+      return {
+        status: true,
+        message: 'password successfully updated'
+      }
+    else
+      return {
+        status: false,
+        message: 'phone_no not matched'
+      }
+  }
+
+
 
   async getUserRenewTokenForMobile(id: string) {
 

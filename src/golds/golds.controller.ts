@@ -60,4 +60,10 @@ export class GoldsController {
     return this.goldsService.fetchCoinStatus(status);
   }
 
+  @Get('user-history/:id')
+  userHistoryMobile(@Param('id') id: any,@Query() {page,perpage}) {
+
+    return this.goldsService.userHistoryMobile(id,page, perpage);
+  }
+
 }

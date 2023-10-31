@@ -15,22 +15,22 @@ export class DailyRewardsService {
   async create(createDailyRewardDto: CreateDailyRewardDto) {
     let collection = await this.dailyReward.find({});
     const startinput = new Date(createDailyRewardDto['start_date']).getTime();
-    const endinput =  new Date(createDailyRewardDto['end_date']).getTime();
+    const endinput = new Date(createDailyRewardDto['end_date']).getTime();
     const matchedCollection = [];
     for (const item of collection) {
       const startdb = new Date(item['start_date']).getTime();
       const enddb = new Date(item['end_date']).getTime();
-if(
-  (startinput >= startdb && startinput <= enddb)
-  ||
-   (endinput >= startdb && endinput <= enddb)
-  ||
-   (startinput <= startdb && endinput >= startdb )
-  ||
-   (startinput <= enddb && endinput >= enddb)
-){
-    matchedCollection.push(item);
-}
+      if (
+        (startinput >= startdb && startinput <= enddb)
+        ||
+        (endinput >= startdb && endinput <= enddb)
+        ||
+        (startinput <= startdb && endinput >= startdb)
+        ||
+        (startinput <= enddb && endinput >= enddb)
+      ) {
+        matchedCollection.push(item);
+      }
     }
     function checkRecordExists(records, criteria) {
       const [countries, startTime, endTime] = criteria;
@@ -124,6 +124,41 @@ if(
       start_date: { $lte: now.toISOString() },
       end_date: { $gte: now.toISOString() },
     });
+  }
+
+  async findForMobile(country: any) {
+    const currentDate = new Date();
+    const reward = await this.dailyReward.findOne({
+      country: country,
+      start_date: { $lte: currentDate }, // start_date is  than or equal to the current date
+      end_date: { $gte: currentDate } // Check if end_date is greater than or equal to the current date
+    });
+    if (reward)
+      return {
+        status: true,
+        message: "daily reward found",
+        title: reward['title'],
+        dailyRewardStatus: reward['status'],
+        silver: reward['silver_coin'],
+        gold: reward['gold_coin'],
+        inactive_day: reward['inactive_day'],
+        description: reward['description'],
+        country: country,
+
+      }
+    else
+      return {
+        status: false,
+        message: "daily reward not found",
+        title: "",
+        dailyRewardStatus: "",
+        silver: "",
+        gold: "",
+        inactive_day: "",
+        description: "",
+        country: country,
+
+      }
   }
 
 }

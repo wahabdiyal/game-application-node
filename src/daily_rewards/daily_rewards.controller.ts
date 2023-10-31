@@ -35,4 +35,8 @@ export class DailyRewardsController {
   remove(@Param('id') id: string) {
     return this.dailyRewardsService.remove(id);
   }
+  @Get('mobile/:country')
+  findForMobile(@Param('country') country: string) {
+    return this.dailyRewardsService.findForMobile(country);
+  }
 }

@@ -27,11 +27,11 @@ export class GoldsService {
       createGoldDto['client_id'] = user._id.toString()
 
     const newBalance = (createGoldDto['type'] == "credit") ? parseInt(user.gold_balance) + parseInt(createGoldDto['coins'], 10) : parseInt(user.gold_balance) - parseInt(createGoldDto['coins'], 10);
-  
+
     this.userService.UpdateUser(createGoldDto['client_id'], newBalance, "gold");
     /////add user current balance in gold and field in db
-    var res = await this.goldModel.create({...createGoldDto,'bal':newBalance});
-    
+    var res = await this.goldModel.create({ ...createGoldDto, 'bal': newBalance });
+
     return res;
   }
 
@@ -40,7 +40,7 @@ export class GoldsService {
     const latestAdminBal = await this.adminAccount.getLatestEntry();
     if (Number(latestAdminBal?.gold_coin_balance) > Number(createGoldDto['coins'])) {
       var res = await this.create(createGoldDto);
-     
+
       // handle admin account
 
       const coins = createGoldDto['type'] == "credit" ? (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) - Number(createGoldDto['coins'])
@@ -168,6 +168,45 @@ export class GoldsService {
     }
     return {
       data: data,
+      currentPage: page,
+      totalPages,
+      perPage,
+      total_count: totalCount,
+    };
+  }
+
+  async userHistoryMobile(id: any, page = 0, perPage = 20) {
+
+    let status = true;
+    let message = "transitions found";
+    let totalCount = 0
+    totalCount = await this.goldModel.find({ client_id: id, remarks: { $not: { $regex: /^game/i } } }).countDocuments().exec();
+
+    const totalPages = Math.ceil(totalCount / perPage);
+
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
+    }
+
+    const skip = (page - 1) * perPage;
+
+    let data = [];
+    try {
+      data = await this.goldModel.find({ client_id: id, remarks: { $not: { $regex: /^game/i } } }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
+    } catch (error) {
+      data = [];
+    }
+    if (!data) {
+
+      message = 'transitions found';
+      status = false;
+    }
+    return {
+      status: status,
+      message: message,
+      transitionHistory: data,
       currentPage: page,
       totalPages,
       perPage,
