@@ -56,6 +56,7 @@ import { BetsModule } from './bets/bets.module';
 import { UserMenusModule } from './user_menus/user_menus.module';
 import { CreateLogsModule } from './create-logs/create-logs.module';
 import { UserRightsModule } from './user-rights/user-rights.module';
+import { CryptoValuesModule } from './crypto-values/crypto-values.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -125,7 +126,8 @@ import { UserRightsModule } from './user-rights/user-rights.module';
     BetsModule,
     UserMenusModule,
     CreateLogsModule,
-    UserRightsModule
+    UserRightsModule,
+    CryptoValuesModule
   ],
   controllers: [AppController],
   providers: [AppService],

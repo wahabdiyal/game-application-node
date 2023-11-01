@@ -64,10 +64,22 @@ export class CryptoWalletsService {
 
   async findByCountryForMobile(ctry: string) {
     const getCountry = await this.cryptoWalletService.find({ country: { $in: [ctry] } });
-     if(getCountry.length > 0){
-        return {status:true,message:"Crypt Wallet for country",walletdata:getCountry};
-     }else{
-      return {status:false,message:"Crypto wallet not found."};
-     }
+    if (getCountry.length > 0) {
+      return { status: true, message: "Crypt Wallet for country", walletdata: getCountry };
+    } else {
+      return { status: false, message: "Crypto wallet not found." };
+    }
+  }
+
+  async allCoinsCodes() {
+    const list = await this.cryptoWalletService.find();
+    const coin_codes = [];
+    list.forEach((element: any) => {
+      element.wallet_detail.forEach((el) => {
+        if (!coin_codes.includes(el['coins_code']))
+          coin_codes.push(el['coins_code']);
+      });
+    });
+    return coin_codes;
   }
 }
