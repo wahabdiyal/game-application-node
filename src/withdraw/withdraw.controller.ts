@@ -31,9 +31,11 @@ export class WithdrawController {
   @UseInterceptors(FileInterceptor("form-data"))
   async mobilerequest(@Body() createWithdrawDto: CreateWithdrawDto, @Request() req) {
     try {
-      const user = await this.userService.findByID(createWithdrawDto['client_id'].toString());
+      const user = await this.userService.findByID(req.user._id);
 
       if (user) {
+        if (Number(user.gold_balance) < Number(createWithdrawDto['coins']))
+          return { status: false, message: "low balance" };
         const requestwithdraw = await this.withdrawService.getLimitWithdraw(user['country']);
         if (requestwithdraw && Number(requestwithdraw['max_gold_coin']) >= Number(createWithdrawDto['coins']) && Number(requestwithdraw['min_gold_coin']) <= Number(createWithdrawDto['coins'])) {
           return await this.withdrawService.createWithdrawRequest({
@@ -51,7 +53,7 @@ export class WithdrawController {
         }
       }
       else {
-        return { status: false, message: "Country is not available" };
+        return { status: false, message: "user not found" };
       }
     } catch (error) {
       return { status: false, message: error.message };
