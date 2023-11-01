@@ -195,20 +195,19 @@ export class GoldsService {
     let data = [];
     try {
       data = await this.goldModel
-      .find({
-        client_id: id,
-        remarks: { $not: { $regex: /^game/i } }
-      })
-      .skip(skip)
-      .limit(perPage)
-      .sort({ createdAt: -1 })
-      .select('transaction_id createdAt updatedAt type coins transaction_status remarks')
-      .exec();
+        .find({
+          client_id: id,
+          remarks: { $not: { $regex: /^game/i } }
+        })
+        .skip(skip)
+        .sort({ createdAt: -1 })
+        .limit(perPage)
+        .select('transaction_id createdAt updatedAt type coins transaction_status remarks')
+        .exec();
     } catch (error) {
       data = [];
     }
-    if (!data) {
-
+    if (data.length < 1) {
       message = 'transitions found';
       status = false;
     }
