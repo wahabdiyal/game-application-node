@@ -214,7 +214,7 @@ export class GoldsService {
     return {
       status: status,
       message: message,
-      gameTransactions: data,
+      transactionsHistory: data,
       currentPage: page,
       totalPages,
       perPage,
