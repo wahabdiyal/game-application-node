@@ -194,7 +194,16 @@ export class GoldsService {
 
     let data = [];
     try {
-      data = await this.goldModel.find({ client_id: id, remarks: { $not: { $regex: /^game/i } } }).skip(skip).limit(perPage).sort({ createdAt: -1 }).exec();
+      data = await this.goldModel
+      .find({
+        client_id: id,
+        remarks: { $not: { $regex: /^game/i } }
+      })
+      .skip(skip)
+      .limit(perPage)
+      .sort({ createdAt: -1 })
+      .select('transaction_id createdAt updatedAt type coins transaction_status remarks')
+      .exec();
     } catch (error) {
       data = [];
     }
@@ -206,7 +215,7 @@ export class GoldsService {
     return {
       status: status,
       message: message,
-      transitionHistory: data,
+      gameTransactions: data,
       currentPage: page,
       totalPages,
       perPage,

@@ -33,21 +33,21 @@ export class BorrowService {
       return { check: false, message: "Coin are not match with request" };
     }
     if (createborrowDto['status'] != 'pending') {
-      await this.goldService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow reqeust", type: "debit", status: "success", coins: createborrowDto['gold_coin'] });
+      await this.goldService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "debit", status: "success", coins: createborrowDto['gold_coin'], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
 
-      await this.goldService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: createborrowDto['gold_coin'] });
+      await this.goldService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "credit", status: "success", coins: createborrowDto['gold_coin'], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow reqeust", type: "debit", status: "success", coins: createborrowDto['silver_coin'] });
+      await this.silverService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "debit", status: "success", coins: createborrowDto['silver_coin'], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow reqeust", type: "credit", status: "success", coins: createborrowDto["silver_coin"] });
+      await this.silverService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "credit", status: "success", coins: createborrowDto["silver_coin"], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
 
     }
     delete createborrowDto['_id'];
     delete createborrowDto['createdAt'];
     delete createborrowDto['updatedAt'];
 
-        
-        var res = await this.borrowModel.create({...createborrowDto,transaction_id:Math.random().toString(36).slice(-5),});
+
+    var res = await this.borrowModel.create({ ...createborrowDto, transaction_id: Math.random().toString(36).slice(-5), });
     return { ...res.toObject(), check: true };
   }
 
@@ -183,13 +183,13 @@ export class BorrowService {
     const object = await this.borrowModel.findOne(borrow._id);
 
     if (object.status != 'pending') {
-      await this.goldService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.gold_coin });
+      await this.goldService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
 
-      await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.gold_coin });
+      await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.silver_coin });
+      await this.silverService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.silver_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.silver_coin });
+      await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.silver_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
 
     }
     return this.userService.getUserRenewTokenForMobile(object.sender);
@@ -229,13 +229,13 @@ export class BorrowService {
           message: "Request is already in reversed"
         }
       }
-      await this.goldService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.gold_coin });
+      await this.goldService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.gold_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
 
-      await this.goldService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.gold_coin });
+      await this.goldService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.gold_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.silver_coin });
+      await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.silver_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin });
+      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin ,transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
       await this.borrowModel.findByIdAndUpdate(borrow_id, { is_reverse: true, status: 'reversed' });
       return {
         status: "success",

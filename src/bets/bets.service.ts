@@ -230,10 +230,12 @@ export class BetsService {
 
       await this.goldService.create({
         client_id: user['_id'],
-        "remarks": "game win TrD:" + bet['_id'],
-        "type": "credit",
-        'game_id': bet.game_id,
-        "coins": userprice
+        remarks: "game win TrD:" + bet['_id'],
+        type: "credit",
+        game_id: bet.game_id,
+        coins: userprice,
+        transaction_id: bet['transaction_id'],
+        transaction_status: "game_win",
       });
       await this.update(id, { status: "complete", winner: user['_id'], admin_commission: commission, user_coins: userprice });
 

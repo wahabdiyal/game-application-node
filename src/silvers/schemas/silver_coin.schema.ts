@@ -33,6 +33,11 @@ export class Silver extends Document {
     client_id: string;
     @Prop()
     userId: string;
+    @Prop({ default: "xxxx" })
+    transaction_id: string;
+
+    @Prop({ default: "yyy" })
+    transaction_status: string;
 
 }
 export const SilverSchema = SchemaFactory.createForClass(Silver)

@@ -34,7 +34,7 @@ export class PurchaseRequestsService {
     createPurchaseDto['first_name'] = user.first_name;
     createPurchaseDto['last_name'] = user.last_name;
     createPurchaseDto['userId'] = user.userId;
-    // createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
+    createPurchaseDto['transaction_id'] = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
     createPurchaseDto['operator'] = singleArrayValue;
     var res = await this.purchasemModel.create(createPurchaseDto);
     return res;
@@ -42,7 +42,7 @@ export class PurchaseRequestsService {
   async createForMobile(createPurchaseDto: CreatePurchaseRequestDto) {
     const user = await this.userService.findUserbyId(createPurchaseDto['user_id']);
     if (!user) {
-      return {status:false,message:"User not found"};
+      return { status: false, message: "User not found" };
     }
     const getOperator = await this.userService.findOperatorWithCountry(user.country);
     const singleArrayValue = getOperator.reduce((acc, item) => {
@@ -56,7 +56,7 @@ export class PurchaseRequestsService {
     // createPurchaseDto['transaction_id'] =Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1)+Math.random().toString(36).slice(-1);
     createPurchaseDto['operator'] = singleArrayValue;
     var res = await this.purchasemModel.create(createPurchaseDto);
-    return {status:true,message:"create purchase request",purchase:res};
+    return { status: true, message: "create purchase request", purchase: res };
   }
 
   async findAll() {
@@ -89,6 +89,8 @@ export class PurchaseRequestsService {
         "type": "credit",
         "status": "complete",
         "coins": object['gold_coin'],
+        transaction_id: object['transaction_id'],
+        transaction_status: "purchased"
       });
       await this.silverService.create({
         "client_id": object['user_id'],
@@ -97,6 +99,8 @@ export class PurchaseRequestsService {
         "type": "credit",
         "status": "complete",
         "coins": object['silver_coin'],
+        transaction_id: object['transaction_id'],
+        transaction_status: "purchased"
       });
 
     }
@@ -109,6 +113,8 @@ export class PurchaseRequestsService {
           "type": "debit",
           "status": "complete",
           "coins": object['gold_coin'],
+          transaction_id: object['transaction_id'],
+          transaction_status: "purchased"
         });
         await this.silverService.create({
           "client_id": object['user_id'],
@@ -117,6 +123,8 @@ export class PurchaseRequestsService {
           "type": "debit",
           "status": "complete",
           "coins": object['silver_coin'],
+          transaction_id: object['transaction_id'],
+          transaction_status: "purchased"
         });
       }
     }
@@ -245,7 +253,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-          { purchase_id: { $regex: search, $options: 'i' } },
+            { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (date.length > 0 && search) {
@@ -260,7 +268,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-          { purchase_id: { $regex: search, $options: 'i' } },
+            { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (status && search) {
@@ -273,7 +281,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-          { purchase_id: { $regex: search, $options: 'i' } },
+            { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
       } else if (date.length > 0 && status) {
@@ -292,7 +300,7 @@ export class PurchaseRequestsService {
             { first_name: { $regex: search, $options: 'i' } },
             { last_name: { $regex: search, $options: 'i' } },
             { transaction_id: { $regex: search, $options: 'i' } },
-          { purchase_id: { $regex: search, $options: 'i' } },
+            { purchase_id: { $regex: search, $options: 'i' } },
           ],
         }).populate({
           path: 'operator',

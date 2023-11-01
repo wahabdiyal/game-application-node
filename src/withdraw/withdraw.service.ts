@@ -50,12 +50,7 @@ export class WithdrawService {
       return { status: false, 'message': 'not enough coins.' };
 
 
-    await this.goldService.create({
-      client_id: createWithdrawDto['client_id'],
-      remarks: "Coin is debit withdrawl",
-      type: "debit",
-      coins: createWithdrawDto['coins']
-    });
+
 
     await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
 
@@ -74,6 +69,16 @@ export class WithdrawService {
     createWithdrawDto['client_last_name'] = userCoin.last_name;
     createWithdrawDto['client_userId'] = userCoin.userId;
     var res = await this.withDrawModel.create({ ...createWithdrawDto, transaction_id: Math.random().toString(36).slice(-5) });
+
+
+    await this.goldService.create({
+      client_id: createWithdrawDto['client_id'],
+      remarks: "Coin is debit withdrawal TrD:" + res['_id'],
+      type: "debit",
+      coins: createWithdrawDto['coins'],
+      transaction_id: res['transaction_id'],
+      transaction_status: "withdrawn"
+    });
     return res;
   }
 
@@ -100,7 +105,9 @@ export class WithdrawService {
         client_id: createWithdrawDto['client_id'],
         remarks: "Coin is debit withdrawl",
         type: "debit",
-        coins: createWithdrawDto['coins']
+        coins: createWithdrawDto['coins'],
+        transaction_id: createWithdrawDto['transaction_id'],
+        transaction_status: "withdrawn"
       });
 
       await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
@@ -613,8 +620,9 @@ export class WithdrawService {
         coins: item.coins,
         withdraw_amount: item.withdraw_amount,
         createdAt: item.createdAt,
-        withdrawalstatus: item.status = 'approved' ? 'approved'
-          : item.status = 'canceled' ? "disapproved" : 'awaiting',
+        transaction_id: item.transaction_id,
+        withdrawalstatus: item.status == 'approved' ? 'approved'
+          : item.status == 'canceled' ? "disapproved" : 'awaiting',
       }));
 
 

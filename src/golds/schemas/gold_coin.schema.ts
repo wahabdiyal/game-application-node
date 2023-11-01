@@ -36,6 +36,12 @@ export class Gold extends Document {
     @Prop()
     userId: string;
 
+    @Prop({ default: "xxxx" })
+    transaction_id: string;
+
+    @Prop({ default: "yyy" })
+    transaction_status: string;
+
 
 }
 export const GoldSchema = SchemaFactory.createForClass(Gold)
