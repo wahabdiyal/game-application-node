@@ -32,14 +32,14 @@ export class CryptoValuesService {
   async get() {
     try {
       const data = await this.cryptoValuesModal.find({});
-      const modifiedData = data.map((item: any) => ({
-        transaction_id: item.transaction_id,
-        gold: item.gold,
-        gamedetail: item.game_id,
-        user_coins: item.winner == _id ? item.user_coins : item.gold,
-        createdAt: item.createdAt,
-        status: item.winner == _id ? 'won' : 'lost',
-      }));
+      // const modifiedData = data.map((item: any) => ({
+      //   transaction_id: item.transaction_id,
+      //   gold: item.gold,
+      //   gamedetail: item.game_id,
+      //   user_coins: item.winner == _id ? item.user_coins : item.gold,
+      //   createdAt: item.createdAt,
+      //   status: item.winner == _id ? 'won' : 'lost',
+      // }));
       return {};
     } catch (error) {
       return error.message
