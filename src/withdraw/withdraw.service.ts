@@ -77,7 +77,8 @@ export class WithdrawService {
       type: "debit",
       coins: createWithdrawDto['coins'],
       transaction_id: res['transaction_id'],
-      transaction_status: "withdrawn"
+      transaction_status: "withdrawn",
+      amount: createWithdrawDto['withdraw_amount'],
     });
     return res;
   }
@@ -107,7 +108,8 @@ export class WithdrawService {
         type: "debit",
         coins: createWithdrawDto['coins'],
         transaction_id: createWithdrawDto['transaction_id'],
-        transaction_status: "withdrawn"
+        transaction_status: "withdrawn",
+        amount: createWithdrawDto['withdraw_amount'],
       });
 
       await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });

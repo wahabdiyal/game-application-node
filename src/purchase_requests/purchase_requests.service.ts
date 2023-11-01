@@ -90,7 +90,8 @@ export class PurchaseRequestsService {
         "status": "complete",
         "coins": object['gold_coin'],
         transaction_id: object['transaction_id'],
-        transaction_status: "purchased"
+        transaction_status: "purchased",
+        amount: Number(object['amount']) - Number(object['silver_coin_amount']),
       });
       await this.silverService.create({
         "client_id": object['user_id'],
@@ -114,7 +115,8 @@ export class PurchaseRequestsService {
           "status": "complete",
           "coins": object['gold_coin'],
           transaction_id: object['transaction_id'],
-          transaction_status: "purchased"
+          transaction_status: "purchased",
+          amount: Number(object['amount']) - Number(object['silver_coin_amount']),
         });
         await this.silverService.create({
           "client_id": object['user_id'],

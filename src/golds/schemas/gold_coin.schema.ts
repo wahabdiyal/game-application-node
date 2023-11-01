@@ -18,17 +18,17 @@ export class Gold extends Document {
     @Prop({ default: "pending" })
     status: Status;
     @Prop()
-    coins:string;
-    @Prop({default:null })
-    type:string ;
+    coins: string;
+    @Prop({ default: null })
+    type: string;
     @Prop()
     bal: string;
     @Prop()
-    remarks:string;
+    remarks: string;
     @Prop()
     client_id: string;
     @Prop()
-    game_id:string;
+    game_id: string;
     @Prop()
     created_by: string;
     @Prop()
@@ -41,6 +41,8 @@ export class Gold extends Document {
 
     @Prop({ default: "yyy" })
     transaction_status: string;
+    @Prop({ default: "0" })
+    amount: string;
 
 
 }

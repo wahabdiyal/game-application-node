@@ -202,7 +202,7 @@ export class GoldsService {
         .skip(skip)
         .sort({ createdAt: -1 })
         .limit(perPage)
-        .select('transaction_id createdAt updatedAt type coins transaction_status remarks')
+        .select('transaction_id createdAt updatedAt type coins amount transaction_status remarks')
         .exec();
     } catch (error) {
       data = [];
