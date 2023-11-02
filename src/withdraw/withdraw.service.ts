@@ -129,6 +129,7 @@ export class WithdrawService {
       console.log("notifications pushed")
       console.log("notifications pushed:", notificationDevice.deviceToken)
       return {
+        my_logs: notificationDevice.deviceToken,
         status: true,
         message: "withdrawal request successfully submitted",
         withdrawalStatus: res['status'],
