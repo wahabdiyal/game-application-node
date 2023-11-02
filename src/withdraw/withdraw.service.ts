@@ -29,11 +29,9 @@ export class WithdrawService {
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
 
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-    console.log(createWithdrawDto['client_id'])
-    console.log(1)
+   
     if (!userCoin) {
-      console.log(2)
-      console.log(createWithdrawDto['client_id'])
+  
       return new NotFoundException("User not found");
     }
 
@@ -85,8 +83,10 @@ export class WithdrawService {
   async createWithdrawRequest(createWithdrawDto: CreateWithdrawDto): Promise<any> {
     try {
       const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-
+      console.log(createWithdrawDto['client_id'])
+      console.log(1)
       if (!userCoin) {
+        console.log(2)
         return new NotFoundException("User not found");
       }
       ///////condition add here check for balance 
@@ -135,6 +135,7 @@ export class WithdrawService {
         client_first_name: res['client_first_name'],
       }
     } catch (error) {
+      console.log(2)
       console.log(error.message)
       return {
         status: false,
