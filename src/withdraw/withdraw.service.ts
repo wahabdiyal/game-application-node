@@ -29,9 +29,9 @@ export class WithdrawService {
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
 
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-   
+
     if (!userCoin) {
-  
+
       return new NotFoundException("User not found");
     }
 
@@ -83,12 +83,14 @@ export class WithdrawService {
   async createWithdrawRequest(createWithdrawDto: CreateWithdrawDto): Promise<any> {
     try {
       const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
+
       console.log(createWithdrawDto['client_id'])
       console.log(1)
       if (!userCoin) {
         console.log(2)
         return new NotFoundException("User not found");
       }
+
       ///////condition add here check for balance 
       if (Number(userCoin['gold_balance']) <= 0) {
         return { status: false, message: 'Request not processed because user not have enough coins.' };
