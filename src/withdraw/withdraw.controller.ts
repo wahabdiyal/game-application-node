@@ -31,7 +31,7 @@ export class WithdrawController {
   @UseInterceptors(FileInterceptor("form-data"))
   async mobilerequest(@Body() createWithdrawDto: CreateWithdrawDto, @Request() req) {
     try {
-      const user = await this.userService.findByID(req.user._id);
+      const user = await this.userService.findByID(createWithdrawDto['client_id']);
 
       if (user) {
         if (Number(user.gold_balance) < Number(createWithdrawDto['coins']))

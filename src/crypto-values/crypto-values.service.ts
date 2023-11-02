@@ -20,29 +20,41 @@ export class CryptoValuesService {
     try {
       const coins_codes = (await this.adminCryptoService.allCoinsCodes()).join(';')
       const response = await this.httpService.get('https://rest.coinapi.io/v1/assets?filter_asset_id=' + coins_codes + '&apikey=73A274D9-99FF-4D04-90D2-7CA74399F555').toPromise();
+      const walletDetails = response.data;
+
+
       ///remove all previous trd;
       await this.cryptoValuesModal.deleteMany({});
       //////create new details
-      await this.cryptoValuesModal.create({ list: response.data });
-      return {};
+      for (const element of walletDetails) {
+        await this.cryptoValuesModal.create({
+          price_usd: element.price_usd,
+          wallet_no: "element.asd",
+          wallet_name: "element",
+          coinsCode: "element",
+          coinName: "element",
+          country: "element"
+        });
+      }
+      return { status: true };
     } catch (error) {
-      return error.message
+      return { status: false };
     }
   }
+
   async get() {
     try {
       const data = await this.cryptoValuesModal.find({});
-      // const modifiedData = data.map((item: any) => ({
-      //   transaction_id: item.transaction_id,
-      //   gold: item.gold,
-      //   gamedetail: item.game_id,
-      //   user_coins: item.winner == _id ? item.user_coins : item.gold,
-      //   createdAt: item.createdAt,
-      //   status: item.winner == _id ? 'won' : 'lost',
-      // }));
-      return {};
+      const modifiedData = data.map((item: any) => ({
+        wallet_no: item.transaction_id,
+        wallet_name: item.gold,
+        coinsCode: item.game_id,
+        coinName: item.winner,
+        price_usd: item.createdAt
+      }));
+      return { status: true, message: "crypto wallet found for this country", walletList: [] };
     } catch (error) {
-      return error.message
+      return { status: true, message: error.message, walletList: [] };
     }
   }
 
