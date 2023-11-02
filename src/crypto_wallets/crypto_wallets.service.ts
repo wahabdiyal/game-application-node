@@ -52,6 +52,7 @@ export class CryptoWalletsService {
       throw new NotFoundException('Wallet not found.');
     }
     const data = await this.cryptoWalletService.findOne({ _id: id });
+    await this.cryptoValuesService.calculateAllCodesValues();
     return { status: true, data: data, message: "Wallet updated successfully" };
   }
 
