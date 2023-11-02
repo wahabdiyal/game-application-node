@@ -45,7 +45,8 @@ export class WithdrawController {
             "remarks": "Request for withdraw coins",
             "total_amount": requestwithdraw['min_gold_coin'],
             "admin_commission": requestwithdraw['percentage'],
-            "withdraw_amount": requestwithdraw['max_gold_coin']
+            "withdraw_amount": requestwithdraw['max_gold_coin'],
+            transaction_id: Math.random().toString(36).slice(-5)
 
           });
         } else {

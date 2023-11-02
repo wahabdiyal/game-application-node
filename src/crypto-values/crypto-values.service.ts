@@ -18,7 +18,7 @@ export class CryptoValuesService {
   ) { }
   async create() {
     try {
-      const coins_codes = (await this.adminCryptoService.allCoinsCodes()).join(';')
+      const coins_codes = (await this.adminCryptoService.allCountriesCoinsCodes()).join(';')
       const response = await this.httpService.get('https://rest.coinapi.io/v1/assets?filter_asset_id=' + coins_codes + '&apikey=73A274D9-99FF-4D04-90D2-7CA74399F555').toPromise();
       const walletDetails = response.data;
 

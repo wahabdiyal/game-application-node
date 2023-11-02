@@ -82,4 +82,17 @@ export class CryptoWalletsService {
     });
     return coin_codes;
   }
+  async allCountriesCoinsCodes() {
+    const list = await this.cryptoWalletService.find();
+    const coin_codes = [];
+    list.forEach((element: any) => {
+      element.wallet_detail.forEach((el) => {
+        const jj=el['country'];
+        
+        if (!coin_codes.includes(el['coins_code']))
+          coin_codes.push(el['coins_code']);
+      });
+    });
+    return coin_codes;
+  }
 }
