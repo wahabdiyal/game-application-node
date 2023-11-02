@@ -96,7 +96,7 @@ export class WithdrawService {
         return { status: false, message: 'Request not processed because user not have enough coins.' };
       }
 
-      await this.goldService.create({
+      const aa = await this.goldService.create({
         client_id: createWithdrawDto['client_id'],
         remarks: "coin is debit withdrawal",
         type: "debit",
@@ -105,12 +105,15 @@ export class WithdrawService {
         transaction_status: "withdrawn",
         amount: createWithdrawDto['withdraw_amount'],
       });
+      console.log("aa", aa)
 
-      await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
-
+      const bb = await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
+      console.log("bb", bb)
 
       var res = await this.withDrawModel.create(createWithdrawDto);
+      console.log("bb", res)
       const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
+      console.log("bb", notificationDevice)
       await admin.messaging().send({
         notification: { title: "withdraw", body: "Withdraw requested" },
         webpush: {
