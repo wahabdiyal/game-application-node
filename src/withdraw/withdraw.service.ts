@@ -126,10 +126,11 @@ export class WithdrawService {
         },
         token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
       });
+      console.log("notifications pushed")
       return {
         status: true,
         message: "withdrawal request successfully submitted",
-        withdrawalstatus: res['status'],
+        withdrawalStatus: res['status'],
         coins: res['coins'],
         proved_date: res['proved_date'],
         remarks: res['remarks'],
