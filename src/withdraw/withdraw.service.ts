@@ -137,7 +137,7 @@ export class WithdrawService {
         client_first_name: res['client_first_name'],
       }
     } catch (error) {
-      console.log(2)
+      console.log(3)
       console.log(error.message)
       return {
         status: false,

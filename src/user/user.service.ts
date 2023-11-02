@@ -836,6 +836,7 @@ export class UserService {
     if (!user) {
       return false;
     }
+    console.log(4);
     return user;
   }
 
