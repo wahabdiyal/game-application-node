@@ -40,7 +40,7 @@ export class WithdrawController {
         if (requestwithdraw && Number(requestwithdraw['max_gold_coin']) >= Number(createWithdrawDto['coins']) && Number(requestwithdraw['min_gold_coin']) <= Number(createWithdrawDto['coins'])) {
           return await this.withdrawService.createWithdrawRequest({
             "status": "pending",
-            "client_id": req.user.id,
+            "client_id": createWithdrawDto['client_id'],
             "coins": createWithdrawDto['coins'],
             "remarks": "Request for withdraw coins",
             "total_amount": requestwithdraw['min_gold_coin'],
