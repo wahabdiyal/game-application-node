@@ -126,8 +126,6 @@ export class WithdrawService {
         },
         token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
       });
-      console.log("notifications pushed")
-      console.log("notifications pushed:", notificationDevice.deviceToken)
       return {
         my_logs: notificationDevice.deviceToken,
         status: true,
@@ -146,10 +144,11 @@ export class WithdrawService {
         client_first_name: res['client_first_name'],
       }
     } catch (error) {
+      console.log(error.message)
       return {
         status: false,
-        message: "withdrawal request successfully submitted",
-        withdrawalstatus: res['status'],
+        message: error.message,
+        withdrawalStatus: res['status'],
         coins: res['coins'],
         proved_date: res['proved_date'],
         remarks: res['remarks'],
