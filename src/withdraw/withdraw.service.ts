@@ -635,7 +635,7 @@ export class WithdrawService {
         withdraw_amount: item.withdraw_amount,
         createdAt: item.createdAt,
         transaction_id: item.transaction_id,
-        withdrawalstatus: item.status == 'approved' ? 'approved'
+        withdrawalStatus: item.status == 'approved' ? 'approved'
           : item.status == 'canceled' ? "disapproved" : 'awaiting',
       }));
 
