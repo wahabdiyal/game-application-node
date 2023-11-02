@@ -29,34 +29,24 @@ export class WithdrawService {
   async create(createWithdrawDto: CreateWithdrawDto): Promise<any> {
 
     const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
-
+    console.log(createWithdrawDto['client_id'])
+    console.log(1)
     if (!userCoin) {
+      console.log(2)
+      console.log(createWithdrawDto['client_id'])
       return new NotFoundException("User not found");
     }
 
-    const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
-    await admin.messaging().send({
-      notification: { title: "withdraw", body: "Withdraw requested" },
-      webpush: {
-        headers: {
-          Urgency: "high", // Set high priority for web
-        },
-      },
-      token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
-    });
+
 
     ///////condition add here check for balance 
     if (Number(userCoin['gold_balance']) <= 0 || Number(userCoin['gold_balance']) < Number(createWithdrawDto['coins']))
       return { status: false, 'message': 'not enough coins.' };
 
-
-
-
     await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
 
     if (createWithdrawDto['status'] == "approved") {
       const latestAdminBal = await this.adminAccount.getLatestEntry();
-
       await this.adminAccount.create({
         remarks: "Added gold balance from withdrawal",
         credit: Number(createWithdrawDto['coins']),
@@ -64,10 +54,12 @@ export class WithdrawService {
         gold_coin_balance: (Number(latestAdminBal?.gold_coin_balance) ? Number(latestAdminBal?.gold_coin_balance) : 0) + Number(createWithdrawDto['coins'])
       });
     }
+
     createWithdrawDto['client_country'] = userCoin.country;
     createWithdrawDto['client_first_name'] = userCoin.first_name;
     createWithdrawDto['client_last_name'] = userCoin.last_name;
     createWithdrawDto['client_userId'] = userCoin.userId;
+
     var res = await this.withDrawModel.create({ ...createWithdrawDto, transaction_id: Math.random().toString(36).slice(-5) });
 
 
@@ -104,7 +96,7 @@ export class WithdrawService {
 
       await this.goldService.create({
         client_id: createWithdrawDto['client_id'],
-        remarks: "Coin is debit withdrawl",
+        remarks: "coin is debit withdrawal",
         type: "debit",
         coins: createWithdrawDto['coins'],
         transaction_id: createWithdrawDto['transaction_id'],
@@ -127,7 +119,6 @@ export class WithdrawService {
         token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
       });
       return {
-        my_logs: notificationDevice.deviceToken,
         status: true,
         message: "withdrawal request successfully submitted",
         withdrawalStatus: res['status'],

@@ -830,11 +830,6 @@ export class UserService {
   }
 
   async findUserbyId(id: string) {
-    try {
-      new mongoose.Types.ObjectId(id);
-    } catch (e) {
-      return false;
-    }
 
     const user = await this.userModel.findOne({ _id: id });
 
