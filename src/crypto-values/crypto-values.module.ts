@@ -4,10 +4,13 @@ import { CryptoValuesController } from './crypto-values.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CryptoValuesScheme } from './schemas/crypto-values.schema';
 import { HttpModule } from '@nestjs/axios';
-import { CryptoWalletsModule } from 'src/crypto_wallets/crypto_wallets.module';
+import { CryptoWalletSchema } from 'src/crypto_wallets/schemas/crypto_wallets.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'CryptoValues', schema: CryptoValuesScheme }]), HttpModule, CryptoWalletsModule],
+  imports: [MongooseModule.forFeature([
+    { name: 'CryptoValues', schema: CryptoValuesScheme },
+    { name: "CryptoWallet", schema: CryptoWalletSchema }
+  ]), HttpModule],
   controllers: [CryptoValuesController],
   providers: [CryptoValuesService],
   exports: [CryptoValuesService],

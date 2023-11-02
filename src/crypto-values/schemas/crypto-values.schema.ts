@@ -13,9 +13,9 @@ export class CryptoValues extends Document {
     @Prop({ default: "" })
     wallet_name: "";
     @Prop({ default: "" })
-    coinsCode: "";
+    coins_code: "";
     @Prop({ default: "" })
-    coinName: "";
+    coins_name: "";
 
     @Prop({ default: "" })
     country: "";

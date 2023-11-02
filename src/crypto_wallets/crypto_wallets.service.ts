@@ -4,12 +4,14 @@ import { UpdateCryptoWalletDto } from './dto/update-crypto_wallet.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { CryptoWallet } from './schemas/crypto_wallets.schema';
 import mongoose from 'mongoose';
+import { CryptoValuesService } from 'src/crypto-values/crypto-values.service';
 
 @Injectable()
 export class CryptoWalletsService {
   constructor(
     @InjectModel(CryptoWallet.name)
     private cryptoWalletService: mongoose.Model<CryptoWallet>,
+    private cryptoValuesService: CryptoValuesService,
   ) { }
   async create(createCryptoWalletDto: CreateCryptoWalletDto) {
 
@@ -18,6 +20,7 @@ export class CryptoWalletsService {
       return { status: false, message: "country is already exist in list." };
     }
     var res = await this.cryptoWalletService.create(createCryptoWalletDto);
+    await this.cryptoValuesService.calculateAllCodesValues();
     return res;
   }
 
@@ -71,28 +74,5 @@ export class CryptoWalletsService {
     }
   }
 
-  async allCoinsCodes() {
-    const list = await this.cryptoWalletService.find();
-    const coin_codes = [];
-    list.forEach((element: any) => {
-      element.wallet_detail.forEach((el) => {
-        if (!coin_codes.includes(el['coins_code']))
-          coin_codes.push(el['coins_code']);
-      });
-    });
-    return coin_codes;
-  }
-  async allCountriesCoinsCodes() {
-    const list = await this.cryptoWalletService.find();
-    const coin_codes = [];
-    list.forEach((element: any) => {
-      element.wallet_detail.forEach((el) => {
-        const jj=el['country'];
-        
-        if (!coin_codes.includes(el['coins_code']))
-          coin_codes.push(el['coins_code']);
-      });
-    });
-    return coin_codes;
-  }
+
 }

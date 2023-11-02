@@ -11,9 +11,9 @@ export class CryptoValuesController {
   create() {
     return this.cryptoValuesService.create();
   }
-  @Get()
-  get() {
-    return this.cryptoValuesService.get();
+  @Get(':country')
+  get(@Param('country') country: any) {
+    return this.cryptoValuesService.get(country);
   }
 
 }
