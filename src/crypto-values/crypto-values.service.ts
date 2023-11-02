@@ -43,14 +43,16 @@ export class CryptoValuesService {
       //////create new details
       for (const element of countryCoinsCodes) {
         const obj = walletDetails.find((asset: any) => asset.asset_id === element.coins_code);
-        await this.cryptoValuesModal.create({
-          price_usd: obj ? obj.price_usd : 'wrong code',
-          wallet_no: element.wallet_no,
-          wallet_name: element.wallet_name,
-          coins_code: element.coins_code,
-          coins_name: element.coins_name,
-          country: element.country,
-        });
+        if (obj) {
+          await this.cryptoValuesModal.create({
+            price_usd: obj.price_usd,
+            wallet_no: element.wallet_no,
+            wallet_name: element.wallet_name,
+            coins_code: element.coins_code,
+            coins_name: element.coins_name,
+            country: element.country,
+          });
+        }
       }
       console.log('crypto values calculated')
       return { status: true };

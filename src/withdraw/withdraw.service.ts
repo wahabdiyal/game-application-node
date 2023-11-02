@@ -34,16 +34,16 @@ export class WithdrawService {
       return new NotFoundException("User not found");
     }
 
-    // const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
-    // await admin.messaging().send({
-    //   notification: { title: "withdraw", body: "Withdraw requested" },
-    //   webpush: {
-    //     headers: {
-    //       Urgency: "high", // Set high priority for web
-    //     },
-    //   },
-    //   token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
-    // });
+    const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
+    await admin.messaging().send({
+      notification: { title: "withdraw", body: "Withdraw requested" },
+      webpush: {
+        headers: {
+          Urgency: "high", // Set high priority for web
+        },
+      },
+      token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
+    });
 
     ///////condition add here check for balance 
     if (Number(userCoin['gold_balance']) <= 0 || Number(userCoin['gold_balance']) < Number(createWithdrawDto['coins']))
@@ -116,6 +116,16 @@ export class WithdrawService {
 
 
       var res = await this.withDrawModel.create(createWithdrawDto);
+      const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
+      await admin.messaging().send({
+        notification: { title: "withdraw", body: "Withdraw requested" },
+        webpush: {
+          headers: {
+            Urgency: "high", // Set high priority for web
+          },
+        },
+        token: notificationDevice.deviceToken,//"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
+      });
       return {
         status: true,
         message: "withdrawal request successfully submitted",
