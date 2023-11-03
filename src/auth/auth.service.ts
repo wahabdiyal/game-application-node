@@ -139,7 +139,7 @@ export class AuthService {
 
             await this.usersService.update({ _id: user.id }, { user_login_token: access_token });
           status = true; message = "success"
-          await this.loginLogsService.create({ user: user._id, ip_address: ip })
+          await this.loginLogsService.create({ user: user._id, ip_address: ip, action_type: "login" })
         }
       }
     }

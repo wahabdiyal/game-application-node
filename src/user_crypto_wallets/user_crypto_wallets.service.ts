@@ -51,7 +51,7 @@ export class UserCryptoWalletsService {
     return await this.userCryptoWalletService.findOne({ _id: id });
   }
   async findOneUser(user_id: any) {
-    return await this.userCryptoWalletService.find({ user_id: user_id }).sort({ createdAt: 1 }).exec();
+    return await this.userCryptoWalletService.find({ user_id: user_id }).sort({ createdAt: -1 }).exec();
   }
 
 

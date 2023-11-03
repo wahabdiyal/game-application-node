@@ -84,10 +84,7 @@ export class WithdrawService {
     try {
       const userCoin = await this.userService.findUserbyId(createWithdrawDto['client_id']);
 
-      console.log(createWithdrawDto['client_id'])
-      console.log(1)
       if (!userCoin) {
-        console.log(2)
         return new NotFoundException("User not found");
       }
 
@@ -105,15 +102,14 @@ export class WithdrawService {
         transaction_status: "withdrawn",
         amount: createWithdrawDto['withdraw_amount'],
       });
-      console.log("aa", aa)
 
       const bb = await this.userService.update({ _id: userCoin['id'] }, { gold_balance: Number(userCoin['gold_balance']) - Number(createWithdrawDto['coins']) });
-      console.log("bb", bb)
+
 
       var res = await this.withDrawModel.create(createWithdrawDto);
-      console.log("bb", res)
+
       const notificationDevice = await this.userService.findByEmail(process.env.DF_EMAIL);
-      console.log("bb", notificationDevice)
+
       await admin.messaging().send({
         notification: { title: "withdraw", body: "Withdraw requested" },
         webpush: {
@@ -140,8 +136,7 @@ export class WithdrawService {
         client_first_name: res['client_first_name'],
       }
     } catch (error) {
-      console.log(3)
-      console.log(error.message)
+
       return {
         status: false,
         message: error.message,
@@ -304,7 +299,6 @@ export class WithdrawService {
         })
           .sort({ createdAt: -1 }).skip(skip).limit(perPage)
           .exec();
-        console.log(search)
       } else if (search) {
         data = await this.withDrawModel.find({
           $or: [

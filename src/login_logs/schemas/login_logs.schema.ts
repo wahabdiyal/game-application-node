@@ -10,6 +10,8 @@ export class LoginLogs extends Document {
     user: User;
     @Prop({ required: true })
     ip_address: string;
+    @Prop({ default: "" })
+    action_type: string;
 
 
 
