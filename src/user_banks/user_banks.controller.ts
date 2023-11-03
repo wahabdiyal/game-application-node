@@ -26,6 +26,11 @@ export class UserBanksController {
     return this.userBanksService.findOneUser(id);
   }
 
+  @Get('/selectedWallet/:id')
+  findOneUserSelected(@Param('id') id: string) {
+    return this.userBanksService.findOneUserSelected(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserBankDto: UpdateUserBankDto) {
     return this.userBanksService.update(id, updateUserBankDto);

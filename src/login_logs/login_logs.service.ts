@@ -11,7 +11,6 @@ export class LoginLogsService {
   constructor(
     @InjectModel(LoginLogs.name)
     private loginLogsModal: mongoose.Model<LoginLogs>,
- 
   ) { }
 
   async create(createLoginLogDto: CreateLoginLogDto) {
@@ -22,7 +21,7 @@ export class LoginLogsService {
     return await this.loginLogsModal.find({ country: country });
   }
   async findAll() {
-    return await this.loginLogsModal.find().populate('user');
+    return await this.loginLogsModal.find().populate('user').sort({ createdAt: -1 });
   }
   async findOne(id: any) {
     return await this.loginLogsModal.findOne({ _id: id });

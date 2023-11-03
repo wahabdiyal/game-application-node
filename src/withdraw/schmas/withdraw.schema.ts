@@ -29,7 +29,7 @@ export class Withdraw extends Document {
     @Prop({ default: 0, })
     admin_commission: string;
     @Prop({ default: 0, })
-    withdraw_amount: string;
+    withdraw_amount: number;
     @Prop()
     transaction_id: string;
     @Prop()

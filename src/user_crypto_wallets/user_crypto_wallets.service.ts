@@ -54,6 +54,11 @@ export class UserCryptoWalletsService {
     return await this.userCryptoWalletService.find({ user_id: user_id }).sort({ createdAt: -1 }).exec();
   }
 
+  async findOneUserSelected(user_id: any) {
+    return await this.userCryptoWalletService.find({ user_id: user_id, is_selected: 1 }).sort({ createdAt: -1 }).exec();
+  }
+
+
 
   async update(id: any, updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
     if (updateUserCryptoWalletDto['is_selected'] === true) await this.clearSelectBankWallet(updateUserCryptoWalletDto['user_id'].toString());
