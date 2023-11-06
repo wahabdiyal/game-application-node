@@ -25,7 +25,7 @@ export class AdminBankService {
     return await this.adminBankService.find({ country: country });
   }
   async findAll() {
-    return await this.adminBankService.find();
+    return await this.adminBankService.find().sort({ createdAt: -1 });
   }
   async findOne(id: any) {
     return await this.adminBankService.findOne({ _id: id });

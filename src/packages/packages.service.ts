@@ -21,7 +21,7 @@ export class PackagesService {
   }
 
   async findAll() {
-    return await this.packagesModel.find();
+    return await this.packagesModel.find().sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {

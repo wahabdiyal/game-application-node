@@ -22,7 +22,7 @@ export class AllowedIpsService {
     return await this.allowedIPService.find({ country: country });
   }
   async findAll() {
-    return await this.allowedIPService.find().populate('user');
+    return await this.allowedIPService.find().populate('user').sort({ createdAt: -1 });;
   }
   async findOne(id: any) {
     return await this.allowedIPService.findOne({ _id: id });

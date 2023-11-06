@@ -15,24 +15,24 @@ export class SignupRewardsService {
   async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
     const collection = await this.signuprewardModel.find();
     const startinput = new Date(createSignupRewardDto['start_date']).getTime();
-    const endinput =  new Date(createSignupRewardDto['end_date']).getTime();
+    const endinput = new Date(createSignupRewardDto['end_date']).getTime();
     const matchedCollection = [];
     for (const item of collection) {
       const startdb = new Date(item['start_date']).getTime();
       const enddb = new Date(item['end_date']).getTime();
-if(
-  (startinput >= startdb && startinput <= enddb)
-  ||
-   (endinput >= startdb && endinput <= enddb)
-  ||
-   (startinput <= startdb && endinput >= startdb )
-  ||
-   (startinput <= enddb && endinput >= enddb)
-){
-    matchedCollection.push(item);
-}
+      if (
+        (startinput >= startdb && startinput <= enddb)
+        ||
+        (endinput >= startdb && endinput <= enddb)
+        ||
+        (startinput <= startdb && endinput >= startdb)
+        ||
+        (startinput <= enddb && endinput >= enddb)
+      ) {
+        matchedCollection.push(item);
+      }
     }
- 
+
     function checkRecordExists(records, criteria) {
 
       //         const [countries, startTime, endTime] = criteria;
@@ -169,7 +169,7 @@ if(
   }
 
   async findAll() {
-    return await this.signuprewardModel.find();
+    return await this.signuprewardModel.find().sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {

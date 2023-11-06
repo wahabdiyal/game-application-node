@@ -21,7 +21,7 @@ export class WithdrawLimitsService {
   }
 
   async findAll() {
-    return await this.Withdraw_limitsModel.find();
+    return await this.Withdraw_limitsModel.find().sort({ createdAt: -1 });
   }
 
   async findOne(id: string) {

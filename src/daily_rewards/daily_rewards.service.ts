@@ -83,7 +83,7 @@ export class DailyRewardsService {
   }
 
   async findAllTypes() {
-    return await this.dailyReward.find().exec();
+    return await this.dailyReward.find().sort({ createdAt: -1 }).exec();
   }
 
   async findOne(id: any) {

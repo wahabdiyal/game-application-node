@@ -29,7 +29,7 @@ export class CryptoWalletsService {
   }
 
   async findAll() {
-    return await this.cryptoWalletService.find();
+    return await this.cryptoWalletService.find().sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {
@@ -68,7 +68,7 @@ export class CryptoWalletsService {
 
   async findByCountryForMobile(ctry: string) {
     const getCountry = await this.cryptoWalletService.find({ country: { $in: [ctry] } });
-   
+
     if (getCountry.length > 0) {
       return { status: true, message: "Crypt Wallet for country", walletData: getCountry };
     } else {

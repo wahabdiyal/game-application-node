@@ -85,7 +85,7 @@ export class BorrowService {
         ],
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
       }).skip(skip).limit(perPage).populate('sender')
-        .populate('receiver').exec();
+        .populate('receiver').sort({ createdAt: -1 }).exec();
     }
     else if (date.length > 0) {
       const parsedStartDate = new Date(date[0].start);
@@ -104,7 +104,7 @@ export class BorrowService {
       data = await this.borrowModel.find({
         createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
       }).skip(skip).limit(perPage).populate('sender')
-        .populate('receiver').exec();
+        .populate('receiver').sort({ createdAt: -1 }).exec();
     }
     else if (search) {
       totalCount = await this.borrowModel.find({
@@ -130,7 +130,7 @@ export class BorrowService {
           { transaction_id: { $regex: search, $options: 'i' } },
         ]
       }).skip(skip).limit(perPage).populate('sender')
-        .populate('receiver').exec();
+        .populate('receiver').sort({ createdAt: -1 }).exec();
     }
     else {
 
@@ -147,7 +147,8 @@ export class BorrowService {
         .skip(skip)
         .limit(perPage)
         .populate('sender') // Replace 'sender' with the actual path in your schema
-        .populate('receiver') // Replace 'receiver' with the actual path in your schema
+        .populate('receiver')
+        .sort({ createdAt: -1 }) // Replace 'receiver' with the actual path in your schema
         .exec();
 
     }
@@ -235,7 +236,7 @@ export class BorrowService {
 
       await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.silver_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
 
-      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin ,transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
+      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
       await this.borrowModel.findByIdAndUpdate(borrow_id, { is_reverse: true, status: 'reversed' });
       return {
         status: "success",

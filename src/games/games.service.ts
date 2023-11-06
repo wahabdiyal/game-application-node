@@ -36,7 +36,7 @@ export class GamesService {
 
 
   async findAll() {
-    return await this.gameModel.find();
+    return await this.gameModel.find().sort({ createdAt: -1 });
   }
   async getActiveGamesCount() {
     return await this.gameModel.countDocuments({ status: 'active' });
