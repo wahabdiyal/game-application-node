@@ -18,8 +18,10 @@ export class BannersService {
     return res;
   }
 
-  async findAll() {
-    return await this.bannerModel.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    return await this.bannerModel.find(query).sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {

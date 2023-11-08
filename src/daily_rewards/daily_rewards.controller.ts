@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request } from '@nestjs/common';
 import { DailyRewardsService } from './daily_rewards.service';
 import { CreateDailyRewardDto } from './dto/create-daily_reward.dto';
 import { UpdateDailyRewardDto } from './dto/update-daily_reward.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('daily-rewards')
+@UseGuards(AuthGuard)
 export class DailyRewardsController {
   constructor(private readonly dailyRewardsService: DailyRewardsService) {}
 
@@ -13,12 +15,12 @@ export class DailyRewardsController {
   }
 
   @Get("get-all/:type")
-  findAll(@Param() type: string) { 
-    return this.dailyRewardsService.findAll(type['type']);
+  findAll(@Request() req,@Param() type: string) { 
+    return this.dailyRewardsService.findAll(type['type'],req.user.role,req.user.country);
   }
   @Get("get-all-types/all")
-  findAllTypes() { 
-    return this.dailyRewardsService.findAllTypes();
+  findAllTypes(@Request() req) { 
+    return this.dailyRewardsService.findAllTypes(req.user.role,req.user.country);
   }
 
   @Get(':id')

@@ -18,7 +18,7 @@ export class Package extends Document {
     @Prop({ required: true, default: 0 })
     amount_usd: string;
     @Prop({ required: true, default: "" })
-    country: string;
+    country: [string];
 
     @Prop()
     created_by: string;

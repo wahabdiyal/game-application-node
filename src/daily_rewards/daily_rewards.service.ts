@@ -71,8 +71,10 @@ export class DailyRewardsService {
     }
   }
 
-  async findAll(type) {
+  async findAll(type,myRole = "", myCountries = "") {
 
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ") };
     if (type == "silver") {
       return await this.dailyReward.find({ silver_coin: { $ne: 0 } }).exec();
     } if (type == "gold") {
@@ -82,8 +84,10 @@ export class DailyRewardsService {
 
   }
 
-  async findAllTypes() {
-    return await this.dailyReward.find().sort({ createdAt: -1 }).exec();
+  async findAllTypes(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    return await this.dailyReward.find(query).sort({ createdAt: -1 }).exec();
   }
 
   async findOne(id: any) {

@@ -28,8 +28,10 @@ export class CryptoWalletsService {
     return await this.cryptoWalletService.find({ country: { $in: [ctry] } });
   }
 
-  async findAll() {
-    return await this.cryptoWalletService.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ") };
+    return await this.cryptoWalletService.find(query).sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {

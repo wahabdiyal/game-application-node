@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Request, UseGuards } from '@nestjs/common';
 import { CryptoWalletsService } from './crypto_wallets.service';
 import { CreateCryptoWalletDto } from './dto/create-crypto_wallet.dto';
 import { UpdateCryptoWalletDto } from './dto/update-crypto_wallet.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('crypto-wallets')
+@UseGuards(AuthGuard)
 export class CryptoWalletsController {
   constructor(private readonly cryptoWalletsService: CryptoWalletsService) {}
 
@@ -13,8 +15,8 @@ export class CryptoWalletsController {
   }
 
   @Get()
-  findAll() {
-    return this.cryptoWalletsService.findAll();
+  findAll(@Request() req) {
+    return this.cryptoWalletsService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')

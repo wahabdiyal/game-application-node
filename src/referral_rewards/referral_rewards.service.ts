@@ -47,8 +47,10 @@ export class ReferralRewardsService {
 
   }
 
-  async findAll() {
-    const res = await this.referralModel.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    const res = await this.referralModel.find(query).sort({ createdAt: -1 });
     return res;
   }
 

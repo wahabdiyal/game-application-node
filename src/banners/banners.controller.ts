@@ -1,11 +1,13 @@
 import { storage } from './../config/storage.config';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors,UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors,UploadedFile, UseGuards,Request } from '@nestjs/common';
 import { BannersService } from './banners.service';
 import { CreateBannerDto } from './dto/create-banner.dto';
 import { UpdateBannerDto } from './dto/update-banner.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from 'src/auth/auth.guard';
  
 @Controller('banners')
+@UseGuards(AuthGuard)
 export class BannersController {
     
     constructor(
@@ -27,8 +29,8 @@ export class BannersController {
   }
 
   @Get()
-  findAll() {
-    return this.bannersService.findAll();
+  findAll(@Request() req) {
+    return this.bannersService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')

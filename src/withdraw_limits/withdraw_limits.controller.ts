@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request } from '@nestjs/common';
 import { WithdrawLimitsService } from './withdraw_limits.service';
 import { CreateWithdrawLimitDto } from './dto/create-withdraw_limit.dto';
 import { UpdateWithdrawLimitDto } from './dto/update-withdraw_limit.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('withdraw-limits')
+@UseGuards(AuthGuard)
 export class WithdrawLimitsController {
   constructor(private readonly withdrawLimitsService: WithdrawLimitsService) { }
 
@@ -13,8 +15,8 @@ export class WithdrawLimitsController {
   }
 
   @Get()
-  findAll() {
-    return this.withdrawLimitsService.findAll();
+  findAll(@Request() req) {
+    return this.withdrawLimitsService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')

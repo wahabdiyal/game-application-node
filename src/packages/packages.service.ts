@@ -16,12 +16,15 @@ export class PackagesService {
     private countryService: CountriesService,
   ) { }
   async create(createPackageDto: CreatePackageDto) {
+    createPackageDto['country']=createPackageDto['country'].split(',')
     var res = await this.packagesModel.create(createPackageDto);
     return res;
   }
 
-  async findAll() {
-    return await this.packagesModel.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ")};
+    return await this.packagesModel.find(query).sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {
@@ -65,6 +68,7 @@ export class PackagesService {
     }
   }
   async update(id: string, updatePackageDto: UpdatePackageDto) {
+    updatePackageDto['country']=updatePackageDto['country'].split(',')
     const pakcage = await this.packagesModel.findByIdAndUpdate(id, updatePackageDto);
 
     if (!pakcage) {

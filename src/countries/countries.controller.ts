@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request } from '@nestjs/common';
 import { CountriesService } from './countries.service';
 import { CreateCountryDto } from './dto/create-country.dto';
 import { UpdateCountryDto } from './dto/update-country.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('countries')
+@UseGuards(AuthGuard)
 export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
 
@@ -13,8 +15,8 @@ export class CountriesController {
   }
 
   @Get()
-  findAll() {
-    return this.countriesService.findAll();
+  findAll(@Request() req,) {
+    return this.countriesService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')

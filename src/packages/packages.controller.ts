@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UploadedFile, UseInterceptors,Request, UseGuards } from '@nestjs/common';
 import { PackagesService } from './packages.service';
 import { CreatePackageDto } from './dto/create-package.dto';
 import { UpdatePackageDto } from './dto/update-package.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { storage } from './../config/storage.config';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('packages')
+@UseGuards(AuthGuard)
 export class PackagesController {
   constructor(private readonly packagesService: PackagesService) { }
 
@@ -24,8 +26,8 @@ export class PackagesController {
   }
 
   @Get()
-  findAll() {
-    return this.packagesService.findAll();
+  findAll(@Request() req) {
+    return this.packagesService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')

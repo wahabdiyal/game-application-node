@@ -16,7 +16,6 @@ export class BannerCollectionsService {
   ) { }
 
   async create(createBannerCollectionDto: CreateBannerCollectionDto) {
-
     const bannerCollection = await this.bannerCollectionModel.findOne({ country: { $in: createBannerCollectionDto['country'] } });
     if (bannerCollection)
       return {
@@ -32,8 +31,10 @@ export class BannerCollectionsService {
 
   }
 
-  async findAll() {
-    return await this.bannerCollectionModel.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    return await this.bannerCollectionModel.find(query).sort({ createdAt: -1 });
   }
 
   async findBannerbyId(id: any) {
@@ -65,8 +66,11 @@ export class BannerCollectionsService {
       };
     }
   }
-  async find() {
-    const collectionBanner = await this.bannerCollectionModel.find();
+  async find(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+
+    const collectionBanner = await this.bannerCollectionModel.find(query).sort({ createdAt: -1 });
     if (collectionBanner.length > 0) {
       let bannerlist = [];
       for (let i = 0; i < collectionBanner.length; i++) {

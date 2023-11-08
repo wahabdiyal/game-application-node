@@ -17,7 +17,9 @@ export class ContactsService {
     return res;
   }
 
-  async findAll() {
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ")};
     return await this.contactModel.find().sort({ createdAt: -1 });
   }
 

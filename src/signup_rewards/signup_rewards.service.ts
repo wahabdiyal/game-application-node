@@ -168,8 +168,10 @@ export class SignupRewardsService {
 
   }
 
-  async findAll() {
-    return await this.signuprewardModel.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    return await this.signuprewardModel.find(query).sort({ createdAt: -1 });
   }
 
   async findOne(id: any) {

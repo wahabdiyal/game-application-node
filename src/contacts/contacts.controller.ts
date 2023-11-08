@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Request, UseGuards } from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('whatsapp')
+@UseGuards(AuthGuard)
 export class ContactsController {
   constructor(private readonly contactsService: ContactsService) {}
 
@@ -13,8 +15,8 @@ export class ContactsController {
   }
 
   @Get()
-  findAll() {
-    return this.contactsService.findAll();
+  findAll(@Request() req) {
+    return this.contactsService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')

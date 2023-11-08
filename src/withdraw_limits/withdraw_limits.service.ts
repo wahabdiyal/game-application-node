@@ -20,8 +20,10 @@ export class WithdrawLimitsService {
     return res;
   }
 
-  async findAll() {
-    return await this.Withdraw_limitsModel.find().sort({ createdAt: -1 });
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['countries'] = { $in: myCountries.split(", ") };
+    return await this.Withdraw_limitsModel.find(query).sort({ createdAt: -1 });
   }
 
   async findOne(id: string) {

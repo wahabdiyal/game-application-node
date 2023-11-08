@@ -1,10 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Request, UseGuards } from '@nestjs/common';
 import { SignupRewardsService } from './signup_rewards.service';
 import { CreateSignupRewardDto } from './dto/create-signup_reward.dto';
 import { UpdateSignupRewardDto } from './dto/update-signup_reward.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
  
 
 @Controller('signup-rewards')
+@UseGuards(AuthGuard)
 export class SignupRewardsController {
   constructor(private readonly signupRewardsService: SignupRewardsService) {}
 
@@ -13,8 +15,8 @@ export class SignupRewardsController {
     return this.signupRewardsService.create(createSignupRewardDto);
   }
   @Get()
-  findAll() {
-    return this.signupRewardsService.findAll();
+  findAll(@Request() req) {
+    return this.signupRewardsService.findAll(req.user.role,req.user.country);
   }
 
   @Get(':id')
