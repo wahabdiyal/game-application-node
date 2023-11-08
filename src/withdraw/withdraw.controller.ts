@@ -10,6 +10,7 @@ import firebase from 'firebase/app'
 import { SignupRewardsService } from 'src/signup_rewards/signup_rewards.service';
 import { UserService } from 'src/user/user.service';
 @Controller('withdraw')
+@UseGuards(AuthGuard)
 export class WithdrawController {
   private firestore: FirebaseFirestore.Firestore;
 
@@ -69,10 +70,10 @@ export class WithdrawController {
 
 
 
-  @Get()
-  findAll(@Query() { page, perpage, start_date, end_date, status, search }) {
+  @Get('/')
+  findAll(@Request() req,@Query() { page, perpage, start_date, end_date, status, search }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.withdrawService.findAll(page, perpage, date, status, search);
+    return this.withdrawService.findAll(page, perpage, date, status, search,req.user.role,req.user.country);
   }
   @Get('user-request/:id')
   userRequest(@Param('id') id: any) {

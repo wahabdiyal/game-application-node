@@ -9,6 +9,7 @@ import { GoldsService } from 'src/golds/golds.service';
 import { UserService } from 'src/user/user.service';
 import { BorrowStatusService } from 'src/borrow_status/borrow_status.service';
 
+
 @Injectable()
 export class BorrowService {
   constructor(
@@ -47,111 +48,65 @@ export class BorrowService {
     delete createborrowDto['updatedAt'];
 
 
-    var res = await this.borrowModel.create({ ...createborrowDto, transaction_id: Math.random().toString(36).slice(-5), });
+    var res = await this.borrowModel.create({
+      ...createborrowDto,
+      sender_country: user.country,
+      ransaction_id: Math.random().toString(36).slice(-5),
+    });
     return { ...res.toObject(), check: true };
   }
 
-  async findAll(page = 0, perPage = 20, date = [], search = false) {
+  async findAll(page = 0, perPage = 20, date = [], search = false, myRole = "", myCountries = "") {
+
 
     let data: any = [];
     let totalCount: number = 0;
     let totalPages: number = 0;
-
-    if (date.length > 0 && search) {
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
-      totalCount = await this.borrowModel.find({
-        $or: [
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['sender_country'] = { $in: myCountries.split(", ") };
+    if (search) {
+      if (myRole != "Admin" && myRole != "admin")
+        query['$or'] = [
           { type: { $regex: search, $options: 'i' } },
           { status: { $regex: search, $options: 'i' } },
           { remarks: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
-        ],
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).countDocuments().exec();
-
-      totalPages = Math.ceil(totalCount / perPage);
-
-      if (page < 1) page = 1; if (page > totalPages) page = totalPages
-
-      const skip = (page - 1) * perPage;
-
-      data = await this.borrowModel.find({
-        $or: [
+        ];
+      else
+        query['$or'] = [
+          { sender_country: { $regex: search, $options: 'i' } },
+          { receiver_country: { $regex: search, $options: 'i' } },
           { type: { $regex: search, $options: 'i' } },
           { status: { $regex: search, $options: 'i' } },
           { remarks: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
-        ],
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).skip(skip).limit(perPage).populate('sender')
-        .populate('receiver').sort({ createdAt: -1 }).exec();
+        ];
     }
-    else if (date.length > 0) {
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
-
-      totalCount = await this.borrowModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).countDocuments().exec();
-
-      totalPages = Math.ceil(totalCount / perPage);
-
-      if (page < 1) page = 1; if (page > totalPages) page = totalPages
-
-      const skip = (page - 1) * perPage;
-
-      data = await this.borrowModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate }
-      }).skip(skip).limit(perPage).populate('sender')
-        .populate('receiver').sort({ createdAt: -1 }).exec();
+    if (date.length > 0) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      query['createdAt'] = { $gte: parsedStartDate, $lte: parsedEndDate };
     }
-    else if (search) {
-      totalCount = await this.borrowModel.find({
-        $or: [
-          { type: { $regex: search, $options: 'i' } },
-          { status: { $regex: search, $options: 'i' } },
-          { remarks: { $regex: search, $options: 'i' } },
-          { transaction_id: { $regex: search, $options: 'i' } },
-        ]
-      }).countDocuments().exec();
 
-      totalPages = Math.ceil(totalCount / perPage);
+    totalCount = await this.borrowModel.find(query).countDocuments().exec();
+    totalPages = Math.ceil(totalCount / perPage);
 
-      if (page < 1) page = 1; if (page > totalPages) page = totalPages
-
-      const skip = (page - 1) * perPage;
-
-      data = await this.borrowModel.find({
-        $or: [
-          { type: { $regex: search, $options: 'i' } },
-          { status: { $regex: search, $options: 'i' } },
-          { remarks: { $regex: search, $options: 'i' } },
-          { transaction_id: { $regex: search, $options: 'i' } },
-        ]
-      }).skip(skip).limit(perPage).populate('sender')
-        .populate('receiver').sort({ createdAt: -1 }).exec();
+    if (page < 1) {
+      page = 1;
+    } else if (page > totalPages) {
+      page = totalPages;
     }
-    else {
 
-      totalCount = await this.borrowModel.find().countDocuments().exec();
-
-      totalPages = Math.ceil(totalCount / perPage);
-
-      if (page < 1) page = 1; if (page > totalPages) page = totalPages
-
-      const skip = ((page - 1) * perPage) < 0 ? 0 : ((page - 1) * perPage);
-
-      data = await this.borrowModel
-        .find()
-        .skip(skip)
-        .limit(perPage)
-        .populate('sender') // Replace 'sender' with the actual path in your schema
-        .populate('receiver')
-        .sort({ createdAt: -1 }) // Replace 'receiver' with the actual path in your schema
-        .exec();
-
-    }
+    let skip = (page - 1) * perPage;
+    if (skip < 0) skip = 0;
+    data = await this.borrowModel
+      .find(query)
+      .skip(skip)
+      .limit(perPage)
+      .populate('sender') // Replace 'sender' with the actual path in your schema
+      .populate('receiver')
+      .sort({ createdAt: -1 }) // Replace 'receiver' with the actual path in your schema
+      .exec();
 
 
 

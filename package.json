@@ -43,6 +43,7 @@
     "firebase-admin": "^11.10.1",
     "hbs": "^4.2.0",
     "moment": "^2.29.4",
+    "mongodb": "^6.2.0",
     "mongoose": "^7.3.4",
     "mongoose-autopopulate": "^1.0.1",
     "mongoose-sequence": "^5.3.1",

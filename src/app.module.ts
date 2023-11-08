@@ -57,6 +57,7 @@ import { UserMenusModule } from './user_menus/user_menus.module';
 import { CreateLogsModule } from './create-logs/create-logs.module';
 import { UserRightsModule } from './user-rights/user-rights.module';
 import { CryptoValuesModule } from './crypto-values/crypto-values.module';
+import { RoomModule } from './room/room.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -127,7 +128,8 @@ import { CryptoValuesModule } from './crypto-values/crypto-values.module';
     UserMenusModule,
     CreateLogsModule,
     UserRightsModule,
-    CryptoValuesModule
+    CryptoValuesModule,
+    RoomModule
   ],
   controllers: [AppController],
   providers: [AppService],

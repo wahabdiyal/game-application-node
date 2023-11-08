@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards,Request } from '@nestjs/common';
 import { BetsService } from './bets.service';
 import { CreateBetDto } from './dto/create-bet.dto';
 import { UpdateBetDto } from './dto/update-bet.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('bets')
+@UseGuards(AuthGuard)
 export class BetsController {
   constructor(private readonly betsService: BetsService) { }
 
@@ -13,9 +15,9 @@ export class BetsController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage, status, start_date, end_date, key }) {
+  findAll(@Request() req,@Query() { page, perpage, status, start_date, end_date, key }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.betsService.findAll(page, perpage, status, date, key);
+    return this.betsService.findAll(page, perpage, status, date, key,req.user.role,req.user.country);
   }
 
   @Get(':id')

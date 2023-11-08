@@ -17,6 +17,8 @@ export class Bets extends Document {
     @Prop()
     first_user_id: string;
     @Prop({ default: 0 })
+    first_user_country: string;
+    @Prop({ default: 0 })
     transaction_id: string;
     @Prop({ default: 0 })
     ignore_count: string;
@@ -26,6 +28,8 @@ export class Bets extends Document {
     second_email: string;
     @Prop()
     second_name: string;
+    @Prop({ default: 0 })
+    second_user_country: string;
     @Prop()
     second_user_id: string;
     @Prop()

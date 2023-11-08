@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query,Request, UseGuards } from '@nestjs/common';
 import { BorrowService } from './borrow.service';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
 import { UpdateBorrowDto } from './dto/update-borrow.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('borrow')
+@UseGuards(AuthGuard)
 export class BorrowController {
   constructor(private readonly borrowService: BorrowService) { }
 
@@ -13,9 +15,9 @@ export class BorrowController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage, start_date, end_date, search }) {
+  findAll(@Request() req,@Query() { page, perpage, start_date, end_date, search }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.borrowService.findAll(page, perpage, date, search);
+    return this.borrowService.findAll(page, perpage, date, search,req.user.role,req.user.country);
   }
 
   @Get(':id')

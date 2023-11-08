@@ -34,19 +34,19 @@ export class UserController {
   async getUser(@Request() req, @Query() { page, perpage, search, start_date, end_date, role }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
 
-    if (req.user.role == 'operator') {
-
-      return this.userService.findAllForOperator(page, perpage, search, date, role, req.user.country);
-    } else if (req.user.role == 'admin') {
-      return this.userService.findAll(page, perpage, search, date, role);
-    } else {
-      return {
-        data: [],
-        currentPage: 0,
-        total_count: 0,
-        message: "user not allowed"
-      };
-    }
+    return this.userService.findAll(page, perpage, search, date, role,req.user.role,req.user.country);
+    // if (req.user.role == 'operator') {
+    //   return this.userService.findAllForOperator(page, perpage, search, date, role, req.user.country);
+    // } else if (req.user.role == 'admin') {
+     
+    // } else {
+    //   return {
+    //     data: [],
+    //     currentPage: 0,
+    //     total_count: 0,
+    //     message: "user not allowed"
+    //   };
+    // }
 
   }
 

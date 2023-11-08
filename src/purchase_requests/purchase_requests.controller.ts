@@ -1,11 +1,13 @@
 import { storage } from './../config/storage.config';
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile,Request, Query, UseGuards } from '@nestjs/common';
 import { PurchaseRequestsService } from './purchase_requests.service';
 import { CreatePurchaseRequestDto } from './dto/create-purchase_request.dto';
 import { UpdatePurchaseRequestDto } from './dto/update-purchase_request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('purchase-requests')
+@UseGuards(AuthGuard)
 export class PurchaseRequestsController {
   constructor(private readonly purchaseRequestsService: PurchaseRequestsService) { }
 
@@ -36,9 +38,9 @@ export class PurchaseRequestsController {
   }
 
   @Get()
-  findAll(@Query() { page, perpage, start_date, end_date, status,search }) {
+  findAll(@Request() req,@Query() { page, perpage, start_date, end_date, status,search }) {
     let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.purchaseRequestsService.findByStatus(page, perpage, date, status,search);
+    return this.purchaseRequestsService.findByStatus(page, perpage, date, status,search,req.user.role,req.user.country);
   }
 
   @Get(':id')

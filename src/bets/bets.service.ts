@@ -51,7 +51,15 @@ export class BetsService {
       if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && createbetDto['second_player'] === "ai") {
 
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
-        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId, });
+        const res = await this.betsModel.create({
+          ...createbetDto,
+          first_email: first_user['email'],
+          first_name: first_user['first_name'],
+          last_name: first_user['last_name'],
+          first_user_id: first_user['userId'],
+          first_user_country: first_user['country'],
+          transaction_id: transactionId,
+        });
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       }
       else {
@@ -63,7 +71,15 @@ export class BetsService {
     if (Number(first_user['silver_balance']) > Number(createbetDto['silver']) && Number(createbetDto['silver']) != 0) {
       if (!first_user['bet_block'].includes(game.game_id)) {
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
-        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId });
+        const res = await this.betsModel.create({
+          ...createbetDto,
+          first_email: first_user['email'],
+          first_name: first_user['first_name'],
+          last_name: first_user['last_name'],
+          first_user_id: first_user['userId'],
+          first_user_country: first_user['country'],
+          transaction_id: transactionId
+        });
 
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       } else {
@@ -77,7 +93,15 @@ export class BetsService {
 
         /////playing with gold /////
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
-        const res = await this.betsModel.create({ ...createbetDto, first_email: first_user['email'], first_name: first_user['first_name'], last_name: first_user['last_name'], first_user_id: first_user['userId'], transaction_id: transactionId });
+        const res = await this.betsModel.create({
+          ...createbetDto,
+          first_email: first_user['email'],
+          first_name: first_user['first_name'],
+          last_name: first_user['last_name'],
+          first_user_id: first_user['userId'],
+          first_user_country: first_user['country'],
+          transaction_id: transactionId
+        });
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       } else {
         return { status: false, message: "User is blocked for this game." }
@@ -171,7 +195,15 @@ export class BetsService {
 
       if (user && Number(user['silver_balance']) > Number(bet['silver'])) {
         await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
-        await this.betsModel.findByIdAndUpdate(id, { status: "active", second_player: second_user, second_email: user.email, second_name: user.first_name, second_user_id: user.userId, second_join_time: new Date().toISOString() });
+        await this.betsModel.findByIdAndUpdate(id, {
+          status: "active",
+          second_player: second_user,
+          second_email: user.email,
+          second_name: user.first_name,
+          second_user_id: user.userId,
+          second_user_country: user.country,
+          second_join_time: new Date().toISOString()
+        });
         const updateBet = await this.betsModel.findById(id);
         return { ...await this.userService.getUserRenewTokenForMobile(user['id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
       } else {
@@ -189,7 +221,15 @@ export class BetsService {
 
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
         await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
-        await this.betsModel.findByIdAndUpdate(id, { status: "active", second_player: second_user, second_email: user.email, second_name: user.first_name, second_user_id: user.userId, second_join_time: new Date().toISOString() });
+        await this.betsModel.findByIdAndUpdate(id, {
+          status: "active",
+          second_player: second_user,
+          second_email: user.email,
+          second_name: user.first_name,
+          second_user_country: user.country,
+          second_user_id: user.userId,
+          second_join_time: new Date().toISOString()
+        });
         const updateBet = await this.betsModel.findById(id);
         return { ...await this.userService.getUserRenewTokenForMobile(user['id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
       } else {
@@ -245,7 +285,7 @@ export class BetsService {
       return { status: false, message: "Already request proccessed" };
     }
   }
-  async findAll(page = 0, perPage = 20, status = '', date = [], value = null) {
+  async findAll(page = 0, perPage = 20, status = '', date = [], value = null, myRole = "", myCountries = "") {
     const query = { second_player: { $ne: "ai" } };
     if (status == 'active') {
       query['status'] = 'active';
@@ -254,6 +294,7 @@ export class BetsService {
     } else if (status == 'complete') {
       query['status'] = 'complete';
     }
+    if (myRole != "Admin" && myRole != "admin") query['first_user_country'] = { $in: myCountries.split(", ") };
     if (date.length > 0) {
       const parsedStartDate = new Date(date[0].start);
       const parsedEndDate = new Date(date[0].end);

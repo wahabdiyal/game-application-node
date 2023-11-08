@@ -157,83 +157,40 @@ export class WithdrawService {
 
   }
 
-  async findAll(page = 0, perPage = 20, date = [], status = false, search = false) {
+  async findAll(page = 0, perPage = 20, date = [], status = false, search = false, myRole = "", myCountries = "") {
 
 
     let totalCount = 0
-    if (date.length > 0 && status && search) {
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
-
-      totalCount = await this.withDrawModel.find({
-        $or: [
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['client_country'] = { $in: myCountries.split(", ") };
+    if (date.length > 0) {
+      let parsedStartDate = new Date(date[0].start);
+      let parsedEndDate = new Date(date[0].end);
+      query['createdAt'] = { $gte: parsedStartDate, $lte: parsedEndDate };
+    }
+    if (status) query['status'] = status;
+    if (search) {
+      if (myRole != "Admin" && myRole != "admin")
+        query['$or'] = [
+          // { client_country: { $regex: search, $options: 'i' } },
+          { client_first_name: { $regex: search, $options: 'i' } },
+          { client_last_name: { $regex: search, $options: 'i' } },
+          { client_userId: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
           { payment_id: { $regex: search, $options: 'i' } },
-          { client_id: { $regex: search, $options: 'i' } },
-        ],
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        status: status
-      }).countDocuments().exec();
-    } else if (date.length > 0 && search) {
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
-
-      totalCount = await this.withDrawModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        $or: [
-          { transaction_id: { $regex: search, $options: 'i' } },
-          { payment_id: { $regex: search, $options: 'i' } },
-          { client_id: { $regex: search, $options: 'i' } },
-        ],
-      }).countDocuments().exec();
-    } else if (date.length > 0 && status) {
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
-
-      totalCount = await this.withDrawModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        status: status
-      }).countDocuments().exec();
-    } else if (search && status) {
-
-      totalCount = await this.withDrawModel.find({
-        $or: [
+        ];
+      else
+        query['$or'] = [
           { client_country: { $regex: search, $options: 'i' } },
           { client_first_name: { $regex: search, $options: 'i' } },
           { client_last_name: { $regex: search, $options: 'i' } },
           { client_userId: { $regex: search, $options: 'i' } },
           { transaction_id: { $regex: search, $options: 'i' } },
           { payment_id: { $regex: search, $options: 'i' } },
-        ],
-        status: status
-      }).countDocuments().exec();
-    } else if (search) {
-      totalCount = await this.withDrawModel.find({
-        $or: [
-          { client_country: { $regex: search, $options: 'i' } },
-          { client_first_name: { $regex: search, $options: 'i' } },
-          { client_last_name: { $regex: search, $options: 'i' } },
-          { client_userId: { $regex: search, $options: 'i' } },
-          { transaction_id: { $regex: search, $options: 'i' } },
-          { payment_id: { $regex: search, $options: 'i' } },
-        ],
-      }).countDocuments().exec();
-    } else if (date.length > 0) {
-
-      const parsedStartDate = new Date(date[0].start);
-      const parsedEndDate = new Date(date[0].end);
-
-      totalCount = await this.withDrawModel.find({
-        createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-      }).countDocuments().exec();
-    } else if (status) {
-      totalCount = await this.withDrawModel.find({
-        status: status,
-      }).countDocuments().exec();
-    } else {
-      totalCount = await this.withDrawModel.find().countDocuments().exec();
+        ];
     }
 
+    totalCount = await this.withDrawModel.find(query).countDocuments().exec();
     const totalPages = Math.ceil(totalCount / perPage);
 
     if (page < 1) {
@@ -246,84 +203,8 @@ export class WithdrawService {
 
     let data = [];
     try {
-      if (date.length > 0 && status && search) {
-        const parsedStartDate = new Date(date[0].start);
-        const parsedEndDate = new Date(date[0].end);
 
-        data = await this.withDrawModel.find({
-          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-          status: status,
-          $or: [
-            { client_country: { $regex: search, $options: 'i' } },
-            { client_first_name: { $regex: search, $options: 'i' } },
-            { client_last_name: { $regex: search, $options: 'i' } },
-            { client_userId: { $regex: search, $options: 'i' } },
-            { transaction_id: { $regex: search, $options: 'i' } },
-            { payment_id: { $regex: search, $options: 'i' } },
-          ],
-        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else if (date.length > 0 && status) {
-        const parsedStartDate = new Date(date[0].start);
-        const parsedEndDate = new Date(date[0].end);
-
-        data = await this.withDrawModel.find({
-          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-          status: status
-        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else if (date.length > 0 && search) {
-        const parsedStartDate = new Date(date[0].start);
-        const parsedEndDate = new Date(date[0].end);
-
-        data = await this.withDrawModel.find({
-          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-          $or: [
-            { client_country: { $regex: search, $options: 'i' } },
-            { client_first_name: { $regex: search, $options: 'i' } },
-            { client_last_name: { $regex: search, $options: 'i' } },
-            { client_userId: { $regex: search, $options: 'i' } },
-            { transaction_id: { $regex: search, $options: 'i' } },
-            { payment_id: { $regex: search, $options: 'i' } },
-          ],
-        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else if (search && status) {
-        data = await this.withDrawModel.find({
-          $or: [
-            { client_country: { $regex: search, $options: 'i' } },
-            { client_first_name: { $regex: search, $options: 'i' } },
-            { client_last_name: { $regex: search, $options: 'i' } },
-            { client_userId: { $regex: search, $options: 'i' } },
-            { transaction_id: { $regex: search, $options: 'i' } },
-            { payment_id: { $regex: search, $options: 'i' } },
-          ],
-          status: status
-        })
-          .sort({ createdAt: -1 }).skip(skip).limit(perPage)
-          .exec();
-      } else if (search) {
-        data = await this.withDrawModel.find({
-          $or: [
-            { client_country: { $regex: search, $options: 'i' } },
-            { client_first_name: { $regex: search, $options: 'i' } },
-            { client_last_name: { $regex: search, $options: 'i' } },
-            { client_userId: { $regex: search, $options: 'i' } },
-            { transaction_id: { $regex: search, $options: 'i' } },
-            { payment_id: { $regex: search, $options: 'i' } },
-          ],
-        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else if (status) {
-        data = await this.withDrawModel.find({
-          status: status
-        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      } else if (date.length > 0) {
-        const parsedStartDate = new Date(date[0].start);
-        const parsedEndDate = new Date(date[0].end);
-        data = await this.withDrawModel.find({
-          createdAt: { $gte: parsedStartDate, $lte: parsedEndDate },
-        }).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-
-      } else {
-        data = await this.withDrawModel.find().sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-      }
+      data = await this.withDrawModel.find(query).sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
     } catch (error) {
       date = [];
     }
