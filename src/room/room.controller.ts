@@ -9,8 +9,8 @@ export class RoomController {
   private client: MongoClient;
   private dbName = 'game-application';
   constructor(private readonly roomService: RoomService) {
-    this.client = new MongoClient('mongodb://localhost:27017');
-    this.client.connect();
+    // this.client = new MongoClient('mongodb://localhost:27017');
+    // this.client.connect();
   }
 
   @Post()
