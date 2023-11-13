@@ -39,6 +39,6 @@ export class DailyRewardsController {
   }
   @Get('mobile/:country')
   findForMobile(@Param('country') country: string) {
-    return this.dailyRewardsService.findForMobile(country);
+    return this.dailyRewardsService.findForMobile(country.toLowerCase());
   }
 }

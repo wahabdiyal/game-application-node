@@ -40,7 +40,7 @@ export class CryptoWalletsController {
   }
   @Get('/country/mobile/:country')
   findByCountryForMobile(@Param('country') country: string) {
-    return this.cryptoWalletsService.findByCountryForMobile(country);
+    return this.cryptoWalletsService.findByCountryForMobile(country.toLowerCase());
   }
 
 }

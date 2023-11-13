@@ -13,7 +13,7 @@ export class CryptoValuesController {
   }
   @Get(':country')
   get(@Param('country') country: any) {
-    return this.cryptoValuesService.get(country);
+    return this.cryptoValuesService.get(country.toLowerCase());
   }
 
 }

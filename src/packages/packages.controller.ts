@@ -70,6 +70,6 @@ export class PackagesController {
 
   @Get('/country/mobile/:country')
   findByCountryMobile(@Param('country') country: string) {
-    return this.packagesService.findbyCountryForMobile(country);
+    return this.packagesService.findbyCountryForMobile(country.toLowerCase());
   }
 }

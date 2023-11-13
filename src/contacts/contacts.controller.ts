@@ -36,6 +36,6 @@ export class ContactsController {
 
   @Get('/find/country/:country')
   findUserCountry(@Param('country') country: string) {
-    return this.contactsService.findCountry(country);
+    return this.contactsService.findCountry(country.toLowerCase());
   }
 }
