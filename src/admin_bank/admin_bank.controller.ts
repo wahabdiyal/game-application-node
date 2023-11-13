@@ -5,7 +5,7 @@ import { UpdateAdminBankDto } from './dto/update-admin_bank.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('admin-bank')
-@UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
 export class AdminBankController {
   constructor(private readonly adminBankService: AdminBankService) {}
 
@@ -41,6 +41,6 @@ export class AdminBankController {
 
   @Get('/country/mobile/:country')
   findOneCountryForMobile(@Param('country') country: string) {
-    return this.adminBankService.findOneCountryForMobile(country);
+    return this.adminBankService.findOneCountryForMobile(country.toLowerCase());
   }
 }

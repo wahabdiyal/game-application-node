@@ -39,7 +39,7 @@ export class WithdrawLimitsController {
   }
   @Get('mobile/country/:id')
   findOneByCountryMobile(@Param('id') id: string) {
-    return this.withdrawLimitsService.findOneByCountryMobile(id);
+    return this.withdrawLimitsService.findOneByCountryMobile(id.toLowerCase());
   }
 
 

@@ -63,13 +63,13 @@ export class CryptoValuesService {
 
   async get(country: string) {
     try {
-      const data = await this.cryptoValuesModal.find({ country: country });
-      if (data)
+      const data = await this.cryptoValuesModal.find({ country:  { $regex: country, $options: 'i' }});
+      if (data.length)
         return { status: true, message: "crypto wallet found for this country", walletList: data };
       else
-        return { status: true, message: "crypto wallet found for this country", walletList: [] };
+        return { status: false, message: "crypto wallet not found for this country", walletList: [] };
     } catch (error) {
-      return { status: true, message: error.message, walletList: [] };
+      return { status: false, message: error.message, walletList: [] };
     }
   }
 

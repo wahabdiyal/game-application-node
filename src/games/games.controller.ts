@@ -23,7 +23,10 @@ export class GamesController {
     const remove = filecustom.replace("\\", "/");
     return await this.gamesService.create({ ...createGameDto, file_url: remove.replace("public/", "") });
   }
-
+  @Get('/mobile')
+ async findAllForMobile() {
+    return await this.gamesService.findAllMobile();
+  }
   @Get()
   findAll() {
     return this.gamesService.findAll();
@@ -68,6 +71,9 @@ export class GamesController {
     return this.gamesService.getActiveGamesCount();
     // return "Allah hu";
   }
+
+
+
 
  
 }

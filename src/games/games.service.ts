@@ -38,6 +38,14 @@ export class GamesService {
   async findAll() {
     return await this.gameModel.find().sort({ createdAt: -1 });
   }
+  async findAllMobile(){
+    const games =  await this.gameModel.find().sort({ createdAt: -1 });
+    if(games.length){
+      return {status:true,message:"All Game detail", data:games}
+    }else{ 
+      return {status:false,message:"Not Game found"};
+    }
+  }
   async getActiveGamesCount() {
     return await this.gameModel.countDocuments({ status: 'active' });
   }
