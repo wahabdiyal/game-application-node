@@ -14,6 +14,20 @@ export class GoldsController {
   create(@Body() createGoldDto: CreateGoldDto) {
     return this.goldsService.create(createGoldDto);
   }
+  @Post('/apirequest/server/jk_y97wah')
+  createApiRequest(@Body() createSilverDto: CreateGoldDto) {
+    return this.goldsService.createApiRequest(createSilverDto);
+  }
+
+  @Post('admin/recharge')
+  rechargeAdminDirectly(@Body() createGoldDto: CreateGoldDto) {
+    return this.goldsService.rechargeAdminDirectly(createGoldDto);
+  }
+
+  // @Post('create/admin-panel')
+  // adminCreate(@Body() createGoldDto: CreateGoldDto) {
+  //   return this.goldsService.adminCreate(createGoldDto);
+  // }
 
   @Get()
   findAll() {
@@ -44,6 +58,12 @@ export class GoldsController {
   @Get('getcoin/status/:status')
   fetchCoinStatus(@Param('status') status: any) {
     return this.goldsService.fetchCoinStatus(status);
+  }
+
+  @Get('user-history/:id')
+  userHistoryMobile(@Param('id') id: any,@Query() {page,perpage}) {
+
+    return this.goldsService.userHistoryMobile(id,page, perpage);
   }
 
 }

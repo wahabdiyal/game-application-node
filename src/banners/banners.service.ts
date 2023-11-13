@@ -10,32 +10,36 @@ export class BannersService {
   constructor(
     @InjectModel(Banner.name)
     private bannerModel: mongoose.Model<Banner>,
-    ){}
+  ) { }
 
   async create(createBannerDto: CreateBannerDto) {
-   
-  var res = await this.bannerModel.create(createBannerDto);
-   return res;
+
+    var res = await this.bannerModel.create(createBannerDto);
+    return res;
   }
 
- async findAll() {
-    return await this.bannerModel.find();
+  async findAll(myRole = "", myCountries = "") {
+    const query = {};
+    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    return await this.bannerModel.find(query).sort({ createdAt: -1 });
   }
 
- async findOne(id: any) {
-    return await this.bannerModel.findOne({_id : id});
+  async findOne(id: any) {
+    return await this.bannerModel.findOne({ _id: id });
   }
 
   async update(id: any, updateBannerDto: UpdateBannerDto) {
-    const banner = await this.bannerModel.findByIdAndUpdate(id,updateBannerDto);
+    const banner = await this.bannerModel.findByIdAndUpdate(id, updateBannerDto);
 
     if (!banner) {
       throw new NotFoundException('banner not found.');
     }
 
-    return {status: true,message: "banner updated successfully"};
+    const object = await this.bannerModel.findOne(banner._id);
+
+    return { status: true, data: object, message: "banner updated successfully" };
   }
-  
+
   async remove(id: any) {
     const banner = await this.bannerModel.findByIdAndDelete(id);
 
@@ -43,6 +47,11 @@ export class BannersService {
       throw new NotFoundException('banner not found.');
     }
 
-    return {status: true,message: "banner Delete successfully"};
+    return { status: true, message: "banner Delete successfully" };
+  }
+
+  async getBannerList(list: any) {
+    const bannerList = await this.bannerModel.find({ _id: list });
+    return bannerList;
   }
 }

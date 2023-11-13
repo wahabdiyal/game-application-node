@@ -11,6 +11,11 @@ export class Contact extends Document{
     phone:string;
     @Prop()
     country_id:string;
+
+    @Prop()
+    created_by: string;
+    @Prop()
+    updated_by: string;
 }
 export const ContactSchema = SchemaFactory.createForClass(Contact)
 

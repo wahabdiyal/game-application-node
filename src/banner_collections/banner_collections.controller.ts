@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request } from '@nestjs/common';
 import { BannerCollectionsService } from './banner_collections.service';
 import { CreateBannerCollectionDto } from './dto/create-banner_collection.dto';
 import { UpdateBannerCollectionDto } from './dto/update-banner_collection.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('banner-collections')
+@UseGuards(AuthGuard)
 export class BannerCollectionsController {
   constructor(private readonly bannerCollectionsService: BannerCollectionsService) {}
 
@@ -13,13 +15,18 @@ export class BannerCollectionsController {
   }
 
   @Get()
-  findAll() {
-    return this.bannerCollectionsService.findAll();
+  findAll(@Request() req) {
+    return this.bannerCollectionsService.find(req.user.role,req.user.country);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bannerCollectionsService.findOne(id);
+  @Get('/getbannerwithid/:id')
+  async findOneBannerwithid(@Param('id') id: string) {
+    return await this.bannerCollectionsService.findBannerbyId(id);
+  }
+
+  @Get(':country')
+  findOne(@Param('country') country: string) {
+    return this.bannerCollectionsService.findOne(country);
   }
 
   @Patch(':id')

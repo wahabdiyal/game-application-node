@@ -2,32 +2,42 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document, Types } from 'mongoose';
 import { User } from "src/user/schemas/user.schema";
 
-export enum Type{
-    credit="credit",
-    debit="debit",
-  
+export enum Type {
+    credit = "credit",
+    debit = "debit",
+
 }
-export enum Status{
-    approved="approved",
-    pending="pending",
-  
+export enum Status {
+    approved = "approved",
+    pending = "pending",
+
 }
 @Schema({
-        timestamps: true,
+    timestamps: true,
 })
-export class Silver extends Document{
-    @Prop({default:"pending"})
-    status:Status;
+export class Silver extends Document {
+    @Prop({ default: "pending" })
+    status: Status;
     @Prop()
-    coins:string;
-    @Prop({default:null })
-    type:Type ;
+    coins: string;
+    @Prop({ default: null })
+    type: Type;
     @Prop()
-    remarks:string;
-    @Prop({default: null,})
-    entry_by:string;
-    @Prop({ type: Types.ObjectId, ref: 'User'})
-    client_id: User;
+    bal: string;
+    @Prop()
+    remarks: string;
+    @Prop({ default: null, })
+    entry_by: string;
+    @Prop()
+    @Prop()
+    client_id: string;
+    @Prop()
+    userId: string;
+    @Prop({ default: "xxxx" })
+    transaction_id: string;
+
+    @Prop({ default: "yyy" })
+    transaction_status: string;
 
 }
 export const SilverSchema = SchemaFactory.createForClass(Silver)
