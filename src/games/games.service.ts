@@ -41,7 +41,7 @@ export class GamesService {
   async findAllMobile(){
     const games =  await this.gameModel.find().sort({ createdAt: -1 });
     if(games.length){
-      return {status:true,message:"All Game detail", data:games}
+      return {status:true,message:"All Game detail", game_detail:games}
     }else{ 
       return {status:false,message:"Not Game found"};
     }
