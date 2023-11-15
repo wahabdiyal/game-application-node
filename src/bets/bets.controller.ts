@@ -64,6 +64,13 @@ export class BetsController {
     return await this.betsService.ignore_count(id);
   }
 
+  @Post('/reject/update/:id')
+  async betReject(@Param('id') id: string) {
+    return await this.betsService.reject_counter(id);
+  }
+
+
+
   @Post('reverse/:id')
   async reverseBet(@Param('id') id: string) {
     return await this.betsService.reverseBet(id);

@@ -4,7 +4,10 @@ import { UpdateBetDto } from './dto/update-bet.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Bets } from './schemas/bets.schema';
 import mongoose from 'mongoose';
-
+import * as moment from "moment";
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Cron, CronExpression } from '@nestjs/schedule/dist';
+import { OnEvent } from '@nestjs/event-emitter/dist/decorators';
 import { UserService } from 'src/user/user.service';
 import { GamesService } from 'src/games/games.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
@@ -21,9 +24,16 @@ export class BetsService {
     private adminAcountService: AdminAccountsService,
     private goldService: GoldsService,
     private silverService: SilversService,
+    private readonly eventEmitter: EventEmitter2
   ) { }
   async create(createbetDto: CreateBetDto) {
-    const transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
+    var transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
+    
+    const checkBetId = await this.betsModel.findOne({transaction_id:transactionId});
+    if(checkBetId){
+      var transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1)+ Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
+    }
+ 
     const first_user = await this.userService.findUserbyId(createbetDto['first_player']);
     const today = new Date();
     const userBet = await this.betsModel.find({
@@ -340,9 +350,26 @@ export class BetsService {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
 
     if (bet) {
-      if (bet.game_id['ignore_bet'] >= bet['ignore_count']) {
+      if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
         await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 });
         return { status: true, message: "bet ignore updated successfully." }
+      } else {
+        await this.userService.update(bet.first_player['_id'], { bet_block: bet.first_player['bet_block'].concat(bet.game_id['game_id']) });
+        return { status: true, message: "First User bet ignore Blocked." }
+      }
+    } else {
+      return { status: false, message: "No bet found." }
+    }
+
+  }
+
+  async reject_counter(id) {
+    const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
+
+    if (bet) {
+      if (Number(bet.game_id['reject_bet']) >= Number(bet['reject_counter'])) {
+        await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 });
+        return { status: true, message: "bet reject updated successfully." }
       } else {
         await this.userService.update(bet.first_player['_id'], { bet_block: bet.first_player['bet_block'].concat(bet.game_id['game_id']) });
         return { status: true, message: "First User bet ignore Blocked." }
@@ -468,6 +495,39 @@ export class BetsService {
     }
 
   }
+  ///////cron
+  @Cron(CronExpression.EVERY_10_SECONDS, { name: "bet-expired-cron" })
+  async sendRequest() {
 
+    this.eventEmitter.emit(
+      'bet-expire',
+    );
+    console.log("send bet request.....");
+  }
+  @OnEvent("bet-expire")
+  async eventDailyReward() {
+    const bets: any = await this.betsModel.find({status:"inactive"}).populate('game_id').populate('first_player').exec();
+    for (let c = 0; c < bets.length; c++) {
+      //  current date match//
+      const today = moment();
+      const startDate = moment(bets[c].createdAt).add(bets[c].game_id.challenge_time_minutes, 'minutes');
+      
+      if (startDate.isBefore(today)) {
+         await this.betsModel.findByIdAndUpdate(bets[c]._id,{status:"expired"});
+         if(Number(bets[c].silver)){
+          await this.userService.UpdateUser(bets[c].first_player._id, Number(bets[c].first_player.silver_balance) + Number(bets[c].silver), 'silver');
+         }
+         if(Number(bets[c].gold)){
+          await this.userService.UpdateUser(bets[c].first_player._id, Number(bets[c].first_player.gold_balance) + Number(bets[c].gold), 'gold');
+         }
+         
+          console.log('Request processed.......!')
+      }
+       
+    }
+    return "Task Processed?";
+
+  }
+ 
 
 }

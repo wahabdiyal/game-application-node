@@ -40,6 +40,9 @@ export class Games extends Document {
     @Prop({default:5})
     ignore_bet:string;
 
+    @Prop({default:5})
+    reject_bet:string;
+
     @Prop({ default: '0' })
     bet_expires_sec: string;
 

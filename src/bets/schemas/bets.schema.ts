@@ -22,6 +22,8 @@ export class Bets extends Document {
     transaction_id: string;
     @Prop({ default: 0 })
     ignore_count: string;
+    @Prop({ default: 0 })
+    reject_counter: string;
     @Prop({ type: Types.ObjectId, ref: 'User' })
     second_player: string;
     @Prop()
