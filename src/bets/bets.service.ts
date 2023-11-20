@@ -204,9 +204,10 @@ export class BetsService {
       const user = await this.userService.findUserbyId(second_user);
 
       if (user && Number(user['silver_balance']) > Number(bet['silver'])) {
-        await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
+        // make new api where user coin detect when accept 
+        // await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
         await this.betsModel.findByIdAndUpdate(id, {
-          status: "active",
+          status: "inprocess",
           second_player: second_user,
           second_email: user.email,
           second_name: user.first_name,
@@ -230,9 +231,9 @@ export class BetsService {
       const user = await this.userService.findUserbyId(second_user);
 
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
-        await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
+        // await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
         await this.betsModel.findByIdAndUpdate(id, {
-          status: "active",
+          status: "inprocess",
           second_player: second_user,
           second_email: user.email,
           second_name: user.first_name,
@@ -361,6 +362,24 @@ export class BetsService {
       return { status: false, message: "No bet found." }
     }
 
+  }
+  async acceptBet(id){
+    const bet = await this.betsModel.findOne({ _id: id });
+    if(bet && bet.status=="inprocess"){
+      const user = await this.userService.findUserbyId(bet.second_player);
+      if( Number(bet['silver'])){
+         await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
+      }else if(Number(bet['gold'])){
+        await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
+      }else{
+        return {status:false,message:"Request is not good."};
+      }
+   
+    await this.betsModel.findOneAndUpdate({_id:id},{status:'active'});
+    const updateBet = await this.betsModel.findById(id);
+    return { ...await this.userService.getUserRenewTokenForMobile(bet.first_player), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
+    }
+      return {status:false,message:"bet not found."}
   }
 
   async reject_counter(id) {

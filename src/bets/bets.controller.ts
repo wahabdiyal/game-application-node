@@ -69,7 +69,10 @@ export class BetsController {
     return await this.betsService.reject_counter(id);
   }
 
-
+  @Post('/accept/update/:id')
+  async betAccept(@Param('id') id: string) {
+    return await this.betsService.acceptBet(id);
+  }
 
   @Post('reverse/:id')
   async reverseBet(@Param('id') id: string) {
