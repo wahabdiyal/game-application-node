@@ -1,3 +1,4 @@
+import { NotificationService } from './../gerenal-notification/notification.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateBetDto } from './dto/create-bet.dto';
 import { UpdateBetDto } from './dto/update-bet.dto';
@@ -13,6 +14,7 @@ import { GamesService } from 'src/games/games.service';
 import { AdminAccountsService } from 'src/admin_accounts/admin_accounts.service';
 import { GoldsService } from 'src/golds/golds.service';
 import { SilversService } from 'src/silvers/silvers.service';
+ 
 
 @Injectable()
 export class BetsService {
@@ -24,7 +26,8 @@ export class BetsService {
     private adminAcountService: AdminAccountsService,
     private goldService: GoldsService,
     private silverService: SilversService,
-    private readonly eventEmitter: EventEmitter2
+    private readonly eventEmitter: EventEmitter2,
+    private readonly notificationService: NotificationService
   ) { }
   async create(createbetDto: CreateBetDto) {
     var transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
@@ -195,6 +198,21 @@ export class BetsService {
     } else {
       return { status: false, message: "Already request proccessed" };
     }
+  }
+
+  async sendNotificationToUser(userId: string, message: string,title:string) {
+    const user = await this.userService.findwithUserId(userId);
+    const payload = {
+      title:title,
+      body: message,
+    };
+    try{
+       await this.notificationService.sendNotification(user.deviceToken, payload);
+       return {status:true,message:'Notification sent.'};
+    }catch (error) {
+      return {status:false,message:error};
+    }
+   
   }
 
   async betSecondSilverUser(id, second_user) {

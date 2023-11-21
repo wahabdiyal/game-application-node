@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards,Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards,Request, UseInterceptors } from '@nestjs/common';
 import { BetsService } from './bets.service';
 import { CreateBetDto } from './dto/create-bet.dto';
 import { UpdateBetDto } from './dto/update-bet.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('bets')
 @UseGuards(AuthGuard)
@@ -82,6 +83,14 @@ export class BetsController {
   @Get('/game/history')
   game_history(@Query() { page, perpage,player_id, game_id }) {
     return this.betsService.game_history(page, perpage,player_id, game_id);
+  }
+  @Post('send/notification')
+  @UseInterceptors(
+    FileInterceptor('')
+  )
+  sendNotification( @Body() req) {
+   
+    return this.betsService.sendNotificationToUser(req['userid'],req['message'],req['title']);
   }
 
 }
