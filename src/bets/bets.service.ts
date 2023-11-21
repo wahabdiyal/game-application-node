@@ -201,7 +201,8 @@ export class BetsService {
   }
 
   async sendNotificationToUser(userId: string, message: string,title:string) {
-    const user = await this.userService.findwithUserId(userId);
+    const user = await this.userService.findByUserId(userId);
+    
     const payload = {
       title:title,
       body: message,

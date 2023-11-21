@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('bets')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class BetsController {
   constructor(private readonly betsService: BetsService) { }
 
