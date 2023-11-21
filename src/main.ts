@@ -23,7 +23,7 @@ const adminConfig: ServiceAccount = {
 // Initialize the firebase admin app
 admin.initializeApp({
   credential: admin.credential.cert(adminConfig),
-  databaseURL: "https://bettingapp-8eb9b-default-rtdb.firebaseio.com/", 
+  databaseURL: "https://betapp-8eb9b-default-rtdb.asia-southeast1.firebasedatabase.app/", 
 });
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(
