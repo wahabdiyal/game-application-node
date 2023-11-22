@@ -91,7 +91,8 @@ export class BetsService {
           last_name: first_user['last_name'],
           first_user_id: first_user['userId'],
           first_user_country: first_user['country'],
-          transaction_id: transactionId
+          transaction_id: transactionId,
+          createdAt:new Date().toISOString()
         });
 
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
