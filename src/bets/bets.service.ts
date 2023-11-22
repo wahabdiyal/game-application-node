@@ -236,7 +236,7 @@ export class BetsService {
     
     if (bet && bet.status == "inactive" && Number(bet.silver) > 0) {
       const user = await this.userService.findUserbyId(second_user);
-
+      console.log(user);
       if (user && Number(user['silver_balance']) > Number(bet['silver'])) {
         // make new api where user coin detect when accept 
         // await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
@@ -387,7 +387,7 @@ export class BetsService {
 
     if (bet) {
       if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
-        await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 });
+        await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 ,second_player:"",second_user_country:""});
         return { status: true, message: "bet ignore updated successfully." }
       } else {
         await this.userService.update(bet.first_player['_id'], { bet_block: bet.first_player['bet_block'].concat(bet.game_id['game_id']) });
@@ -422,7 +422,7 @@ export class BetsService {
 
     if (bet) {
       if (Number(bet.game_id['reject_bet']) >= Number(bet['reject_counter'])) {
-        await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 });
+        await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,second_player:"",second_user_country:""});
         return { status: true, message: "bet reject updated successfully." }
       } else {
         await this.userService.update(bet.first_player['_id'], { bet_block: bet.first_player['bet_block'].concat(bet.game_id['game_id']) });
