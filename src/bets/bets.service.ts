@@ -90,7 +90,11 @@ export class BetsService {
       if (!first_user['bet_block'].includes(game.game_id)) {
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
         const res = await this.betsModel.create({
-          ...createbetDto,
+          status:"inactive",
+          first_player:createbetDto['first_player'],
+          game_id:createbetDto["game_id"],
+          silver:createbetDto["silver"],
+          remark:createbetDto["remark"],
           first_email: first_user['email'],
           first_name: first_user['first_name'],
           last_name: first_user['last_name'],
@@ -113,7 +117,11 @@ export class BetsService {
         /////playing with gold /////
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
         const res = await this.betsModel.create({
-          ...createbetDto,
+          status:"inactive",
+          first_player:createbetDto['first_player'],
+          game_id:createbetDto["game_id"],
+          gold:createbetDto["gold"],
+          remark:createbetDto["remark"],
           first_email: first_user['email'],
           first_name: first_user['first_name'],
           last_name: first_user['last_name'],
