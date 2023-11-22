@@ -534,7 +534,7 @@ export class BetsService {
 
   }
   ///////cron
-  @Cron(CronExpression.EVERY_10_SECONDS, { name: "bet-expired-cron" })
+  @Cron(CronExpression.EVERY_5_MINUTES, { name: "bet-expired-cron" })
   async sendRequest() {
 
     this.eventEmitter.emit(
