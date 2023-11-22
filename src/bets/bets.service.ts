@@ -30,6 +30,7 @@ export class BetsService {
     private readonly notificationService: NotificationService
   ) { }
   async create(createbetDto: CreateBetDto) {
+
     var transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
     
     const checkBetId = await this.betsModel.findOne({transaction_id:transactionId});
@@ -65,7 +66,10 @@ export class BetsService {
 
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
         const res = await this.betsModel.create({
-          ...createbetDto,
+          first_player:createbetDto['first_player'],
+          game_id:createbetDto["game_id"],
+          silver:createbetDto["silver"],
+          remark:createbetDto["remark"],
           first_email: first_user['email'],
           first_name: first_user['first_name'],
           last_name: first_user['last_name'],
@@ -220,7 +224,7 @@ export class BetsService {
   async betSecondSilverUser(id, second_user) {
 
     const bet = await this.betsModel.findById(id);
-    console.log("bet detail console>...."+bet);
+    
     if (bet && bet.status == "inactive" && Number(bet.silver) > 0) {
       const user = await this.userService.findUserbyId(second_user);
 
@@ -243,7 +247,7 @@ export class BetsService {
       }
 
     } else {
-      console.log("bet else console>....");
+      
       return { status: false, message: "Already bet in progress!!!" };
     }
   }
