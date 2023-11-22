@@ -216,7 +216,7 @@ export class BetsService {
 
   async sendNotificationToUser(userId: string, message: string,title:string) {
     const user = await this.userService.findByUserId(userId);
-    
+     
     const payload = {
       title:title,
       body: message,
@@ -386,7 +386,7 @@ export class BetsService {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
 
     if (bet) {
-     await this.sendNotificationToUser(bet.second_player,"Player Ignore your request.","ignorerequest");
+     await this.sendNotificationToUser(bet.second_user_id,"Player Ignore your request.","ignorerequest");
       if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
         await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 ,second_player:"",second_user_country:""});
         return { status: true, message: "bet ignore updated successfully." }
@@ -420,10 +420,10 @@ export class BetsService {
 
   async reject_counter(id) {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
-
-    if (bet) {
-     await this.sendNotificationToUser(bet.second_player,"Sorry No Challengers Available Coins added back to your account.","notaccepted");
-
+    
+    if (bet && bet.second_player!="") {
+    const abc =  await this.sendNotificationToUser(bet.second_user_id,"Sorry No Challengers Available Coins added back to your account.","notaccepted");
+           
       if (Number(bet.game_id['reject_bet']) >= Number(bet['reject_counter'])) {
         await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,second_player:"",second_user_country:""});
         return { status: true, message: "bet reject updated successfully." }
