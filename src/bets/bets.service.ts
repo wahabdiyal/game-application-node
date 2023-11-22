@@ -220,6 +220,7 @@ export class BetsService {
   async betSecondSilverUser(id, second_user) {
 
     const bet = await this.betsModel.findById(id);
+    console.log("bet detail console>...."+bet);
     if (bet && bet.status == "inactive" && Number(bet.silver) > 0) {
       const user = await this.userService.findUserbyId(second_user);
 
@@ -242,7 +243,8 @@ export class BetsService {
       }
 
     } else {
-      return { status: false, message: "Already bet in progress" };
+      console.log("bet else console>....");
+      return { status: false, message: "Already bet in progress!!!" };
     }
   }
   async betSecondGoldUser(id, second_user) {
@@ -268,7 +270,7 @@ export class BetsService {
       }
 
     } else {
-      return { status: false, message: "Already bet in progress" };
+      return { status: false, message: "Already bet in progress....." };
     }
   }
 
