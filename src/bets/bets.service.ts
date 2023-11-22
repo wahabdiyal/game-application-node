@@ -66,6 +66,7 @@ export class BetsService {
 
         await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
         const res = await this.betsModel.create({
+          status:"inactive",
           first_player:createbetDto['first_player'],
           game_id:createbetDto["game_id"],
           silver:createbetDto["silver"],
