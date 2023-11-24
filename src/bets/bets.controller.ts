@@ -70,6 +70,11 @@ export class BetsController {
     return await this.betsService.reject_counter(id);
   }
 
+  @Post('/leave/update/:id')
+  async betleaveSecond(@Param('id') id: string) {
+    return await this.betsService.leaveBetSecond(id);
+  }
+
   @Post('/accept/update/:id')
   async betAccept(@Param('id') id: string) {
     return await this.betsService.acceptBet(id);

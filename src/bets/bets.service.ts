@@ -30,7 +30,7 @@ export class BetsService {
     private readonly notificationService: NotificationService
   ) { }
   async create(createbetDto: CreateBetDto) {
-
+    var diff =0;
     var transactionId = Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1) + Math.random().toString(36).slice(-1);
     
     const checkBetId = await this.betsModel.findOne({transaction_id:transactionId});
@@ -94,6 +94,7 @@ export class BetsService {
         if(element.game==game.game_id){
           const today = moment();
           const block_date = moment(element.date).add(game.time_restrictions, 'minutes');
+          diff = moment.duration(block_date.diff(today)).asMinutes();
           first_user['bet_block'].splice(0,c+1)
           if(block_date.isAfter(today)){
              bet_block_status = true;  
@@ -102,7 +103,7 @@ export class BetsService {
 
               {_id:createbetDto['first_player']}
               ,
-              { bet_block:first_user['bet_block'] }///////return reuslt is save to change
+              { bet_block:first_user['bet_block'] }
               )
             bet_block_status = false;
           }
@@ -132,12 +133,36 @@ export class BetsService {
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       } else {
 
-        return { status: false, message: "User is blocked for this game." }
+        return { status: false, message: "User is blocked for this game.Remain time for Unblock:"+this.roundTwoDecimalPlaces(diff)+" minutes." }
       }
     }
     ////// gold/////////////
     else if (Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(createbetDto['gold']) != 0) {
-      if (!first_user['bet_block'].includes(game.game_id)) {
+
+      var bet_block_status = false;
+      for (let c = 0; c < first_user['bet_block'].length; c++) {
+        const element = first_user['bet_block'][c];
+        if(element.game==game.game_id){
+          const today = moment();
+          const block_date = moment(element.date).add(game.time_restrictions, 'minutes');
+          diff = moment.duration(block_date.diff(today)).asMinutes();
+          first_user['bet_block'].splice(0,c+1)
+          if(block_date.isAfter(today)){
+             bet_block_status = true;  
+          }else{
+            await this.userService.update(
+
+              {_id:createbetDto['first_player']}
+              ,
+              { bet_block:first_user['bet_block'] }///////return reuslt is save to change
+              )
+            bet_block_status = false;
+          }
+          break;
+        }
+        
+      }
+      if (!bet_block_status) {
 
 
         /////playing with gold /////
@@ -157,7 +182,7 @@ export class BetsService {
         });
         return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
       } else {
-        return { status: false, message: "User is blocked for this game." }
+        return { status: false, message: "User is blocked for this game.Remain time for Unblock:"+this.roundTwoDecimalPlaces(diff)+" minutes." }
       }
     }
     else {
@@ -410,19 +435,29 @@ export class BetsService {
   }
   async ignore_count(id) {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
- 
-    if (bet) {
+     
+    if (bet && bet.second_player!="") {
+     if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
      await this.sendNotificationToUser(bet.second_user_id,"Sorry Player "+bet.first_player['first_name']+" is busy playing other challenge.","ignorerequest");
 
-      if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
-        await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 ,second_player:"",second_user_country:"",status:"inactive"});
+     
+        await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 ,second_player:"",second_email:"",second_user_country:"",status:"inactive"});
         return { status: true, message: "bet ignore updated successfully." }
       } else {
-        await this.userService.update(bet.first_player['_id'], 
-
-        { bet_block: bet.first_player['bet_block'].concat({game:bet.game_id['game_id'],date:new Date().toISOString()}) }
+        var bet_block = true;
+        for (let c = 0; c < bet.first_player['bet_block'].length; c++) {
+          const element = bet.first_player['bet_block'][c];
+          if(element.game==bet.game_id['game_id']){
+            bet_block = false;
+            break;
+          }
+        }
+         if(bet_block){
+          await this.userService.update(bet.first_player['_id'], 
+                         { bet_block: bet.first_player['bet_block'].concat({game:bet.game_id['game_id'],date:new Date().toISOString()}) }
+             );
+         }
         
-        );
         return { status: true, message: "First User bet ignore Blocked." }
       }
     } else {
@@ -431,7 +466,8 @@ export class BetsService {
 
   }
   async acceptBet(id){
-    const bet = await this.betsModel.findOne({ _id: id });
+    const bet =await this.betsModel.findOne({ _id: id }).populate("first_player") ;
+  
     if(bet && bet.status=="inprocess"){
       const user = await this.userService.findUserbyId(bet.second_player);
       if( Number(bet['silver'])){
@@ -444,7 +480,8 @@ export class BetsService {
    
     await this.betsModel.findOneAndUpdate({_id:id},{status:'active'});
     const updateBet = await this.betsModel.findById(id);
-    return { ...await this.userService.getUserRenewTokenForMobile(bet.first_player), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
+    await this.sendNotificationToUser(bet.second_user_id,":Challenge Accepted! Player  "+bet.first_player['first_name']+" has accepted your challenge.","accepted");
+    return { ...await this.userService.getUserRenewTokenForMobile(bet.first_player['_id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
     }
       return {status:false,message:"bet not found."}
   }
@@ -453,14 +490,27 @@ export class BetsService {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
     
     if (bet && bet.second_player!="") {
-    const abc =  await this.sendNotificationToUser(bet.second_user_id,"Sorry Challenge was declined by player "+bet.first_player['first_name']+" .","notaccepted");
+
+      
            
       if (Number(bet.game_id['reject_bet']) >= Number(bet['reject_counter'])) {
-        await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,second_player:"",second_user_country:"",status:"inactive"});
+       await this.sendNotificationToUser(bet.second_user_id,"Sorry Challenge was declined by player "+bet.first_player['first_name']+" .","notaccepted");
+        await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,second_player:"",
+        second_email:"",second_user_country:"",status:"inactive"});
        
         return { status: true, message: "Bet reject updated successfully." }
       } else {
-        await this.userService.update(bet.first_player['_id'], { bet_block: bet.first_player['bet_block'].concat(bet.game_id['game_id']) });
+        var bet_block = true;
+        for (let c = 0; c < bet.first_player['bet_block'].length; c++) {
+          const element = bet.first_player['bet_block'][c];
+          if(element.game==bet.game_id['game_id']){
+            bet_block = false;
+            break;
+          }
+        }
+         if(bet_block){
+        await this.userService.update(bet.first_player['_id'], { bet_block: bet.first_player['bet_block'].concat({game:bet.game_id['game_id'],date:new Date().toISOString()}) });
+        }
         return { status: true, message: "First User bet ignore Blocked." }
       }
     } else {
@@ -584,8 +634,28 @@ export class BetsService {
     }
 
   }
+
+  async leaveBetSecond(bet_id){
+    var bet = await this.betsModel.findOne({ _id: bet_id });
+    try{
+     bet = await this.betsModel.findOne({ _id: bet_id }).populate('game_id').populate('second_player');
+    }catch(error){
+    } 
+     
+    if (bet && bet.status=="inprocess" ) {
+    await this.sendNotificationToUser(bet.first_player,bet.second_player['first_name']+" has left your challenge.","secondplayerleaved");
+    await this.betsModel.updateOne({ _id: bet_id }, { second_player:"",
+    second_email:"",second_user_country:"",status:"inactive"});
+      return {status:true,message:"Second leave bet"};
+    }else{
+      return {status:false,message:"Bet not found."}
+    }
+  }
+   roundTwoDecimalPlaces(value) {
+    return Math.round(value * 100) / 100;
+  }
   ///////cron
-  @Cron(CronExpression.EVERY_5_MINUTES, { name: "bet-expired-cron" })
+  @Cron(CronExpression.EVERY_10_SECONDS, { name: "bet-expired-cron" })
   async sendRequest() {
 
     this.eventEmitter.emit(
