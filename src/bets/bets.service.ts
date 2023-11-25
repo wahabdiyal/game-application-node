@@ -281,14 +281,16 @@ export class BetsService {
    
   }
 
-  async betSecondSilverUser(id, second_user) {
+  async betSecondSilverUser(id, second_user,title,message) {
 
-    const bet = await this.betsModel.findById(id);
-    
+    const bet = await this.betsModel.findById(id).populate('first_player');
+   
     if (bet && bet.status == "inactive" && Number(bet.silver) > 0) {
       const user = await this.userService.findUserbyId(second_user);
        
       if (user && Number(user['silver_balance']) > Number(bet['silver'])) {
+      await this.sendNotificationToUser(bet.first_player['userId'],message,title);
+
         // make new api where user coin detect when accept 
         // await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
         await this.betsModel.findByIdAndUpdate(id, {
