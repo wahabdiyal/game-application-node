@@ -289,8 +289,10 @@ export class BetsService {
       const user = await this.userService.findUserbyId(second_user);
        
       if (user && Number(user['silver_balance']) > Number(bet['silver'])) {
-      await this.sendNotificationToUser(bet.first_player['userId'],message,title);
-
+ const updateBet = await this.betsModel.findById(id);
+ const gamebet = await this.gameService.findOne(updateBet['game_id']) ;
+      await this.sendNotificationToUser(bet.first_player['userId'],message,title+gamebet.bet_expires_sec);
+ 
         // make new api where user coin detect when accept 
         // await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
         await this.betsModel.findByIdAndUpdate(id, {
@@ -302,8 +304,8 @@ export class BetsService {
           second_user_country: user.country,
           second_join_time: new Date().toISOString()
         });
-        const updateBet = await this.betsModel.findById(id);
-        return { ...await this.userService.getUserRenewTokenForMobile(user['id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
+      
+        return { ...await this.userService.getUserRenewTokenForMobile(user['id']), bet: updateBet, game: gamebet};
       } else {
         return { status: false, message: "Invalid Coin not enough" };
       }
