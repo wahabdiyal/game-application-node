@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('bets')
-// @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
 export class BetsController {
   constructor(private readonly betsService: BetsService) { }
 
@@ -70,7 +70,7 @@ export class BetsController {
     return await this.betsService.reject_counter(id);
   }
 
-  @Post('/leave/update/:id')
+  @Get('/leave/update/:id')
   async betleaveSecond(@Param('id') id: string) {
     return await this.betsService.leaveBetSecond(id);
   }

@@ -10,6 +10,7 @@ export class NotificationService {
   }
 
   async sendNotification(deviceToken: string, payload): Promise<void> {
+    
     await this.messaging.send({
         notification: payload,
         android: {

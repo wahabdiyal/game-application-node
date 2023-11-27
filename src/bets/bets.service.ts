@@ -442,7 +442,7 @@ export class BetsService {
      
     if (bet && bet.second_player!="") {
      if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
-     await this.sendNotificationToUser(bet.second_user_id,"Sorry Player "+bet.first_player['first_name']+" is busy playing other challenge.","ignorerequest");
+     await this.sendNotificationToUser(bet.second_user_id,"Sorry Player "+bet.first_player['first_name']+" "+bet.first_player['last_name']+" is busy playing other challenge.","ignorerequest");
 
      
         await this.betsModel.updateOne({ _id: id }, { ignore_count: Number(bet['ignore_count']) + 1 ,second_player:"",second_email:"",second_user_country:"",status:"inactive"});
@@ -461,6 +461,7 @@ export class BetsService {
                          { bet_block: bet.first_player['bet_block'].concat({game:bet.game_id['game_id'],date:new Date().toISOString()}) }
              );
          }
+     await this.sendNotificationToUser(bet.first_player['userId'],"Because you have not been responding to Challenge requests, you are blocked  for "+bet.game_id['time_restrictions']+"min amount of hours","blockeduser");
         
         return { status: true, message: "First User bet ignore Blocked." }
       }
@@ -484,7 +485,7 @@ export class BetsService {
    
     await this.betsModel.findOneAndUpdate({_id:id},{status:'active'});
     const updateBet = await this.betsModel.findById(id);
-    await this.sendNotificationToUser(bet.second_user_id,":Challenge Accepted! Player  "+bet.first_player['first_name']+" has accepted your challenge.","accepted");
+    await this.sendNotificationToUser(bet.second_user_id,":Challenge Accepted! Player  "+bet.first_player['first_name']+" "+bet.first_player['last_name']+" has accepted your challenge.","accepted");
     return { ...await this.userService.getUserRenewTokenForMobile(bet.first_player['_id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
     }
       return {status:false,message:"bet not found."}
@@ -498,7 +499,7 @@ export class BetsService {
       
            
       if (Number(bet.game_id['reject_bet']) >= Number(bet['reject_counter'])) {
-       await this.sendNotificationToUser(bet.second_user_id,"Sorry Challenge was declined by player "+bet.first_player['first_name']+" .","notaccepted");
+       await this.sendNotificationToUser(bet.second_user_id,"Sorry Challenge was declined by player "+bet.first_player['first_name']+" "+bet.first_player['last_name']+" .","notaccepted");
         await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,second_player:"",
         second_email:"",second_user_country:"",status:"inactive"});
        
@@ -647,7 +648,7 @@ export class BetsService {
     } 
      
     if (bet && bet.status=="inprocess" ) {
-    await this.sendNotificationToUser(bet.first_player,bet.second_player['first_name']+" has left your challenge.","secondplayerleaved");
+    await this.sendNotificationToUser(bet.first_player,bet.second_player['first_name']+" "+ bet.second_player['last_name']+" has left your challenge.","secondplayerleaved");
     await this.betsModel.updateOne({ _id: bet_id }, { second_player:"",
     second_email:"",second_user_country:"",status:"inactive"});
       return {status:true,message:"Second leave bet"};
