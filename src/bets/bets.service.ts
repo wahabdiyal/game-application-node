@@ -441,7 +441,7 @@ export class BetsService {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
      
     if (bet && bet.second_player!="") {
-     if (Number(bet.game_id['ignore_bet']) >= Number(bet['ignore_count'])) {
+     if (Number(bet.game_id['ignore_bet']) - 1 >= Number(bet['ignore_count'])) {
      await this.sendNotificationToUser(bet.second_user_id,"Sorry Player "+bet.first_player['first_name']+" "+bet.first_player['last_name']+" is busy playing other challenge.","ignorerequest");
 
      
