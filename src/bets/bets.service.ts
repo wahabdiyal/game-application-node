@@ -681,7 +681,8 @@ export class BetsService {
          if(Number(bets[c].silver)){
           
           await this.userService.UpdateUser(bets[c].first_player._id, Number(bets[c].first_player.silver_balance) + Number(bets[c].silver), 'silver');
-           await this.sendNotificationToUser(bets[c].first_player.userId," Sorry No Challengers Available Coins added back to your account.","coinsback");
+          console.log("notification::::",bets[c].first_player.userId);
+          await this.sendNotificationToUser(bets[c].first_player.userId," Sorry No Challengers Available Coins added back to your account.","coinsback");
           
         }
          if(Number(bets[c].gold)){
