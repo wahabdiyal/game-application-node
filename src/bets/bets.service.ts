@@ -461,7 +461,8 @@ export class BetsService {
                          { bet_block: bet.first_player['bet_block'].concat({game:bet.game_id['game_id'],date:new Date().toISOString()}) }
              );
          }
-     await this.sendNotificationToUser(bet.first_player['userId'],"Because you have not been responding to Challenge requests, you are blocked  for "+bet.game_id['time_restrictions']+"min amount of hours","blockeduser");
+         console.log("block bet notification:::::::");
+         await this.sendNotificationToUser(bet.first_player['userId'],"Because you have not been responding to Challenge requests, you are blocked  for "+bet.game_id['time_restrictions']+"min amount of hours","blockeduser");
         
         return { status: true, message: "First User bet ignore Blocked." }
       }
@@ -674,7 +675,7 @@ export class BetsService {
     for (let c = 0; c < bets.length; c++) {
       //  current date match//
       const today = moment();
-      const startDate = moment(bets[c].createdAt).add(bets[c].game_id.challenge_time_minutes, 'minutes');
+      const startDate = moment(bets[c].updatedAt).add(bets[c].game_id.challenge_time_minutes, 'minutes');
       
       if (startDate.isBefore(today)) {
          await this.betsModel.findByIdAndUpdate(bets[c]._id,{status:"expired"});
