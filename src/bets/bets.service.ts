@@ -679,11 +679,11 @@ export class BetsService {
       if (startDate.isBefore(today)) {
          await this.betsModel.findByIdAndUpdate(bets[c]._id,{status:"expired"});
          if(Number(bets[c].silver)){
-          
+           await this.sendNotificationToUser(bets[c].first_player.userId," Sorry No Challengers Available Coins added back to your account.","coinsback");
+           console.log("notification::::",bets[c].first_player.userId);
           await this.userService.UpdateUser(bets[c].first_player._id, Number(bets[c].first_player.silver_balance) + Number(bets[c].silver), 'silver');
-          console.log("notification::::",bets[c].first_player.userId);
-          await this.sendNotificationToUser(bets[c].first_player.userId," Sorry No Challengers Available Coins added back to your account.","coinsback");
-          
+         
+         
         }
          if(Number(bets[c].gold)){
           await this.userService.UpdateUser(bets[c].first_player._id, Number(bets[c].first_player.gold_balance) + Number(bets[c].gold), 'gold');
