@@ -8,6 +8,7 @@ import { SilversService } from 'src/silvers/silvers.service';
 import { GoldsService } from 'src/golds/golds.service';
 import { UserService } from 'src/user/user.service';
 import { BorrowStatusService } from 'src/borrow_status/borrow_status.service';
+import { NotificationService } from 'src/gerenal-notification/notification.service';
 
 
 @Injectable()
@@ -18,7 +19,9 @@ export class BorrowService {
     private silverService: SilversService,
     private goldService: GoldsService,
     private userService: UserService,
-    private borrowStatusSerivcie: BorrowStatusService
+    private borrowStatusSerivcie: BorrowStatusService,
+    private readonly notificationService: NotificationService
+
   ) { }
 
   async create(createborrowDto: CreateBorrowDto) {
@@ -53,6 +56,8 @@ export class BorrowService {
       sender_country: user.country,
       ransaction_id: Math.random().toString(36).slice(-5),
     });
+    await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+"wants to borrow "+createborrowDto['createdAt']+" amount of silver coins to play","ignorerequest");
+
     return { ...res.toObject(), check: true };
   }
 
@@ -204,6 +209,22 @@ export class BorrowService {
       }
     }
 
+  }
+
+  async sendNotificationToUser(userId: string, message: string,title:string) {
+    const user = await this.userService.findByUserId(userId);
+     
+    const payload = {
+      title:title,
+      body: message,
+    };
+    try{
+       await this.notificationService.sendNotification(user.deviceToken, payload);
+       return {status:true,message:'Notification sent.'};
+    }catch (error) {
+      return {status:false,message:error};
+    }
+   
   }
 
 

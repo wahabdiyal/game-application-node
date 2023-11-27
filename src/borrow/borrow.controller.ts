@@ -5,7 +5,7 @@ import { UpdateBorrowDto } from './dto/update-borrow.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('borrow')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class BorrowController {
   constructor(private readonly borrowService: BorrowService) { }
 
@@ -27,6 +27,7 @@ export class BorrowController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBorrowDto: UpdateBorrowDto) {
+    
     return this.borrowService.update(id, updateBorrowDto);
   }
 
