@@ -35,6 +35,7 @@ export class AppController {
         };
   }
   @Get('hello')
+  @Render('pages/deeplink.hbs')
   findAlla(@Session() session: Record<string, any>) {
      
       return session;
