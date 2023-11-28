@@ -209,9 +209,9 @@ export class BetsService {
     const betDetail = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
     
     const bet = await this.betsModel.findByIdAndDelete(id);
-    await this.sendNotificationToUser(betDetail.second_user_id,"Current challenge has been removed.","challengedeleted");
+    await this.sendNotificationToUser(betDetail.first_player['userId'],"Current challenge has been removed.","challengedeleted");
     if(betDetail.second_player && betDetail.second_player!=""){
-      console.log("second run");
+   
       await this.sendNotificationToUser(betDetail.second_user_id,"Current challenge has been removed.","challengedeleted");
     }
     if (!bet) {
