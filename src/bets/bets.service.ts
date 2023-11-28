@@ -205,13 +205,23 @@ export class BetsService {
   }
 
   async remove(id: any) {
+    try{
+    const betDetail = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
+    
     const bet = await this.betsModel.findByIdAndDelete(id);
-
-    if (!bet) {
-      throw new NotFoundException('bet not found.');
+    await this.sendNotificationToUser(betDetail.second_user_id,"Current challenge has been removed.","challengedeleted");
+    if(betDetail.second_player && betDetail.second_player!=""){
+      console.log("second run");
+      await this.sendNotificationToUser(betDetail.second_user_id,"Current challenge has been removed.","challengedeleted");
     }
-
+    if (!bet) {
+      return {status:false,message:'bet not found.'} ;
+    } 
     return { status: true, message: "bet Delete successfully" };
+  }catch(error){
+    return {status:false,message:'bet not found.'} ;
+  }
+   
   }
 
   /////actual function to update win & loss
