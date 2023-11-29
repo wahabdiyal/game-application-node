@@ -46,20 +46,35 @@ export class BetsController {
 
     return await this.betsService.betSecondSilverUser(id,user_id,title,message);
   }
-  @Post('/winner/bet/:id')
-  async betUpdateWinUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    return await this.betsService.betUpdateWinUser(id, updateBetDto['user_id']);
+  @Post('/winner/bet/:id/user/:userid')
+  async betUpdateWinUser(@Param('id') id: string, @Param('userid') userid: string) {
+    return await this.betsService.betUpdateWinUser(id,userid);
   }
+
+  @Post('/lose/bet/:id/user/:userid')
+  async betUpdateLoseUser(@Param('id') id: string, @Param('userid') userid: string) {
+    return await this.betsService.betUpdateLoseUser(id, userid);
+  }
+
+
   @Post('/gold/bet/:id/seconduser/:user_id/notification/:title/:message')
   async betSecondGoldUser(@Param('id') id: string, @Param('user_id') user_id: string, @Param('message') message: string, @Param('title') title: string) {
 
     return await this.betsService.betSecondGoldUser(id,user_id,title,message);
   }
 
-  @Post('gold/winner/bet/:id')
-  async betUpdateWinUserGold(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    return await this.betsService.betUpdateWinUserGold(id, updateBetDto['user_id']);
+  @Post('gold/winner/bet/:id/user/:userid')
+  async betUpdateWinUserGold(@Param('id') id: string, @Param('userid') user_id: string) {
+    return await this.betsService.betUpdateWinUserGold(id, user_id);
   }
+
+  
+  @Post('gold/lose/bet/:id/user/:userid')
+  async betUpdateLoseUserGold(@Param('id') id: string, @Param('userid') user_id: string) {
+    return await this.betsService.betUpdateLoseUserGold(id, user_id);
+  }
+
+
   @Post('/ignore/update/:id')
   async ignoreUpdate(@Param('id') id: string) {
     return await this.betsService.ignore_count(id);

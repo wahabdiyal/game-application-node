@@ -275,6 +275,30 @@ export class BetsService {
     }
   }
 
+  async betUpdateLoseUser(id: string, user_id: string) {
+    const bet = await this.betsModel.findById(id);
+    if (bet && bet.status == "active") {
+      var user;
+      if(user_id == bet.first_player){
+      user = await this.userService.findUserbyId(bet.second_player);
+    }else{
+     user = await this.userService.findUserbyId(bet.first_player);
+    }
+      await this.update(id, { status: "complete" });
+      await this.silverService.create({
+        client_id: user['_id'],
+        "remarks": "player silver win game TrD:" + bet['_id'],
+        "type": "credit",
+        'game_id': bet.game_id,
+        "coins": Number(user['silver_balance']) + Number(bet['silver']) + Number(bet['silver'])
+      });
+      return await this.userService.updateMobile(user['id'], { updated_by: "" });
+
+    } else {
+      return { status: false, message: "Already request proccessed" };
+    }
+  }
+
   async sendNotificationToUser(userId: string, message: string,title:string) {
     const user = await this.userService.findByUserId(userId);
      
@@ -398,6 +422,57 @@ export class BetsService {
       return { status: false, message: "Already request proccessed" };
     }
   }
+
+  async betUpdateLoseUserGold(id: string, user_id: string) {
+
+    const bet = await this.betsModel.findById(id);
+    if (bet && bet.status == "active") {
+      var user;
+      if(user_id == bet.first_player){
+       user = await this.userService.findUserbyId(bet.second_player);
+      }else{
+       user = await this.userService.findUserbyId(bet.first_player);
+      }
+      const winprice = Number(bet['gold']) + Number(bet['gold']);
+      const game = await this.gameService.findOne(bet.game_id);
+      const commission = Math.ceil((Number(game.commission) / 100) * winprice);
+      const userprice = winprice - commission;
+
+      await this.adminAcountService.create({
+        "remarks": "game commission TrD:" + bet['_id'],
+        "credit": commission,
+        "debit": "0",
+        "user_id": user['id'],
+        country: user['country'],
+        bet_id: id,
+        first_player: bet.first_player,
+        second_player: bet.second_player,
+        game_id: game.id,
+        type: 'commission_bet'
+      });
+
+      // const admin = await this.userService.findByEmail(process.env.DF_EMAIL);
+
+      // await this.userService.update(admin.id,{gold_balance:Number(admin.gold_balance)+commission});
+
+      await this.goldService.create({
+        client_id: user['_id'],
+        remarks: "game win TrD:" + bet['_id'],
+        type: "credit",
+        game_id: bet.game_id,
+        coins: userprice,
+        transaction_id: bet['transaction_id'],
+        transaction_status: "game_win",
+      });
+      await this.update(id, { status: "complete", winner: user['_id'], admin_commission: commission, user_coins: userprice });
+
+      ////////////admin commumation///////////////
+      return await this.userService.getUserRenewTokenForMobile(user['id']);
+    } else {
+      return { status: false, message: "Already request proccessed" };
+    }
+  }
+
   async findAll(page = 0, perPage = 20, status = '', date = [], value = null, myRole = "", myCountries = "") {
     const query = { second_player: { $ne: "ai" } };
     if (status == 'active') {
