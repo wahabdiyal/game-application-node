@@ -325,10 +325,12 @@ export class BetsService {
       return { status: false, message: "Already bet in progress!!!" };
     }
   }
-  async betSecondGoldUser(id, second_user) {
+  async betSecondGoldUser(id, second_user,title,message) {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == "inactive" && Number(bet.gold) > 0) {
       const user = await this.userService.findUserbyId(second_user);
+      const gamebet = await this.gameService.findOne(bet['game_id']) ;
+      await this.sendNotificationToUser(bet.first_player['userId'],message,title+gamebet.bet_expires_sec);
 
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
         // await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');

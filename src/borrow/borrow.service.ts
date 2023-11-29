@@ -56,8 +56,15 @@ export class BorrowService {
       sender_country: user.country,
       ransaction_id: Math.random().toString(36).slice(-5),
     });
-    await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+"wants to borrow "+createborrowDto['createdAt']+" amount of silver coins to play","ignorerequest");
+    if(Number(createborrowDto['silver_coin'])){
+      console.log("Borrow reqeust create:::::: silver");
+      await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+"wants to borrow "+createborrowDto['silver_coin']+" amount of silver coins to play","borrowrequest");
+    }
+    if(Number(createborrowDto['gold_coin'])){
+      console.log("Borrow reqeust create:::::: gold");
 
+      await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+"wants to borrow "+createborrowDto['gold_coin']+" amount of gold coins to play","borrowrequest");
+    }
     return { ...res.toObject(), check: true };
   }
 
@@ -134,24 +141,55 @@ export class BorrowService {
   }
 
   async update(id: any, updateborrowDto: UpdateBorrowDto) {
-    const borrow = await this.borrowModel.findByIdAndUpdate(id, updateborrowDto);
+    
+    const borrowReqeust = await this.borrowModel.findById(id);
+     
+    if(borrowReqeust && borrowReqeust.status == "approved"){
+      return {status:false,message:"Request already processed."};
+    }
 
+    const borrow = await this.borrowModel.findByIdAndUpdate(id, updateborrowDto);
+    
 
     if (!borrow) {
-      throw new NotFoundException('borrow request not found.');
+      return {status:false,message:'borrow request not found.'};
     }
 
     const object = await this.borrowModel.findOne(borrow._id);
+     const user = await this.userService.findUserbyId(object.sender);
 
     if (object.status != 'pending') {
+    
+      if(Number(object.gold_coin )){
+        console.log("Borrow reqeust accept:::::: gold");
       await this.goldService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
 
       await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
-
+        if(user && user.userId){
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is approved amount "+object.gold_coin,"borrowapproved");
+        }
+    }
+      if(Number(object.silver_coin)){
       await this.silverService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.silver_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
 
       await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.silver_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
+      if(user && user.userId){
+        console.log("Borrow reqeust accept:::::: silver");
 
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is approved amount "+object.silver_coin,"borrowapproved");
+        }
+       }
+    }else{
+      if(user && Number(object.silver_coin) ){
+        console.log("Borrow reqeust ignore:::::: silver");
+
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is approved amount "+object.silver_coin,"borrowapproved");
+        }
+
+        if(user && Number(object.gold_coin)){
+          console.log("Borrow reqeust ignore:::::: gold");
+          await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is approved amount "+object.gold_coin,"borrowapproved");
+          }
     }
     return this.userService.getUserRenewTokenForMobile(object.sender);
   }

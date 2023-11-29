@@ -50,10 +50,10 @@ export class BetsController {
   async betUpdateWinUser(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
     return await this.betsService.betUpdateWinUser(id, updateBetDto['user_id']);
   }
-  @Post('/gold/bet/:id/seconduser/:user_id')
-  async betSecondGoldUser(@Param('id') id: string, @Param('user_id') user_id: string) {
+  @Post('/gold/bet/:id/seconduser/:user_id/notification/:title/:message')
+  async betSecondGoldUser(@Param('id') id: string, @Param('user_id') user_id: string, @Param('message') message: string, @Param('title') title: string) {
 
-    return await this.betsService.betSecondGoldUser(id, user_id);
+    return await this.betsService.betSecondGoldUser(id,user_id,title,message);
   }
 
   @Post('gold/winner/bet/:id')
