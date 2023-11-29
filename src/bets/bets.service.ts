@@ -292,7 +292,7 @@ export class BetsService {
         'game_id': bet.game_id,
         "coins": Number(user['silver_balance']) + Number(bet['silver']) + Number(bet['silver'])
       });
-      return await this.userService.updateMobile(user['id'], { updated_by: "" });
+      return await this.userService.updateMobile(user_id, { updated_by: "" });
 
     } else {
       return { status: false, message: "Already request proccessed" };
@@ -467,7 +467,7 @@ export class BetsService {
       await this.update(id, { status: "complete", winner: user['_id'], admin_commission: commission, user_coins: userprice });
 
       ////////////admin commumation///////////////
-      return await this.userService.getUserRenewTokenForMobile(user['id']);
+      return await this.userService.getUserRenewTokenForMobile(user_id);
     } else {
       return { status: false, message: "Already request proccessed" };
     }
