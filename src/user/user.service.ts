@@ -521,7 +521,7 @@ export class UserService {
             if (Number(refRewardSetting.days_limit) >= daycount && Number(getRefDetail.total_use) < Number(refRewardSetting.referral_limit)) {
               if (Number(refRewardSetting.silver_coin) > 0) {
                 await this.UpdateUser(getRefDetail.user_id, Number(userRef['silver_balance']) + Number(refRewardSetting.silver_coin), "silver");
-                const response = await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
+                const response = await axiosInstance.post('http://localhost:2053/silvers/apirequest/server/jk_y97wah', {
                   "coins": refRewardSetting.silver_coin,
                   "bal": refRewardSetting.silver_coin,
                   "remarks": "Added by refferal reward",
@@ -536,7 +536,7 @@ export class UserService {
               } if (Number(refRewardSetting.gold_coin) > 0) {
                 await this.UpdateUser(getRefDetail.user_id, Number(userRef['gold_balance']) + Number(refRewardSetting.gold_coin), "gold");
 
-                const response = await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah', {
+                const response = await axiosInstance.post('http://localhost:2053/golds/apirequest/server/jk_y97wah', {
                   "coins": refRewardSetting.silver_coin,
                   "bal": refRewardSetting.silver_coin,
                   "remarks": "Added by refferal reward",
@@ -565,7 +565,7 @@ export class UserService {
       });
       if (getCoinValue) {
         if (Number(getCoinValue.gold_coin) != 0 && Number(getCoinValue.silver_coin) != 0) {
-          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
+          await axiosInstance.post('http://localhost:2053/silvers/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.silver_coin,
             "bal": userVal.silver_balance,
             "remarks": "Added Signup reward",
@@ -579,7 +579,7 @@ export class UserService {
             });
 
 
-          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah', {
+          await axiosInstance.post('http://localhost:2053/golds/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.gold_coin,
             "bal": userVal.gold_balance,
             "remarks": "Added Signup reward",
@@ -593,7 +593,7 @@ export class UserService {
             });
         }
         else if (Number(getCoinValue.gold_coin) != 0) {
-          await axiosInstance.post('http://localhost:3000/golds/apirequest/server/jk_y97wah', {
+          await axiosInstance.post('http://localhost:2053/golds/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.gold_coin,
             "bal": userVal.gold_balance,
             "remarks": "Added Signup reward",
@@ -606,7 +606,7 @@ export class UserService {
               console.log(error);
             });
         } else if (Number(getCoinValue.silver_coin) != 0) {
-          await axiosInstance.post('http://localhost:3000/silvers/apirequest/server/jk_y97wah', {
+          await axiosInstance.post('http://localhost:2053/silvers/apirequest/server/jk_y97wah', {
             "coins": getCoinValue.silver_coin,
             "bal": userVal.silver_balance,
             "remarks": "Added Signup reward",
