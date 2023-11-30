@@ -10,6 +10,7 @@ import { CoinTrasModule } from 'src/coin_tras/coin_tras.module';
  import { HttpModule } from '@nestjs/axios/dist';
 import { LoginLogsService } from 'src/login_logs/login_logs.service';
 import { LoginLogsModule } from 'src/login_logs/login_logs.module';
+import { NotificationService } from 'src/gerenal-notification/notification.service';
  
 @Module({
     imports: [MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
@@ -21,7 +22,7 @@ import { LoginLogsModule } from 'src/login_logs/login_logs.module';
     HttpModule,
   ],
     controllers: [UserController ],
-    providers: [UserService, ],
+    providers: [UserService,NotificationService ],
     exports: [UserService],
   })
   export class UserModule {}

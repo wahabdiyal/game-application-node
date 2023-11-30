@@ -10,6 +10,7 @@ import { ReferralRewardsService } from 'src/referral_rewards/referral_rewards.se
 import * as moment from "moment";
 import { CoinTrasService } from 'src/coin_tras/coin_tras.service';
 import axios, { AxiosInstance } from 'axios';
+import { NotificationService } from 'src/gerenal-notification/notification.service';
 
 
 
@@ -23,10 +24,26 @@ export class UserService {
     private refrewardService: ReferralRewardsService,
     private coinTraService: CoinTrasService,
     private jwtService: JwtService,
-    private readonly httpService: HttpService
+    private readonly httpService: HttpService,
+    private readonly notificationService: NotificationService
+    
 
   ) { }
-
+  async sendNotificationToUser(userId: string, message: string,title:string) {
+    const user = await this.findByUserId(userId);
+     
+    const payload = {
+      title:title,
+      body: message,
+    };
+    try{
+       await this.notificationService.sendNotification(user.deviceToken, payload);
+       return {status:true,message:'Notification sent.'};
+    }catch (error) {
+      return {status:false,message:error};
+    }
+   
+  }
 
   async findAllForOperator(page = 0, perPage = 20, search = false, date = [], role = false, country) {
     let totalCount = 0
@@ -629,6 +646,8 @@ export class UserService {
         role: userVal.role,
 
       };
+      await this.sendNotificationToUser(userVal.userId,"hello world","hello");
+
       return {
         status: true,
         user: userVal,

@@ -15,6 +15,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { AllowedIpsModule } from 'src/allowed_ips/allowed_ips.module';
 import { LoginLogsService } from '../login_logs/login_logs.service'; // Corrected import path
 import { LoginLogsModule } from 'src/login_logs/login_logs.module';
+import { NotificationService } from 'src/gerenal-notification/notification.service';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { LoginLogsModule } from 'src/login_logs/login_logs.module';
     LoginLogsModule
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtStrategy], // Include LoginLogsService here
+  providers: [AuthService, UserService, JwtStrategy,NotificationService], // Include LoginLogsService here
   exports: [PassportModule, JwtModule],
 })
 export class AuthModule { }
