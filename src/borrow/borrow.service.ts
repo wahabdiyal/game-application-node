@@ -56,6 +56,7 @@ export class BorrowService {
       sender_country: user.country,
       ransaction_id: Math.random().toString(36).slice(-5),
     });
+
     if(Number(createborrowDto['silver_coin'])){
       console.log("Borrow reqeust create:::::: silver");
       await this.sendNotificationToUser(user.userId, user.first_name+"  "+user.last_name+" wants to borrow "+createborrowDto['silver_coin']+" amount of silver coins to play.Trx:"+res._id,"Borrow Request");
@@ -156,7 +157,7 @@ export class BorrowService {
     }
 
     const object = await this.borrowModel.findOne(borrow._id);
-     const user = await this.userService.findUserbyId(object.sender);
+     const user = await this.userService.findUserbyId(object.receiver);
 
     if (object.status != 'pending' && object.status != 'reject') {
     
