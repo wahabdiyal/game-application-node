@@ -58,12 +58,12 @@ export class BorrowService {
     });
     if(Number(createborrowDto['silver_coin'])){
       console.log("Borrow reqeust create:::::: silver");
-      await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+"wants to borrow "+createborrowDto['silver_coin']+" amount of silver coins to play","borrowrequest");
+      await this.sendNotificationToUser(user.userId, user.first_name+"  "+user.last_name+" wants to borrow "+createborrowDto['silver_coin']+" amount of silver coins to play.Trx:"+res._id,"Borrow Request");
     }
     if(Number(createborrowDto['gold_coin'])){
       console.log("Borrow reqeust create:::::: gold");
 
-      await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+"wants to borrow "+createborrowDto['gold_coin']+" amount of gold coins to play","borrowrequest");
+      await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" wants to borrow "+createborrowDto['gold_coin']+" amount of gold coins to play.Trx:"+res._id,"Borrow Request");
     }
     return { ...res.toObject(), check: true };
   }
