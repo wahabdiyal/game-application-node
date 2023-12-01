@@ -60,13 +60,13 @@ export class AuthService {
 
     const user = await this.usersService.findByPhone(phone);
 
-    if (user.status !== 'active' && user.role != "player") {
-      throw new NotAcceptableException("User is invalid, try to contact admin")
+    if (user.status !== 'active' || user.role != "player") {
+      return {status:false,message:"User is invalid, try to contact admin"};
     }
     //&& user.role=="player" 
 
     if (user?.password !== pass) {
-      throw new NotAcceptableException("password is not valid");
+      return {status:false,message:"password is not valid"};
 
     }
     const payload = {
