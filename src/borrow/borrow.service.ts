@@ -166,7 +166,7 @@ export class BorrowService {
 
       await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
         if(user && user.userId){
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is approved amount "+object.gold_coin,"borrowapproved");
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is approved amount "+object.gold_coin,"Approved Borrow Request");
         }
     }
       if(Number(object.silver_coin)){
@@ -176,19 +176,19 @@ export class BorrowService {
       if(user && user.userId){
         console.log("Borrow reqeust accept:::::: silver");
 
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is approved amount "+object.silver_coin,"borrowapproved");
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is approved amount "+object.silver_coin,"Approved Borrow Request");
         }
        }
     }else{
       if(user && Number(object.silver_coin) ){
         console.log("Borrow reqeust ignore:::::: silver");
 
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is reject amount "+object.silver_coin,"borrowapproved");
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is reject amount "+object.silver_coin,"Rejected Borrow Request");
         }
 
         if(user && Number(object.gold_coin)){
           console.log("Borrow reqeust ignore:::::: gold");
-          await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is reject amount "+object.gold_coin,"borrowapproved");
+          await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is reject amount "+object.gold_coin,"Rejected Borrow Request");
           }
     }
     return this.userService.getUserRenewTokenForMobile(object.sender);
