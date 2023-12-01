@@ -158,7 +158,7 @@ export class BorrowService {
     const object = await this.borrowModel.findOne(borrow._id);
      const user = await this.userService.findUserbyId(object.sender);
 
-    if (object.status != 'pending') {
+    if (object.status != 'pending' && object.status != 'reject') {
     
       if(Number(object.gold_coin )){
         console.log("Borrow reqeust accept:::::: gold");
@@ -183,12 +183,12 @@ export class BorrowService {
       if(user && Number(object.silver_coin) ){
         console.log("Borrow reqeust ignore:::::: silver");
 
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is approved amount "+object.silver_coin,"borrowapproved");
+        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is reject amount "+object.silver_coin,"borrowapproved");
         }
 
         if(user && Number(object.gold_coin)){
           console.log("Borrow reqeust ignore:::::: gold");
-          await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is approved amount "+object.gold_coin,"borrowapproved");
+          await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is reject amount "+object.gold_coin,"borrowapproved");
           }
     }
     return this.userService.getUserRenewTokenForMobile(object.sender);
