@@ -341,7 +341,7 @@ export class BetsService {
       
         return { ...await this.userService.getUserRenewTokenForMobile(user['id']), bet: updateBet, game: gamebet};
       } else {
-        return { status: false, message: "Invalid Coin not enough" };
+        return { status: false, message: "Bet amount is higher than account balance" };
       }
 
     } else {
