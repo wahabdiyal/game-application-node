@@ -1076,7 +1076,7 @@ export class UserService {
     query['role'] = 'player';
     const user = await this.userModel.findOne(query).select('-password').exec();
     if (user) {
-      return { status: true, user: user };
+      return { status: true,message:"User Detail Found.", user: user };
     } else {
       return { status: false, message: "User not found" };
     }
