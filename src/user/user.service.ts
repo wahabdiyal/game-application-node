@@ -1068,15 +1068,13 @@ export class UserService {
     // return await this.userModel.find(query).exec();
     const query = {};
     const numberPattern = /^[0-9]+(\.[0-9]+)?$/;
-    if (typeof value === 'string') {
-      query['userId'] = value;
+    if (numberPattern.test(value) && !isNaN(value)) {
+      query['userId'] = String(value);
     } else if (typeof value === 'string') {
       query['email'] = { $regex: value, $options: 'i' };
     }
     query['role'] = 'player';
- 
     const user = await this.userModel.findOne(query).select('-password').exec();
-     
     if (user) {
       return { status: true, user: user };
     } else {
