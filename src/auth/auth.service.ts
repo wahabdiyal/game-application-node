@@ -73,7 +73,7 @@ export class AuthService {
   }
   async loginwithphone(phone, pass) {
 
-    const user = await this.usersService.findByPhone(phone);
+    var user = await this.usersService.findByPhone(phone);
 
     if (user.status !== 'active' || user.role != "player") {
       return {status:false,message:"User is invalid, try to contact admin"};
@@ -83,6 +83,17 @@ export class AuthService {
     if (user?.password !== pass) {
       return {status:false,message:"password is not valid"};
 
+    }
+    if(user.referral_code === undefined){
+      var code = this.generateUniqueRandomString(10);
+      const valRef = await this.refcodeService.getRefWithCode(code);
+      if(valRef){
+        var code = this.generateUniqueRandomString(12);
+      }
+      await this.refcodeService.registerUserRefCode(user._id,code);
+      await this.userModel.updateOne({_id:user._id},{referral_code:code})
+    var user = await this.usersService.findByPhone(phone);
+      
     }
     const payload = {
       id: user._id,
