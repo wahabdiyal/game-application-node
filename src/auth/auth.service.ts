@@ -9,6 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { AllowedIP } from 'src/allowed_ips/schemas/allowed_ips.schema';
 import { LoginLogs } from 'src/login_logs/schemas/login_logs.schema';
 import { LoginLogsService } from 'src/login_logs/login_logs.service';
+import { ReferralCodesService } from 'src/referral_codes/referral_codes.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,8 @@ export class AuthService {
     private usersService: UsersService,
     private loginLogsService: LoginLogsService,
     private jwtService: JwtService,
+    private refcodeService: ReferralCodesService,
+
     @InjectModel(User.name)
     private userModel: mongoose.Model<User>,
 
@@ -33,7 +36,7 @@ export class AuthService {
   }
   async signIn(email, pass) {
 
-    const user = await this.usersService.findByEmail(email);
+    var user = await this.usersService.findByEmail(email);
 
     if (user.status !== 'active') {
       throw new NotAcceptableException("User is invalid, try to contact admin")
@@ -42,6 +45,18 @@ export class AuthService {
     if (user?.password !== pass) {
       throw new UnauthorizedException();
     }
+    if(user.referral_code === undefined){
+      var code = this.generateUniqueRandomString(10);
+      const valRef = await this.refcodeService.getRefWithCode(code);
+      if(valRef){
+        var code = this.generateUniqueRandomString(12);
+      }
+      await this.refcodeService.registerUserRefCode(user._id,code);
+      await this.userModel.updateOne({_id:user._id},{referral_code:code})
+      var user = await this.usersService.findByEmail(email);
+    }
+     
+  
     const payload = {
       id: user._id,
       name: user.first_name + user.last_name,
@@ -151,5 +166,25 @@ export class AuthService {
       access_token: access_token,
     };
 
+  }
+  randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  generateUniqueRandomString(length) {
+    let randomString = "";
+    const usedCharacters = new Set();
+  
+    for (let i = 0; i < length; i++) {
+      let randomCharacter = this.randomInt(65, 90);
+  
+      while (usedCharacters.has(randomCharacter)) {
+        randomCharacter = this.randomInt(65, 90);
+      }
+  
+      usedCharacters.add(randomCharacter);
+      randomString += String.fromCharCode(randomCharacter);
+    }
+  
+    return randomString;
   }
 }

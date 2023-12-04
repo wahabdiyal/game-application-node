@@ -6,6 +6,27 @@ export enum UserType {
     manager = "operator",
     user = "player"
 }
+
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+function generateUniqueRandomString(length) {
+    let randomString = "";
+    const usedCharacters = new Set();
+  
+    for (let i = 0; i < length; i++) {
+      let randomCharacter = randomInt(65, 90);
+  
+      while (usedCharacters.has(randomCharacter)) {
+        randomCharacter = randomInt(65, 90);
+      }
+  
+      usedCharacters.add(randomCharacter);
+      randomString += String.fromCharCode(randomCharacter);
+    }
+  
+    return randomString;
+  }
 @Schema({
     timestamps: true,
 })
@@ -72,6 +93,8 @@ export class User extends Document {
 
     @Prop()
     user_login_token: string;
+    @Prop({unique:true})
+    referral_code:string
 
 
 }

@@ -50,6 +50,19 @@ export class ReferralCodesService {
       }
        
   }
+  async registerUserRefCode(userid,code){
+    
+    
+       const res = await this.referralModel.create({user_id:userid,referral_code:code});
+        if(res){
+          return true;
+        }else{
+          return false;
+        }
+       
+    
+     
+}
   async getRefWithCode(refcode){
     const ref =  await this.referralModel.findOne({referral_code:refcode});
       if(ref){

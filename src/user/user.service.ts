@@ -22,7 +22,7 @@ export class UserService {
     private signuprewardService: SignupRewardsService,
     private refcodeService: ReferralCodesService,
     private refrewardService: ReferralRewardsService,
-    private coinTraService: CoinTrasService,
+    // private coinTraService: CoinTrasService,
     private jwtService: JwtService,
     private readonly httpService: HttpService,
     private readonly notificationService: NotificationService
@@ -573,13 +573,23 @@ export class UserService {
         }
       }
       const lastRecords = await this.userModel.find().sort({ createdAt: -1 }).limit(1);
-
-
+    
+      
+       var code = this.generateUniqueRandomString(8)
+       var valRef = await this.refcodeService.getRefWithCode(code);
+      if(valRef){
+        var code = this.generateUniqueRandomString(12)
+      }
+      const refrral=code;
+     
       const userVal = await this.userModel.create({
         ...user, silver_balance: getCoinValue?.silver_coin,
         gold_balance: getCoinValue?.gold_coin,
         "userId": lastRecords[0] ? Number(lastRecords[0]['userId']) + 1 : 1,
+        referral_code:refrral,
       });
+    
+      this.refcodeService.registerUserRefCode(userVal._id,refrral)
       if (getCoinValue) {
         if (Number(getCoinValue.gold_coin) != 0 && Number(getCoinValue.silver_coin) != 0) {
           await axiosInstance.post('http://localhost:2053/silvers/apirequest/server/jk_y97wah', {
@@ -1103,6 +1113,26 @@ export class UserService {
       ],
       role: 'operator'
     });
+  }
+   randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+  generateUniqueRandomString(length) {
+    let randomString = "";
+    const usedCharacters = new Set();
+  
+    for (let i = 0; i < length; i++) {
+      let randomCharacter = this.randomInt(65, 90);
+  
+      while (usedCharacters.has(randomCharacter)) {
+        randomCharacter = this.randomInt(65, 90);
+      }
+  
+      usedCharacters.add(randomCharacter);
+      randomString += String.fromCharCode(randomCharacter);
+    }
+  
+    return randomString;
   }
 
 }
