@@ -14,6 +14,10 @@ export class BetsController {
   create(@Body() createBetDto: CreateBetDto) {
     return this.betsService.create(createBetDto);
   }
+  @Post("first/second/player")
+  createBetForFirstAndSecondUser(@Body() createBetDto: CreateBetDto) {
+    return this.betsService.createBetForFirstAndSecondUser(createBetDto);
+  }
 
   @Get()
   findAll(@Request() req,@Query() { page, perpage, status, start_date, end_date, key }) {
