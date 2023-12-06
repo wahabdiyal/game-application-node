@@ -720,7 +720,7 @@ export class BetsService {
   async rejectBySecondUser(id) {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('second_player').populate('first_player');
     if (bet && bet.second_player!="" && bet.status=="inprocess") {
-       await this.sendNotificationToUser(bet.first_user_id,"Sorry Challenge was declined by player "+bet.second_player['first_name']+" "+bet.second_player['last_name']+" .","notaccepted");
+       await this.sendNotificationToUser(bet.first_user_id,"Sorry Challenge was declined by player "+bet.second_player['first_name']+" "+bet.second_player['last_name']+" .","Rejected Invited Challenge");
         await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,status:"reject"});
         return { status: true, message: "Bet reject updated successfully." }
         } else {
