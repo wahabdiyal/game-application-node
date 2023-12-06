@@ -88,6 +88,11 @@ export class BetsController {
   async betReject(@Param('id') id: string) {
     return await this.betsService.reject_counter(id);
   }
+  /////////second player reject request of first user //////
+  @Post('/reject/second/player/:id')
+  async rejectBySecondUser(@Param('id') id: string) {
+    return await this.betsService.rejectBySecondUser(id);
+  }
 
   @Get('/leave/update/:id')
   async betleaveSecond(@Param('id') id: string) {
@@ -96,6 +101,11 @@ export class BetsController {
 
   @Post('/accept/update/:id')
   async betAccept(@Param('id') id: string) {
+    return await this.betsService.acceptBet(id);
+  }
+
+  @Post('/accept/request/second/player/:id')
+  async acceptBetForFirstAndSecondPlayerJoin(@Param('id') id: string) {
     return await this.betsService.acceptBet(id);
   }
 

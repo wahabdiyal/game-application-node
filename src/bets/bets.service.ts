@@ -680,8 +680,8 @@ export class BetsService {
    
     await this.betsModel.findOneAndUpdate({_id:id},{status:'active'});
     const updateBet = await this.betsModel.findById(id);
-    await this.sendNotificationToUser(bet.second_user_id,":Challenge Accepted! Player  "+bet.first_player['first_name']+" "+bet.first_player['last_name']+" has accepted your challenge.","accepted");
-    return { ...await this.userService.getUserRenewTokenForMobile(bet.first_player['_id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
+    await this.sendNotificationToUser(bet.first_user_id,"Challenge Accepted! Player  "+bet.second_player['first_name']+" "+bet.second_player['last_name']+" has accepted your challenge.","Accepted invited challenge");
+    return { ...await this.userService.getUserRenewTokenForMobile(bet.second_player['_id']), bet: updateBet, game: await this.gameService.findOne(updateBet['game_id']) };
     }
       return {status:false,message:"bet not found."}
   }
@@ -691,9 +691,6 @@ export class BetsService {
     const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('first_player');
     
     if (bet && bet.second_player!="") {
-
-      
-           
       if (Number(bet.game_id['reject_bet']) >= Number(bet['reject_counter'])) {
        await this.sendNotificationToUser(bet.second_user_id,"Sorry Challenge was declined by player "+bet.first_player['first_name']+" "+bet.first_player['last_name']+" .","notaccepted");
         await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,second_player:"",
@@ -717,6 +714,18 @@ export class BetsService {
     } else {
       return { status: false, message: "No bet found." }
     }
+
+  }
+
+  async rejectBySecondUser(id) {
+    const bet = await this.betsModel.findOne({ _id: id }).populate('game_id').populate('second_player').populate('first_player');
+    if (bet && bet.second_player!="" && bet.status=="inprocess") {
+       await this.sendNotificationToUser(bet.first_user_id,"Sorry Challenge was declined by player "+bet.second_player['first_name']+" "+bet.second_player['last_name']+" .","notaccepted");
+        await this.betsModel.updateOne({ _id: id }, { reject_counter: Number(bet['reject_counter']) + 1 ,status:"reject"});
+        return { status: true, message: "Bet reject updated successfully." }
+        } else {
+          return { status: false, message: "No bet found." }
+        }
 
   }
   async reverseBet(id) {
