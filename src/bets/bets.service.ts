@@ -340,6 +340,7 @@ export class BetsService {
         first_player: createbetDto['first_player'],
         game_id: createbetDto['game_id'],
         silver: createbetDto['silver'],
+        main_player_info: createbetDto['main_player_info'],
         remark: createbetDto['remark'],
         first_email: first_user['email'],
         first_name: first_user['first_name'],
