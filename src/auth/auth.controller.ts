@@ -104,8 +104,13 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login/phone')
   loginwithphone(@Body() signInDto: Record<string, any>) {
-
     return this.authService.loginwithphone(signInDto.phone, signInDto.password);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('login/email/:email')
+  loginwithEmail(@Param('email') email: string) {
+    return this.authService.loginwithEmail(email);
   }
 
   @UseGuards(AuthGuard)
