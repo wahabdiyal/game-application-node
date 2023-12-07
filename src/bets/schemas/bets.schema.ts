@@ -58,6 +58,9 @@ export class Bets extends Document {
     @Prop({ default: "0" })
     user_coins: string;
 
+    @Prop({ default: "{}" })
+    main_player_info: string;
+
 
 }
 export const BetsSchema = SchemaFactory.createForClass(Bets)
