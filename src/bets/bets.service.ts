@@ -355,15 +355,8 @@ export class BetsService {
         second_user_id: second_user['userId'],
       });
   
-      await this.sendNotificationToUser(
-        second_user['userId'],
-        'Invited challenge',
-        first_user['first_name'] +
-          ' ' +
-          first_user['last_name'] +
-          ' has sent you a challenge to play. Here is the bet ID:' +
-          res._id,
-      );
+      await this.sendNotificationToUser(second_user['userId'],first_user['first_name']+' '+first_user['last_name'] +' has sent you a challenge to play. Here is the bet ID:' +
+          res._id,'Invited challenge',);
       return {
         ...(await this.userService.fetchUserProfile(first_user['email'])),
         bet: res,
