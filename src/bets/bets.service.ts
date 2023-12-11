@@ -363,23 +363,36 @@ export class BetsService {
         game: game,
       };
     }
-    // else if (Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(second_user['gold_balance']) > Number(createbetDto['gold'])) {
-    //   await this.userService.UpdateUser(first_user['_id'], Number(first_user['silver_balance']) - Number(createbetDto['silver']), 'silver');
-    //   const res = await this.betsModel.create({
-    //     status:"inactive",
-    //     first_player:createbetDto['first_player'],
-    //     game_id:createbetDto["game_id"],
-    //     silver:createbetDto["silver"],
-    //     remark:createbetDto["remark"],
-    //     first_email: first_user['email'],
-    //     first_name: first_user['first_name'],
-    //     last_name: first_user['last_name'],
-    //     first_user_id: first_user['userId'],
-    //     first_user_country: first_user['country'],
-    //     transaction_id: transactionId,
-    //   });
-    //   return { ...await this.userService.fetchUserProfile(first_user['email']), bet: res, game: game };
-    // }
+    else if (Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(second_user['gold_balance']) > Number(createbetDto['gold'])) {
+      await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
+      const res = await this.betsModel.create({
+        status: 'inprocess',
+        first_player: createbetDto['first_player'],
+        game_id: createbetDto['game_id'],
+        gold: createbetDto['gold'],
+        main_player_info: createbetDto['main_player_info'],
+        remark: createbetDto['remark'],
+        first_email: first_user['email'],
+        first_name: first_user['first_name'],
+        last_name: first_user['last_name'],
+        first_user_id: first_user['userId'],
+        first_user_country: first_user['country'],
+        transaction_id: transactionId,
+        second_email: second_user['email'],
+        second_join_time: new Date().toISOString(),
+        second_name: second_user['first_name'],
+        second_player: second_user['_id'],
+        second_user_id: second_user['userId'],
+      });
+  
+      await this.sendNotificationToUser(second_user['userId'],first_user['first_name']+' '+first_user['last_name'] +' has sent you a challenge to play. Here is the bet ID:' +
+          res._id,'Invited challenge',);
+      return {
+        ...(await this.userService.fetchUserProfile(first_user['email'])),
+        bet: res,
+        game: game,
+      };
+    }
     else {
       return { status: false, message: 'Coin is not enough to play.' };
     }
