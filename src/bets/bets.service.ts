@@ -354,8 +354,9 @@ export class BetsService {
         second_player: second_user['_id'],
         second_user_id: second_user['userId'],
       });
+  
       await this.sendNotificationToUser(
-        second_user['second_player'],
+        second_user['userId'],
         'Invited challenge',
         first_user['first_name'] +
           ' ' +
