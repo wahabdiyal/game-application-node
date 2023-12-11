@@ -893,7 +893,7 @@ export class BetsService {
           ' ' +
           bet.first_player['last_name'] +
           ' has accepted your challenge.',
-        'accepted',
+        'Accepted invited challenge',
       );
       return {
         ...(await this.userService.getUserRenewTokenForMobile(
