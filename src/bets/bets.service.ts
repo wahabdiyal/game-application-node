@@ -918,7 +918,7 @@ export class BetsService {
       .findOne({ _id: id })
       .populate('second_player');
     const gameObj = await this.gameService.findOne(bet['game_id']);
-    if (bet && bet.status == 'inprocess') {
+    if (bet ) {  //&& bet.status == 'inprocess'
       const user = await this.userService.findUserbyId(bet.second_player);
       if (Number(bet['silver'])) {
         await this.userService.UpdateUser(
