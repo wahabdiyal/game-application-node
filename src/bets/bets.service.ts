@@ -918,7 +918,7 @@ export class BetsService {
       .findOne({ _id: id })
       .populate('second_player');
     const gameObj = await this.gameService.findOne(bet['game_id']);
-    if (bet ) {  //&& bet.status == 'inprocess'
+    if (bet && bet.status == 'inprocess') {
       const user = await this.userService.findUserbyId(bet.second_player);
       if (Number(bet['silver'])) {
         await this.userService.UpdateUser(
@@ -935,8 +935,8 @@ export class BetsService {
       } else {
         return { status: false, message: 'Request is not good.' };
       }
-    //  bet.main_player_info.replace(";;;;", ";"+gameObj.game_id+";"+bet.first_user_id+";"+bet._id+";")
-      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active',main_player_info:"0;;;karamat su;0;1480;20;1;37;65798ae4bfb6a3c00c75bb27;" });
+     
+      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active',main_player_info:bet.main_player_info.replace(";;;;", ";"+gameObj.game_id+";"+bet.first_user_id+";"+bet._id+";") });
        const updateBet = await this.betsModel.findById(id);
       await this.sendNotificationToUser(
         bet.first_user_id,
