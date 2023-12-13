@@ -936,7 +936,7 @@ export class BetsService {
         return { status: false, message: 'Request is not good.' };
       }
     //  bet.main_player_info.replace(";;;;", ";"+gameObj.game_id+";"+bet.first_user_id+";"+bet._id+";")
-      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active',main_player_info:"0;;;karamat su;0;1480;20;1;37;657989ad570c28a105cbf5a9;" });
+      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active',main_player_info:"0;;;karamat su;0;1480;20;1;37;65798ae4bfb6a3c00c75bb27;" });
        const updateBet = await this.betsModel.findById(id);
       await this.sendNotificationToUser(
         bet.first_user_id,
