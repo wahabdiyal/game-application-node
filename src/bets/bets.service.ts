@@ -917,7 +917,7 @@ export class BetsService {
     const bet = await this.betsModel
       .findOne({ _id: id })
       .populate('second_player');
-
+    const gameObj = await this.gameService.findOne(bet['game_id']);
     if (bet && bet.status == 'inprocess') {
       const user = await this.userService.findUserbyId(bet.second_player);
       if (Number(bet['silver'])) {
@@ -935,9 +935,9 @@ export class BetsService {
       } else {
         return { status: false, message: 'Request is not good.' };
       }
-
-      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active' });
-      const updateBet = await this.betsModel.findById(id);
+     
+      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active',main_player_info:bet.main_player_info.replace(";;;;", ";"+gameObj.game_id+";"+bet.first_user_id+";"+bet._id+";") });
+       const updateBet = await this.betsModel.findById(id);
       await this.sendNotificationToUser(
         bet.first_user_id,
         'Challenge Accepted! Player  ' +
@@ -952,7 +952,7 @@ export class BetsService {
           bet.second_player['_id'],
         )),
         bet: updateBet,
-        game: await this.gameService.findOne(updateBet['game_id']),
+        game: gameObj,
       };
     }
     return { status: false, message: 'bet not found.' };
