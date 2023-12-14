@@ -128,7 +128,7 @@ export class AuthController {
     return this.userService.forgotPasswordMobile(phone_no);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('update-password')
   updatePasswordMobile(@Body() details) {
     return this.userService.updatePasswordMobile(details.phone_no, details.new_password);
