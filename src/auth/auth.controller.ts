@@ -122,7 +122,7 @@ export class AuthController {
 
 
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('forgot-password/:phone_no')
   forgotPasswordMobile(@Param('phone_no') phone_no: string) {
     return this.userService.forgotPasswordMobile(phone_no);
