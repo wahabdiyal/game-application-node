@@ -146,7 +146,7 @@ export class AppModule implements NestModule {
         'auth/google/token',
         'auth/login/admin',
         'auth/login/phone',
-        'auth/forgot-password/*'
+        'auth/forgot-password/:phone_no'
       )
       .forRoutes('*');
   }
