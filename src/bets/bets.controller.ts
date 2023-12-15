@@ -106,7 +106,7 @@ export class BetsController {
 
   @Post('/accept/request/second/player/:id')
   async acceptBetForFirstAndSecondPlayerJoin(@Param('id') id: string) {
-    return await this.betsService.acceptBet(id);
+    return await this.betsService.acceptBetForFirstAndSecondPlayerJoin(id);
   }
 
   @Post('reverse/:id')

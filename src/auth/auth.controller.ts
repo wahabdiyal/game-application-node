@@ -122,13 +122,13 @@ export class AuthController {
 
 
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Get('forgot-password/:phone_no')
   forgotPasswordMobile(@Param('phone_no') phone_no: string) {
     return this.userService.forgotPasswordMobile(phone_no);
   }
 
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @Post('update-password')
   updatePasswordMobile(@Body() details) {
     return this.userService.updatePasswordMobile(details.phone_no, details.new_password);
