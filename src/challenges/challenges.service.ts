@@ -65,6 +65,7 @@ export class ChallengesService {
   async findOne(id: any) {
     return await this.challengeModel.findOne({ _id: id });
   }
+ 
 
   async update(id: any, updateChallengeDto: UpdateChallengeDto) {
     const challenge = await this.challengeModel.findByIdAndUpdate(id, updateChallengeDto);

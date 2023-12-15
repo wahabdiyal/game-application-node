@@ -47,6 +47,7 @@ export class ChallengesController {
   restrictUserForChallenges(@Param('id') id: string, @Param('mints') mints: number) {
     return this.challengesService.restrictUserForChallenges(id, mints);
   }
+ 
 
 
 }

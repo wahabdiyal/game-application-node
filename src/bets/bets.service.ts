@@ -520,7 +520,12 @@ export class BetsService {
       return { status: false, message: 'Already request proccessed' };
     }
   }
-
+  async findByGameId(id) {
+    const game = await this.gameService.findbyId(id);
+    return await this.betsModel.find({
+      game_id: new mongoose.Types.ObjectId(game._id),
+    });
+  }
   async sendNotificationToUser(userId: string, message: string, title: string) {
     const user = await this.userService.findByUserId(userId);
 
