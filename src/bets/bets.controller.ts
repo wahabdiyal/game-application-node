@@ -127,9 +127,9 @@ export class BetsController {
     return this.betsService.sendNotificationToUser(req['userid'],req['message'],req['title']);
   }
 
-  @Get('get_by_game/:id')
-  findByGameId(@Param('id') id: string) {
-    return this.betsService.findByGameId(id);
+  @Get('game/all_bets')
+  get_games_bets() {
+    return this.betsService.get_games_bets();
   }
 
  

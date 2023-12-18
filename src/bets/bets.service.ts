@@ -354,17 +354,30 @@ export class BetsService {
         second_player: second_user['_id'],
         second_user_id: second_user['userId'],
       });
-  
-      await this.sendNotificationToUser(second_user['userId'],first_user['first_name']+' '+first_user['last_name'] +' has sent you a challenge to play. Here is the bet ID:' +
-          res._id,'Invited challenge',);
+
+      await this.sendNotificationToUser(
+        second_user['userId'],
+        first_user['first_name'] +
+          ' ' +
+          first_user['last_name'] +
+          ' has sent you a challenge to play. Here is the bet ID:' +
+          res._id,
+        'Invited challenge',
+      );
       return {
         ...(await this.userService.fetchUserProfile(first_user['email'])),
         bet: res,
         game: game,
       };
-    }
-    else if (Number(first_user['gold_balance']) > Number(createbetDto['gold']) && Number(second_user['gold_balance']) > Number(createbetDto['gold'])) {
-      await this.userService.UpdateUser(first_user['_id'], Number(first_user['gold_balance']) - Number(createbetDto['gold']), 'gold');
+    } else if (
+      Number(first_user['gold_balance']) > Number(createbetDto['gold']) &&
+      Number(second_user['gold_balance']) > Number(createbetDto['gold'])
+    ) {
+      await this.userService.UpdateUser(
+        first_user['_id'],
+        Number(first_user['gold_balance']) - Number(createbetDto['gold']),
+        'gold',
+      );
       const res = await this.betsModel.create({
         status: 'inprocess',
         first_player: createbetDto['first_player'],
@@ -384,16 +397,22 @@ export class BetsService {
         second_player: second_user['_id'],
         second_user_id: second_user['userId'],
       });
-  
-      await this.sendNotificationToUser(second_user['userId'],first_user['first_name']+' '+first_user['last_name'] +' has sent you a challenge to play. Here is the bet ID:' +
-          res._id,'Invited challenge',);
+
+      await this.sendNotificationToUser(
+        second_user['userId'],
+        first_user['first_name'] +
+          ' ' +
+          first_user['last_name'] +
+          ' has sent you a challenge to play. Here is the bet ID:' +
+          res._id,
+        'Invited challenge',
+      );
       return {
         ...(await this.userService.fetchUserProfile(first_user['email'])),
         bet: res,
         game: game,
       };
-    }
-    else {
+    } else {
       return { status: false, message: 'Coin is not enough to play.' };
     }
   }
@@ -527,11 +546,38 @@ export class BetsService {
       return { status: false, message: 'Already request proccessed' };
     }
   }
-  async findByGameId(id) {
-    const game = await this.gameService.findbyId(id);
-    return await this.betsModel.find({
-      game_id: new mongoose.Types.ObjectId(game._id),
-    });
+  async get_games_bets() {
+    try {
+      const games = await this.gameService.findAll();
+      const game_bets = [];
+      await Promise.all(
+        games.map(async (element) => {
+          game_bets.push({
+            _id: element._id,
+            game_id: element.game_id,
+            active_challenge_count: await this.betsModel.countDocuments({
+              game_id: new mongoose.Types.ObjectId(element._id),
+              status: 'active',
+            }),
+            inactive_challenge_count: await this.betsModel.countDocuments({
+              game_id: new mongoose.Types.ObjectId(element._id),
+              status: 'inactive',
+            }),
+          });
+        }),
+      );
+      return {
+        status: true,
+        game_count: game_bets,
+        message: 'record found',
+      };
+    } catch (error) {
+      return {
+        status: false,
+        game_count: 0,
+        message: '',
+      };
+    }
   }
   async sendNotificationToUser(userId: string, message: string, title: string) {
     const user = await this.userService.findByUserId(userId);
@@ -940,9 +986,24 @@ export class BetsService {
       } else {
         return { status: false, message: 'Request is not good.' };
       }
-     
-      await this.betsModel.findOneAndUpdate({ _id: id }, { status: 'active',main_player_info:bet.main_player_info.replace(";;;;", ";"+gameObj.game_id+";"+bet.first_user_id+";"+bet._id+";") });
-       const updateBet = await this.betsModel.findById(id);
+
+      await this.betsModel.findOneAndUpdate(
+        { _id: id },
+        {
+          status: 'active',
+          main_player_info: bet.main_player_info.replace(
+            ';;;;',
+            ';' +
+              gameObj.game_id +
+              ';' +
+              bet.first_user_id +
+              ';' +
+              bet._id +
+              ';',
+          ),
+        },
+      );
+      const updateBet = await this.betsModel.findById(id);
       await this.sendNotificationToUser(
         bet.first_user_id,
         'Challenge Accepted! Player  ' +
