@@ -472,10 +472,7 @@ export class BetsService {
           remarks: 'ai silver win game TrD:' + bet['_id'],
           type: 'credit',
           game_id: bet.game_id,
-          coins:
-            Number(user['silver_balance']) +
-            Number(bet['silver']) +
-            Number(bet['silver']),
+          coins:(Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])),
         });
         return await this.userService.updateMobile(user['id'], {
           updated_by: '',
@@ -502,15 +499,13 @@ export class BetsService {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == 'active') {
       const user = await this.userService.findUserbyId(user_id);
-      await this.update(id, { status: 'complete' });
-      await this.silverService.create({
+      // await this.update(id, { status: 'complete' });
+       await this.silverService.create({
         client_id: user['_id'],
         remarks: 'player silver win game TrD:' + bet['_id'],
         type: 'credit',
         game_id: bet.game_id,
-        coins:
-          Number(user['silver_balance']) +
-          Number(bet['silver']) +
+        coins:Number(bet['silver']) +
           Number(bet['silver']),
       });
       return await this.userService.updateMobile(user['id'], {
