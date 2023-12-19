@@ -42,8 +42,8 @@ export class BetsController {
 
   @Post('/user/betstatus/:id')
   async betUpdateLoseWin(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-    console.log(updateBetDto);
-    return await this.betsService.betUpdateLoseWin(id, updateBetDto['winner']);
+     
+    return await this.betsService.betUpdateLoseWin(id, updateBetDto['status']);
   }
 
   @Post('/silver/bet/:id/seconduser/:user_id/notification/:title/:message')
