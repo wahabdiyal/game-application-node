@@ -557,6 +557,7 @@ export class BetsService {
             inactive_challenge_count: await this.betsModel.countDocuments({
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'inactive',
+              remark: { $nin: ['played AI game'] },
             }),
           });
         }),
