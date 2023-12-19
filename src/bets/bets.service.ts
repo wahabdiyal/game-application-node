@@ -462,6 +462,7 @@ export class BetsService {
 
   /////actual function to update win & loss
   async betUpdateLoseWin(id: string, status: boolean) {
+    console.log(status,"call ai winner and lose");
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status != 'complete') {
       const user = await this.userService.findUserbyId(bet.first_player);
@@ -472,7 +473,7 @@ export class BetsService {
           remarks: 'ai silver win game TrD:' + bet['_id'],
           type: 'credit',
           game_id: bet.game_id,
-          coins:(Number(user['silver_balance'])+Number(bet['silver'])+Number(bet['silver'])),
+          coins:(Number(bet['silver'])+Number(bet['silver'])),
         });
         return await this.userService.updateMobile(user['id'], {
           updated_by: '',
