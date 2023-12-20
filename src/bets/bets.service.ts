@@ -438,7 +438,7 @@ export class BetsService {
           if (Number(betDetail.silver)){
             await this.sendNotificationToUser(
               betDetail.first_player['userId'],
-              ' Sorry No Challengers Available Coins added back to your account.',
+              ' Sorry No Challengers Available, '+betDetail.silver+' Silver Coins added back to your account.',
               'coinsback',
             );
             console.log('notification::::', betDetail.first_player['userId']);
@@ -457,7 +457,7 @@ export class BetsService {
             );
             await this.sendNotificationToUser(
               betDetail.first_player['userId'],
-              ' Sorry No Challengers Available Coins added back to your account.',
+              ' Sorry No Challengers Available, '+betDetail.gold+'  Gold Coins added back to your account.',
               'coinsback',
             );
           }
