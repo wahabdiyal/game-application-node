@@ -663,6 +663,7 @@ export class BetsService {
   }
   async betSecondGoldUser(id, second_user, title, message) {
     const bet = await this.betsModel.findById(id);
+    console.log("Bet Second Gold User:::::::",id,second_user,title,message);
     if (bet && bet.status == 'inactive' && Number(bet.gold) > 0) {
       const user = await this.userService.findUserbyId(second_user);
       const gamebet = await this.gameService.findOne(bet['game_id']);
