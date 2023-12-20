@@ -663,18 +663,14 @@ export class BetsService {
   }
   async betSecondGoldUser(id, second_user, title, message) {
     const bet = await this.betsModel.findById(id);
-    console.log("Bet Second Gold User:::::::",id,second_user,title,message);
-    console.log("abbc:::::",bet);
     if (bet && bet.status == 'inactive' && Number(bet.gold) > 0) {
-      console.log("in bet::::::::::::::::::::")
       const user = await this.userService.findUserbyId(second_user);
       const gamebet = await this.gameService.findOne(bet['game_id']);
       await this.sendNotificationToUser(
-        bet.first_player['userId'],
+        bet.first_user_id,
         message,
         title + gamebet.bet_expires_sec,
       );
-
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
         // await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
         await this.betsModel.findByIdAndUpdate(id, {
