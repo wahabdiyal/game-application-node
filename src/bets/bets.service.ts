@@ -27,7 +27,7 @@ export class BetsService {
     private silverService: SilversService,
     private readonly eventEmitter: EventEmitter2,
     private readonly notificationService: NotificationService,
-  ) {}
+  ) { }
   async create(createbetDto: CreateBetDto) {
     var diff = 0;
     var transactionId =
@@ -324,7 +324,7 @@ export class BetsService {
     }
     createbetDto['game_id'] = game._id;
 
-    if (
+    if (Number(createbetDto['silver']) &&
       Number(first_user['silver_balance']) > Number(createbetDto['silver']) &&
       Number(second_user['silver_balance']) > Number(createbetDto['silver'])
     ) {
@@ -358,10 +358,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         second_user['userId'],
         first_user['first_name'] +
-          ' ' +
-          first_user['last_name'] +
-          ' has sent you a challenge to play. Here is the bet ID:' +
-          res._id,
+        ' ' +
+        first_user['last_name'] +
+        ' has sent you a challenge to play. Here is the bet ID:' +
+        res._id,
         'Invited challenge',
       );
       return {
@@ -369,10 +369,7 @@ export class BetsService {
         bet: res,
         game: game,
       };
-    } else if (
-      Number(first_user['gold_balance']) > Number(createbetDto['gold']) &&
-      Number(second_user['gold_balance']) > Number(createbetDto['gold'])
-    ) {
+    } else if (Number(createbetDto['gold']) && Number(first_user['gold_balance']) > Number(createbetDto['gold']) &&Number(second_user['gold_balance']) > Number(createbetDto['gold'])){
       await this.userService.UpdateUser(
         first_user['_id'],
         Number(first_user['gold_balance']) - Number(createbetDto['gold']),
@@ -401,10 +398,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         second_user['userId'],
         first_user['first_name'] +
-          ' ' +
-          first_user['last_name'] +
-          ' has sent you a challenge to play. Here is the bet ID:' +
-          res._id,
+        ' ' +
+        first_user['last_name'] +
+        ' has sent you a challenge to play. Here is the bet ID:' +
+        res._id,
         'Invited challenge',
       );
       return {
@@ -462,7 +459,7 @@ export class BetsService {
 
   /////actual function to update win & loss
   async betUpdateLoseWin(id: string, status: boolean) {
-    console.log(status,"call ai winner and lose");
+    console.log(status, "call ai winner and lose");
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status != 'complete') {
       const user = await this.userService.findUserbyId(bet.first_player);
@@ -473,7 +470,7 @@ export class BetsService {
           remarks: 'ai silver win game TrD:' + bet['_id'],
           type: 'credit',
           game_id: bet.game_id,
-          coins:(Number(bet['silver'])+Number(bet['silver'])),
+          coins: (Number(bet['silver']) + Number(bet['silver'])),
         });
         return await this.userService.updateMobile(user['id'], {
           updated_by: '',
@@ -501,12 +498,12 @@ export class BetsService {
     if (bet && bet.status == 'active') {
       const user = await this.userService.findUserbyId(user_id);
       // await this.update(id, { status: 'complete' });
-       await this.silverService.create({
+      await this.silverService.create({
         client_id: user['_id'],
         remarks: 'player silver win game TrD:' + bet['_id'],
         type: 'credit',
         game_id: bet.game_id,
-        coins:Number(bet['silver']) +
+        coins: Number(bet['silver']) +
           Number(bet['silver']),
       });
       return await this.userService.updateMobile(user['id'], {
@@ -860,10 +857,10 @@ export class BetsService {
         await this.sendNotificationToUser(
           bet.second_user_id,
           'Sorry Player ' +
-            bet.first_player['first_name'] +
-            ' ' +
-            bet.first_player['last_name'] +
-            ' is busy playing other challenge.',
+          bet.first_player['first_name'] +
+          ' ' +
+          bet.first_player['last_name'] +
+          ' is busy playing other challenge.',
           'ignorerequest',
         );
 
@@ -899,8 +896,8 @@ export class BetsService {
         await this.sendNotificationToUser(
           bet.first_player['userId'],
           'Because you have not been responding to Challenge requests, you are blocked  for ' +
-            bet.game_id['time_restrictions'] +
-            'min amount of hours',
+          bet.game_id['time_restrictions'] +
+          'min amount of hours',
           'blockeduser',
         );
         await this.sendNotificationToUser(
@@ -943,10 +940,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         bet.second_user_id,
         ':Challenge Accepted! Player  ' +
-          bet.first_player['first_name'] +
-          ' ' +
-          bet.first_player['last_name'] +
-          ' has accepted your challenge.',
+        bet.first_player['first_name'] +
+        ' ' +
+        bet.first_player['last_name'] +
+        ' has accepted your challenge.',
         'accepted',
       );
       return {
@@ -991,12 +988,12 @@ export class BetsService {
           main_player_info: bet.main_player_info.replace(
             ';;;;',
             ';' +
-              gameObj.game_id +
-              ';' +
-              bet.first_user_id +
-              ';' +
-              bet._id +
-              ';',
+            gameObj.game_id +
+            ';' +
+            bet.first_user_id +
+            ';' +
+            bet._id +
+            ';',
           ),
         },
       );
@@ -1004,10 +1001,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         bet.first_user_id,
         'Challenge Accepted! Player  ' +
-          bet.second_player['first_name'] +
-          ' ' +
-          bet.second_player['last_name'] +
-          ' has accepted your challenge.',
+        bet.second_player['first_name'] +
+        ' ' +
+        bet.second_player['last_name'] +
+        ' has accepted your challenge.',
         'Accepted invited challenge',
       );
       return {
@@ -1032,10 +1029,10 @@ export class BetsService {
         await this.sendNotificationToUser(
           bet.second_user_id,
           'Sorry Challenge was declined by player ' +
-            bet.first_player['first_name'] +
-            ' ' +
-            bet.first_player['last_name'] +
-            ' .',
+          bet.first_player['first_name'] +
+          ' ' +
+          bet.first_player['last_name'] +
+          ' .',
           'notaccepted',
         );
         await this.betsModel.updateOne(
@@ -1084,10 +1081,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         bet.first_user_id,
         'Sorry Challenge was declined by player ' +
-          bet.second_player['first_name'] +
-          ' ' +
-          bet.second_player['last_name'] +
-          ' .',
+        bet.second_player['first_name'] +
+        ' ' +
+        bet.second_player['last_name'] +
+        ' .',
         'Rejected Invited Challenge',
       );
       await this.betsModel.updateOne(
@@ -1235,15 +1232,15 @@ export class BetsService {
         .findOne({ _id: bet_id })
         .populate('game_id')
         .populate('second_player');
-    } catch (error) {}
+    } catch (error) { }
 
     if (bet && bet.status == 'inprocess') {
       await this.sendNotificationToUser(
         bet.first_player,
         bet.second_player['first_name'] +
-          ' ' +
-          bet.second_player['last_name'] +
-          ' has left your challenge.',
+        ' ' +
+        bet.second_player['last_name'] +
+        ' has left your challenge.',
         'secondplayerleaved',
       );
       await this.betsModel.updateOne(
@@ -1298,7 +1295,7 @@ export class BetsService {
           await this.userService.UpdateUser(
             bets[c].first_player._id,
             Number(bets[c].first_player.silver_balance) +
-              Number(bets[c].silver),
+            Number(bets[c].silver),
             'silver',
           );
         }
