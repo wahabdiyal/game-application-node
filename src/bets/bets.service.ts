@@ -434,6 +434,34 @@ export class BetsService {
         .findOne({ _id: id })
         .populate('game_id')
         .populate('first_player');
+        if(betDetail.status=='inprocess'){
+          if (Number(betDetail.silver)){
+            await this.sendNotificationToUser(
+              betDetail.first_player['userId'],
+              ' Sorry No Challengers Available Coins added back to your account.',
+              'coinsback',
+            );
+            console.log('notification::::', betDetail.first_player['userId']);
+            await this.userService.UpdateUser(
+              betDetail.first_player['_id'],
+              Number(betDetail.first_player['silver_balance']) +
+              Number(betDetail.silver),
+              'silver',
+            );
+          }
+          if (Number(betDetail.gold)) {
+            await this.userService.UpdateUser(
+              betDetail.first_player['_id'],
+              Number(betDetail.first_player['gold_balance']) + Number(betDetail.gold),
+              'gold',
+            );
+            await this.sendNotificationToUser(
+              betDetail.first_player['userId'],
+              ' Sorry No Challengers Available Coins added back to your account.',
+              'coinsback',
+            );
+          }
+        }
 
       const bet = await this.betsModel.findByIdAndDelete(id);
       await this.sendNotificationToUser(
