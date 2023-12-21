@@ -525,12 +525,9 @@ export class BetsService {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == 'active') {
       const user = await this.userService.findUserbyId(user_id);
-      console.log("::::::::::::::");
-      console.log("::::::::::::::");
-      // await this.update(id, { status: 'complete' });
-      console.log(user);
-      console.log("::::::::::::::");
-      console.log("::::::::::::::");
+     
+       await this.update(id, { status: 'complete' });
+     
       const silverCoin = await this.silverService.create({
         client_id: user['_id'],
         remarks: 'player silver win game TrD:' + bet['_id'],
@@ -539,11 +536,7 @@ export class BetsService {
         coins: Number(bet['silver']) +
           Number(bet['silver']),
       });
-      console.log("::::::::::::::");
-      console.log("silver winner ::::::::",silverCoin);
-      console.log("::::::::::::::");
-
-      return await this.userService.updateMobile(user['id'], {
+       return await this.userService.updateMobile(user['id'], {
         updated_by: '',
       });
     } else {
