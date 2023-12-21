@@ -536,6 +536,7 @@ export class BetsService {
         coins: Number(bet['silver']) +
           Number(bet['silver']),
       });
+      console.log("winner silver api called:::::::",silverCoin);
        return await this.userService.updateMobile(user['id'], {
         updated_by: '',
       });
