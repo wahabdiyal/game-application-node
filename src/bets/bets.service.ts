@@ -525,7 +525,12 @@ export class BetsService {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == 'active') {
       const user = await this.userService.findUserbyId(user_id);
+      console.log("::::::::::::::");
+      console.log("::::::::::::::");
       // await this.update(id, { status: 'complete' });
+      console.log(user);
+      console.log("::::::::::::::");
+      console.log("::::::::::::::");
       const silverCoin = await this.silverService.create({
         client_id: user['_id'],
         remarks: 'player silver win game TrD:' + bet['_id'],
