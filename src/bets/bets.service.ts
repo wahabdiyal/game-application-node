@@ -703,9 +703,10 @@ export class BetsService {
       const winprice = Number(bet['gold']) + Number(bet['gold']);
       const game = await this.gameService.findOne(bet.game_id);
       const commission = Math.ceil((Number(game.commission) / 100) * winprice);
+      console.log(commission);
       const userprice = winprice - commission;
 
-      await this.adminAcountService.create({
+      const adminCom = await this.adminAcountService.create({
         remarks: 'game commission TrD:' + bet['_id'],
         credit: commission,
         debit: '0',
@@ -722,7 +723,7 @@ export class BetsService {
 
       // await this.userService.update(admin.id,{gold_balance:Number(admin.gold_balance)+commission});
 
-      await this.goldService.create({
+     const sendGold = await this.goldService.create({
         client_id: user['_id'],
         remarks: 'game win TrD:' + bet['_id'],
         type: 'credit',
@@ -731,13 +732,13 @@ export class BetsService {
         transaction_id: bet['transaction_id'],
         transaction_status: 'game_win',
       });
-      await this.update(id, {
+    const updateUserCoin =  await this.update(id, {
         status: 'complete',
         winner: user['_id'],
         admin_commission: commission,
         user_coins: userprice,
       });
-
+      console.log(adminCom,"====admin comm:::::::::gold request======",sendGold,"::::::::::::::user update =====",updateUserCoin);
       ////////////admin commumation///////////////
       return await this.userService.getUserRenewTokenForMobile(user['id']);
     } else {
