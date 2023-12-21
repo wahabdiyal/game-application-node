@@ -551,6 +551,7 @@ export class BetsService {
       } else {
         user = await this.userService.findUserbyId(bet.first_player);
       }
+      console.log("lose api silver::::::::",user);
       await this.update(id, { status: 'complete' });
       await this.silverService.create({
         client_id: user['_id'],
@@ -558,7 +559,6 @@ export class BetsService {
         type: 'credit',
         game_id: bet.game_id,
         coins:
-          Number(user['silver_balance']) +
           Number(bet['silver']) +
           Number(bet['silver']),
       });
