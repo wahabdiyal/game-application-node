@@ -703,8 +703,9 @@ export class BetsService {
   }
 
   async betUpdateWinUserGold(id: string, user_id: string) {
+    await this.update(id, { is_read: '5' });
     const bet = await this.betsModel.findById(id);
-    if (bet && bet.status == 'active') {
+    if (bet && bet.status == 'active' && bet.is_read=="5") {
       const user = await this.userService.findUserbyId(user_id);
       const winprice = Number(bet['gold']) + Number(bet['gold']);
       const game = await this.gameService.findOne(bet.game_id);
@@ -753,8 +754,9 @@ export class BetsService {
   }
 
   async betUpdateLoseUserGold(id: string, user_id: string) {
+    await this.update(id, { is_read: '6' });
     const bet = await this.betsModel.findById(id);
-    if (bet && bet.status == 'active') {
+    if (bet && bet.status == 'active' && bet.is_read=="6") {
       var user;
       if (user_id == bet.first_player) {
         user = await this.userService.findUserbyId(bet.second_player);
