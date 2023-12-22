@@ -92,7 +92,7 @@ export class BetsService {
     createbetDto['game_id'] = game._id;
     if (createbetDto['second_player'] === 'ai') {
       if (
-        Number(first_user['silver_balance']) > Number(createbetDto['silver']) &&
+        Number(first_user['silver_balance']) >= Number(createbetDto['silver']) &&
         createbetDto['second_player'] === 'ai'
       ) {
         await this.userService.UpdateUser(
@@ -325,8 +325,8 @@ export class BetsService {
     createbetDto['game_id'] = game._id;
 
     if (Number(createbetDto['silver']) &&
-      Number(first_user['silver_balance']) > Number(createbetDto['silver']) &&
-      Number(second_user['silver_balance']) > Number(createbetDto['silver'])
+      Number(first_user['silver_balance']) >= Number(createbetDto['silver']) &&
+      Number(second_user['silver_balance']) >= Number(createbetDto['silver'])
     ) {
       await this.userService.UpdateUser(
         first_user['_id'],
@@ -369,7 +369,7 @@ export class BetsService {
         bet: res,
         game: game,
       };
-    } else if (Number(createbetDto['gold']) && Number(first_user['gold_balance']) > Number(createbetDto['gold']) &&Number(second_user['gold_balance']) > Number(createbetDto['gold'])){
+    } else if (Number(createbetDto['gold']) && Number(first_user['gold_balance']) >= Number(createbetDto['gold']) &&Number(second_user['gold_balance']) >= Number(createbetDto['gold'])){
       await this.userService.UpdateUser(
         first_user['_id'],
         Number(first_user['gold_balance']) - Number(createbetDto['gold']),
