@@ -60,7 +60,8 @@ export class Bets extends Document {
 
     @Prop({ default: "{}" })
     main_player_info: string;
-
+    @Prop({ default: "" })
+    is_read: string;
 
 }
 export const BetsSchema = SchemaFactory.createForClass(Bets)
