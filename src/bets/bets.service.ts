@@ -487,9 +487,10 @@ export class BetsService {
 
   /////actual function to update win & loss
   async betUpdateLoseWin(id: string, status: boolean) {
-    console.log(status, "call ai winner and lose");
+  
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status != 'complete') {
+      console.log(status, "call ai winner and lose");
       const user = await this.userService.findUserbyId(bet.first_player);
       await this.update(id, { status: 'complete' });
       if (status) {
