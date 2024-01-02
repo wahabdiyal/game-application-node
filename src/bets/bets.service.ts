@@ -101,7 +101,8 @@ export class BetsService {
           'silver',
         );
         const res = await this.betsModel.create({
-          status: 'inactive',
+          
+          status: 'active',
           first_player: createbetDto['first_player'],
           game_id: createbetDto['game_id'],
           silver: createbetDto['silver'],
@@ -158,6 +159,7 @@ export class BetsService {
           'silver',
         );
         const res = await this.betsModel.create({
+          screenstatus:createbetDto['screenstatus'],
           status: 'inactive',
           first_player: createbetDto['first_player'],
           game_id: createbetDto['game_id'],
@@ -223,6 +225,7 @@ export class BetsService {
           'gold',
         );
         const res = await this.betsModel.create({
+          screenstatus:createbetDto['screenstatus'],
           status: 'inactive',
           first_player: createbetDto['first_player'],
           game_id: createbetDto['game_id'],
@@ -625,25 +628,26 @@ export class BetsService {
     }
   }
 
-  async betSecondSilverUser(id, second_user, title, message) {
+  async betSecondSilverUser(id, second_user,body) {
     const bet = await this.betsModel.findById(id).populate('first_player');
 
     if (bet && bet.status == 'inactive' && Number(bet.silver) > 0) {
       const user = await this.userService.findUserbyId(second_user);
 
       if (user && Number(user['silver_balance']) > Number(bet['silver'])) {
-        const updateBet = await this.betsModel.findById(id);
+        var updateBet = await this.betsModel.findById(id);
         const gamebet = await this.gameService.findOne(updateBet['game_id']);
         await this.sendNotificationToUser(
           bet.first_player['userId'],
-          message,
-          title + gamebet.bet_expires_sec,
+          "Silver challenge of "+(Number(bet.silver)+Number(bet.silver))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
+          "Other Player Accepted Challenge",
         );
 
         // make new api where user coin detect when accept
         // await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
         await this.betsModel.findByIdAndUpdate(id, {
           status: 'inprocess',
+          second_player_info:body.second_player_info,
           second_player: second_user,
           second_email: user.email,
           second_name: user.first_name,
@@ -651,7 +655,7 @@ export class BetsService {
           second_user_country: user.country,
           second_join_time: new Date().toISOString(),
         });
-
+         updateBet = await this.betsModel.findById(id);
         return {
           ...(await this.userService.getUserRenewTokenForMobile(user['id'])),
           bet: updateBet,
@@ -667,19 +671,20 @@ export class BetsService {
       return { status: false, message: 'Already bet in progress!!!' };
     }
   }
-  async betSecondGoldUser(id, second_user, title, message) {
+  async betSecondGoldUser(id, second_user,body) {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == 'inactive' && Number(bet.gold) > 0) {
       const user = await this.userService.findUserbyId(second_user);
       const gamebet = await this.gameService.findOne(bet['game_id']);
       await this.sendNotificationToUser(
         bet.first_user_id,
-        message,
-        title + gamebet.bet_expires_sec,
+        "Gold challenge of "+(Number(bet.gold)+Number(bet.gold))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
+        "Other Player Accepted Challenge",
       );
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
         // await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
         await this.betsModel.findByIdAndUpdate(id, {
+          second_player_info:body.second_player_info,
           status: 'inprocess',
           second_player: second_user,
           second_email: user.email,

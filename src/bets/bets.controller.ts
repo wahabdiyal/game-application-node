@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards,Request, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards,Request, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { BetsService } from './bets.service';
 import { CreateBetDto } from './dto/create-bet.dto';
 import { UpdateBetDto } from './dto/update-bet.dto';
@@ -46,10 +46,19 @@ export class BetsController {
     return await this.betsService.betUpdateLoseWin(id, updateBetDto['status']);
   }
 
-  @Post('/silver/bet/:id/seconduser/:user_id/notification/:title/:message')
-  async betSecondSilverUser(@Param('id') id: string, @Param('user_id') user_id: string, @Param('message') message: string, @Param('title') title: string) {
-
-    return await this.betsService.betSecondSilverUser(id,user_id,title,message);
+  @Post('/silver/bet/:id/seconduser/:user_id')
+  @UseInterceptors(
+    FileInterceptor(
+      "file",
+    )
+  )
+  async betSecondSilverUser(@UploadedFile() file: Express.Multer.File,
+  @Body() body,
+    @Param('id') id: string,
+     @Param('user_id') user_id: string,
+    ) {
+     
+    return await this.betsService.betSecondSilverUser(id,user_id,body);
   }
   @Post('/winner/bet/:id/user/:userid')
   async betUpdateWinUser(@Param('id') id: string, @Param('userid') userid: string) {
@@ -62,10 +71,20 @@ export class BetsController {
   }
 
 
-  @Post('/gold/bet/:id/seconduser/:user_id/notification/:title/:message')
-  async betSecondGoldUser(@Param('id') id: string, @Param('user_id') user_id: string, @Param('message') message: string, @Param('title') title: string) {
+  @Post('/gold/bet/:id/seconduser/:user_id')
+  @UseInterceptors(
+    FileInterceptor(
+      "file",
+    )
+  )
+  async betSecondGoldUser(@UploadedFile() file: Express.Multer.File,
+  @Body() body,
+    @Param('id') id: string,
+     @Param('user_id') user_id: string,
+      
+       ) {
 
-    return await this.betsService.betSecondGoldUser(id,user_id,title,message);
+    return await this.betsService.betSecondGoldUser(id,user_id,body);
   }
 
   @Post('gold/winner/bet/:id/user/:userid')
