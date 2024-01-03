@@ -505,6 +505,7 @@ export class UserService {
     // const user = await this.userModel.find();
     // return user;
   }
+  
   async create(user: any): Promise<any> {
     ///// user phone is unique fix remain 
     //   const user = {

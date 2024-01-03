@@ -1074,7 +1074,7 @@ export class BetsService {
           ' ' +
           bet.first_player['last_name'] +
           ' .',
-          'notaccepted',
+          'Rejected Challange',
         );
         await this.betsModel.updateOne(
           { _id: id },
