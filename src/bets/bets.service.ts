@@ -28,6 +28,29 @@ export class BetsService {
     private readonly eventEmitter: EventEmitter2,
     private readonly notificationService: NotificationService,
   ) { }
+  async createBetNew(createbetDto:CreateBetDto){
+    const res = await this.betsModel.create({
+      screenstatus:createbetDto['screenstatus'],
+      status: 'inactive',
+      first_player: createbetDto['first_player'],
+      game_id: createbetDto['game_id'],
+      silver: createbetDto['silver'],
+      remark: createbetDto['remark'],
+      first_email: createbetDto['email'],
+      first_name: createbetDto['first_name'],
+      last_name: createbetDto['last_name'],
+      first_user_id: createbetDto['userId'],
+      first_user_country: createbetDto['country'],
+      transaction_id: createbetDto['transactionId'],
+      createdAt: new Date().toISOString(),
+    });
+
+    return {
+      ...(await this.userService.fetchUserProfile(createbetDto['email'])),
+      bet: res,
+      
+    };
+  }
   async create(createbetDto: CreateBetDto) {
     var diff = 0;
     var transactionId =

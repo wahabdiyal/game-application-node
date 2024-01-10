@@ -14,6 +14,11 @@ export class BetsController {
   create(@Body() createBetDto: CreateBetDto) {
     return this.betsService.create(createBetDto);
   }
+
+  @Post("mobile/new")
+  createNew(@Body() createBetDto: CreateBetDto) {
+    return this.betsService.createBetNew(createBetDto);
+  }
   @Post("first/second/player")
   createBetForFirstAndSecondUser(@Body() createBetDto: CreateBetDto) {
     return this.betsService.createBetForFirstAndSecondUser(createBetDto);
