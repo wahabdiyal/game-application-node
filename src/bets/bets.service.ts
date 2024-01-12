@@ -81,18 +81,19 @@ export class BetsService {
     const userBet = await this.betsModel
       .find({
         first_player: createbetDto['first_player'],
-        createdAt: {
-          $gte: new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate(),
-          ),
-          $lt: new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate() + 1,
-          ),
-        },
+        status:"inactive"
+        // createdAt: {
+        //   $gte: new Date(
+        //     today.getFullYear(),
+        //     today.getMonth(),
+        //     today.getDate(),
+        //   ),
+        //   $lt: new Date(
+        //     today.getFullYear(),
+        //     today.getMonth(),
+        //     today.getDate() + 1,
+        //   ),
+        // },
       })
       .countDocuments()
       .exec();
@@ -100,7 +101,7 @@ export class BetsService {
     const game = await this.gameService.findbyId(createbetDto['game_id']);
     if (
       game &&
-      Number(game.maximum_challenges) < userBet &&
+      Number(game.maximum_challenges) <= userBet &&
       createbetDto['second_player'] != 'ai'
     ) {
       return { status: false, message: 'Challenges exceeded' };
