@@ -11,7 +11,7 @@ import * as moment from "moment";
 import { CoinTrasService } from 'src/coin_tras/coin_tras.service';
 import axios, { AxiosInstance } from 'axios';
 import { NotificationService } from 'src/gerenal-notification/notification.service';
-
+import * as fs from 'fs';
 
 
 @Injectable()
@@ -723,12 +723,13 @@ export class UserService {
   }
 
   async update(id: any, body: any) {
+    const userBefore = await this.userModel.findOne({ _id: id });
     const user = await this.userModel.findByIdAndUpdate(id, body);
 
     if (!user) {
       throw new NotFoundException('User not found.');
     }
-
+    this.deleteUserFiles(userBefore.file_url);
     return { status: true, message: "User updated successfully" };
   }
   async updatePlayStatus(id: string, bet_block: string) {
@@ -1134,6 +1135,17 @@ export class UserService {
     }
   
     return randomString;
+  }
+  async deleteUserFiles(file_url){
+    
+      const fileDel = await fs.unlink(`./public/${file_url}`, (err) => {
+        if (err) {
+         console.error(err);
+         return err;
+        }
+       });
+       return fileDel;
+    
   }
 
 }
