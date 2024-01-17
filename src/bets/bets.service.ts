@@ -387,8 +387,7 @@ export class BetsService {
         first_user['first_name'] +
         ' ' +
         first_user['last_name'] +
-        ' has sent you a challenge to play. Here is the bet ID:' +
-        res._id,
+        ' '+first_user['userId']+" has sent a challenge for the game name with a silver bet of " + createbetDto['silver'] + createbetDto['silver'] + " coins, and it has been accepted. Bet ID: " + res._id + ". Acceptance time is " + game.bet_expires_sec + " seconds.",
         'Invited challenge',
       );
       return {
@@ -427,8 +426,7 @@ export class BetsService {
         first_user['first_name'] +
         ' ' +
         first_user['last_name'] +
-        ' has sent you a challenge to play. Here is the bet ID:' +
-        res._id,
+        ' '+first_user['userId']+" has sent a challenge for the game name with a gold bet of " + createbetDto['gold'] + createbetDto['gold'] + " coins, and it has been accepted. Bet ID: " + res._id + ". Acceptance time is " + game.bet_expires_sec + " seconds.",
         'Invited challenge',
       );
       return {
@@ -663,8 +661,8 @@ export class BetsService {
         const gamebet = await this.gameService.findOne(updateBet['game_id']);
         await this.sendNotificationToUser(
           bet.first_player['userId'],
-          "Silver challenge of "+(Number(bet.silver)+Number(bet.silver))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
-          "Other Player Accepted Challenge",
+          "Please update notification body on all places. "+user['first_name']+" "+user['last_name']+" ("+user['userId']+") has sent a challenge for the "+gamebet['title']+" with a Silver bet of "+(Number(bet.silver)+Number(bet.silver))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
+        "Other Player Accepted Challenge",
         );
 
         // make new api where user coin detect when accept
@@ -702,7 +700,7 @@ export class BetsService {
       const gamebet = await this.gameService.findOne(bet['game_id']);
       await this.sendNotificationToUser(
         bet.first_user_id,
-        "Gold challenge of "+(Number(bet.gold)+Number(bet.gold))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
+        "Please update notification body on all places. "+user['first_name']+" "+user['last_name']+" ("+user['userId']+") has sent a challenge for the "+gamebet['title']+" with a Gold bet of "+(Number(bet.gold)+Number(bet.gold))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
         "Other Player Accepted Challenge",
       );
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
