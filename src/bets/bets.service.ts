@@ -607,14 +607,36 @@ export class BetsService {
           game_bets.push({
             _id: element._id,
             game_id: element.game_id,
-            active_challenge_count: await this.betsModel.countDocuments({
+            active_silver:await this.betsModel.countDocuments({
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'active',
+              silver:{ $ne: null }
             }),
-            inactive_challenge_count: await this.betsModel.countDocuments({
+            active_gold:await this.betsModel.countDocuments({
+              game_id: new mongoose.Types.ObjectId(element._id),
+              status: 'active',
+              gold:{ $ne: null }
+            }),
+            // active_challenge_count: await this.betsModel.countDocuments({
+            //   game_id: new mongoose.Types.ObjectId(element._id),
+            //   status: 'active',
+            // }),
+            // inactive_challenge_count: await this.betsModel.countDocuments({
+            //   game_id: new mongoose.Types.ObjectId(element._id),
+            //   status: 'inactive',
+            //   remark: { $nin: ['played AI game'] },
+            // }),
+            inactive_silver: await this.betsModel.countDocuments({
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'inactive',
               remark: { $nin: ['played AI game'] },
+              silver:{ $ne: null }
+            }),
+            inactive_gold: await this.betsModel.countDocuments({
+              game_id: new mongoose.Types.ObjectId(element._id),
+              status: 'inactive',
+              remark: { $nin: ['played AI game'] },
+              gold:{ $ne: null }
             }),
           });
         }),
