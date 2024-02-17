@@ -1078,7 +1078,9 @@ export class BetsService {
             bet.first_user_id +
             ';' +
             bet._id +
-            ';',
+            ';'+
+            Number(gameObj.leaving_time_sec)*1000 +
+            ';'
           ),
         },
       );
