@@ -1,25 +1,22 @@
-
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 @Schema({
-    timestamps: true,
+  timestamps: true,
 })
 export class RechargeAdminWallets extends Document {
-    @Prop({ default: "" })
-    coins: string;
+  @Prop({ default: '' })
+  coins: string;
 
-    @Prop({ default: "" })
-    transaction_type: string;
+  @Prop({ default: '' })
+  transaction_type: string;
 
-    @Prop({ default: "" })
-    remarks: string;
+  @Prop({ default: '' })
+  remarks: string;
 
-    @Prop()
-    created_by: string;
-    @Prop()
-    updated_by: string;
-
+  @Prop()
+  created_by: string;
+  @Prop()
+  updated_by: string;
 }
-export const RechargeAdminWalletsSchema = SchemaFactory.createForClass(RechargeAdminWallets)
-
-
+export const RechargeAdminWalletsSchema =
+  SchemaFactory.createForClass(RechargeAdminWallets);

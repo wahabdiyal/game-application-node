@@ -1,4 +1,4 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 // export enum UserType {
@@ -7,22 +7,21 @@ import { Document } from 'mongoose';
 //     player = "player"
 // }
 @Schema({
-    timestamps: true,
+  timestamps: true,
 })
 export class UserRights extends Document {
+  @Prop({ required: true })
+  link: string;
+  @Prop({ required: true })
+  controller: string;
+  @Prop({ required: true })
+  role: string;
+  @Prop()
+  access: number;
 
-    @Prop({ required: true })
-    link: string;
-    @Prop({ required: true })
-    controller: string;
-    @Prop({ required: true })
-    role: string;
-    @Prop()
-    access: number;
-
-    @Prop()
-    created_by: string;
-    @Prop()
-    updated_by: string;
+  @Prop()
+  created_by: string;
+  @Prop()
+  updated_by: string;
 }
-export const UserRightSchema = SchemaFactory.createForClass(UserRights)
+export const UserRightSchema = SchemaFactory.createForClass(UserRights);

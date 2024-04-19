@@ -11,7 +11,7 @@ export class SignupRewardsService {
   constructor(
     @InjectModel(SignupReward.name)
     private signuprewardModel: mongoose.Model<SignupReward>,
-  ) { }
+  ) {}
   async create(@Body() createSignupRewardDto: CreateSignupRewardDto) {
     const collection = await this.signuprewardModel.find();
     const startinput = new Date(createSignupRewardDto['start_date']).getTime();
@@ -21,12 +21,9 @@ export class SignupRewardsService {
       const startdb = new Date(item['start_date']).getTime();
       const enddb = new Date(item['end_date']).getTime();
       if (
-        (startinput >= startdb && startinput <= enddb)
-        ||
-        (endinput >= startdb && endinput <= enddb)
-        ||
-        (startinput <= startdb && endinput >= startdb)
-        ||
+        (startinput >= startdb && startinput <= enddb) ||
+        (endinput >= startdb && endinput <= enddb) ||
+        (startinput <= startdb && endinput >= startdb) ||
         (startinput <= enddb && endinput >= enddb)
       ) {
         matchedCollection.push(item);
@@ -34,7 +31,6 @@ export class SignupRewardsService {
     }
 
     function checkRecordExists(records, criteria) {
-
       //         const [countries, startTime, endTime] = criteria;
 
       // for (const record of records) {
@@ -79,7 +75,6 @@ export class SignupRewardsService {
               // const start2 = moment(new Date(startTime));
               // const end2 = moment(new Date(endTime));
 
-
               // const startdate =isInRange(start2,start,end);
 
               // const enddate =isInRange(end2,start,end);
@@ -91,12 +86,9 @@ export class SignupRewardsService {
               // }
 
               // }
-
             }
           }
-
         }
-
       }
       return false;
 
@@ -104,7 +96,6 @@ export class SignupRewardsService {
       //   const countryMatches = countries.every(country => record.country.includes(country));
       //   // return countryMatches;
       //   if(countryMatches) {
-
 
       //   const start = moment(new Date(record.start_date));
       //   const end = moment(new Date(record.end_date));
@@ -126,7 +117,7 @@ export class SignupRewardsService {
       //      }
       // }
 
-      //  return a 
+      //  return a
       // return records.some(record => {
       //   const countryMatches = countries.every(country => record.country.includes(country));
 
@@ -150,27 +141,36 @@ export class SignupRewardsService {
 
     const inputArray = createSignupRewardDto['country'];
 
-    const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item.toLowerCase()))];
+    const uniqueLowerCaseArray = [
+      ...new Set(inputArray.map((item) => item.toLowerCase())),
+    ];
 
-    const searchCriteria = [uniqueLowerCaseArray, createSignupRewardDto['start_date'], createSignupRewardDto['end_date']];
+    const searchCriteria = [
+      uniqueLowerCaseArray,
+      createSignupRewardDto['start_date'],
+      createSignupRewardDto['end_date'],
+    ];
     const val = checkRecordExists(matchedCollection, searchCriteria);
     //  return a;
     // return val;
     if (!val) {
-
-
-      return await this.signuprewardModel.create({ ...createSignupRewardDto, country: uniqueLowerCaseArray });
+      return await this.signuprewardModel.create({
+        ...createSignupRewardDto,
+        country: uniqueLowerCaseArray,
+      });
     } else {
-      return { "status": false, "message": "Please select unique country" }
+      return { status: false, message: 'Please select unique country' };
     }
-
-
-
   }
 
-  async findAll(myRole = "", myCountries = "") {
+  async findAll(myRole = '', myCountries = '') {
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = {
+        $in: myCountries
+          .split(', ')
+          .map((country) => country.trim().toLowerCase()),
+      };
     return await this.signuprewardModel.find(query).sort({ createdAt: -1 });
   }
 
@@ -179,7 +179,10 @@ export class SignupRewardsService {
   }
 
   async update(id: any, updateSignupRewardDto: UpdateSignupRewardDto) {
-    const signupreward = await this.signuprewardModel.findByIdAndUpdate(id, updateSignupRewardDto);
+    const signupreward = await this.signuprewardModel.findByIdAndUpdate(
+      id,
+      updateSignupRewardDto,
+    );
 
     if (!signupreward) {
       throw new NotFoundException('signupreward Coin not found.');
@@ -187,7 +190,11 @@ export class SignupRewardsService {
 
     const data = await this.signuprewardModel.findById(id);
 
-    return { status: true, data: data, message: "signup reward updated successfully" };
+    return {
+      status: true,
+      data: data,
+      message: 'signup reward updated successfully',
+    };
   }
 
   async remove(id: any) {
@@ -197,11 +204,11 @@ export class SignupRewardsService {
       throw new NotFoundException('signup reward not found.');
     }
 
-    return { status: true, message: "signup reward Delete successfully" };
+    return { status: true, message: 'signup reward Delete successfully' };
   }
   async getCoinByUserCountry(user_country: string) {
     return await this.signuprewardModel.findOne({
-      country: { $in: [user_country] }
+      country: { $in: [user_country] },
     });
   }
 }

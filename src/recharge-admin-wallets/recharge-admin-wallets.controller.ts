@@ -1,20 +1,29 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RechargeAdminWalletsService } from './recharge-admin-wallets.service';
 import { CreateRechargeAdminWalletDto } from './dto/create-recharge-admin-wallet.dto';
 import { UpdateRechargeAdminWalletDto } from './dto/update-recharge-admin-wallet.dto';
 
 @Controller('recharge-admin-wallets')
 export class RechargeAdminWalletsController {
-  constructor(private readonly rechargeAdminWalletsService: RechargeAdminWalletsService) { }
-
+  constructor(
+    private readonly rechargeAdminWalletsService: RechargeAdminWalletsService,
+  ) {}
 
   ///by admin
   @Post()
   create(@Body() createRechargeAdminWalletDto: CreateRechargeAdminWalletDto) {
-    return this.rechargeAdminWalletsService.create(createRechargeAdminWalletDto);
+    return this.rechargeAdminWalletsService.create(
+      createRechargeAdminWalletDto,
+    );
   }
-
- 
 
   @Get()
   findAll() {
@@ -27,8 +36,14 @@ export class RechargeAdminWalletsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: any, @Body() updateRechargeAdminWalletDto: UpdateRechargeAdminWalletDto) {
-    return this.rechargeAdminWalletsService.update(id, updateRechargeAdminWalletDto);
+  update(
+    @Param('id') id: any,
+    @Body() updateRechargeAdminWalletDto: UpdateRechargeAdminWalletDto,
+  ) {
+    return this.rechargeAdminWalletsService.update(
+      id,
+      updateRechargeAdminWalletDto,
+    );
   }
 
   @Delete(':id')

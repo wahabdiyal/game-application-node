@@ -5,7 +5,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { RewardSchema } from './schemas/reward.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Reward', schema: RewardSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Reward', schema: RewardSchema }]),
+  ],
   controllers: [RewardController],
   providers: [RewardService],
   exports: [RewardService],

@@ -9,15 +9,14 @@ import { UserRights } from './schemas/user-rights.schema';
 export class UserRightsService {
   constructor(
     @InjectModel(UserRights.name)
-    private userRightsModel: mongoose.Model<UserRights>
-  ) { }
+    private userRightsModel: mongoose.Model<UserRights>,
+  ) {}
   async create(createUserRightDto: CreateUserRightDto) {
-    await this.userRightsModel.deleteMany(
-      {
-        link: createUserRightDto['link'].toString(),
-        controller: createUserRightDto['controller'].toString(),
-        role: createUserRightDto['role'].toString(),
-      })
+    await this.userRightsModel.deleteMany({
+      link: createUserRightDto['link'].toString(),
+      controller: createUserRightDto['controller'].toString(),
+      role: createUserRightDto['role'].toString(),
+    });
     return await this.userRightsModel.create(createUserRightDto);
   }
 
@@ -33,9 +32,8 @@ export class UserRightsService {
   }
 
   async findByRoleByController(ctrl: string, role: string) {
-    return await this.userRightsModel.find({  controller: ctrl,role:role });
+    return await this.userRightsModel.find({ controller: ctrl, role: role });
   }
-
 
   async update(id: any, body: UpdateUserRightDto) {
     const userright = await this.userRightsModel.findByIdAndUpdate(id, body);
@@ -44,7 +42,7 @@ export class UserRightsService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "updated" };
+    return { status: true, message: 'updated' };
   }
 
   async remove(id: any) {
@@ -54,6 +52,6 @@ export class UserRightsService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "removed" };
+    return { status: true, message: 'removed' };
   }
 }

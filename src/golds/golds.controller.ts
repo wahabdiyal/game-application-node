@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { GoldsService } from './golds.service';
 import { CreateGoldDto } from './dto/create-gold.dto';
 import { UpdateGoldDto } from './dto/update-gold.dto';
@@ -7,7 +16,7 @@ import { UpdateGoldDto } from './dto/update-gold.dto';
 export class GoldsController {
   constructor(private readonly goldsService: GoldsService) {}
   @Get('/data')
-   fetchAllCoinCount() {
+  fetchAllCoinCount() {
     return this.goldsService.fetchAllCoinCount();
   }
   @Post()
@@ -36,7 +45,6 @@ export class GoldsController {
 
   @Get(':id')
   findOne(@Param('id') id: any) {
-    
     return this.goldsService.findOne(id);
   }
 
@@ -50,10 +58,14 @@ export class GoldsController {
     return this.goldsService.remove(id);
   }
   @Get('user/:id')
-  fetchAllCoinUserId(@Param('id') id: any,@Query() {page,perpage,start_date,end_date}) {
-    let date = (start_date && end_date)?[{start:start_date,end:end_date}]:[];
+  fetchAllCoinUserId(
+    @Param('id') id: any,
+    @Query() { page, perpage, start_date, end_date },
+  ) {
+    let date =
+      start_date && end_date ? [{ start: start_date, end: end_date }] : [];
 
-    return this.goldsService.fetchAllCoinUserId(id,page, perpage,date);
+    return this.goldsService.fetchAllCoinUserId(id, page, perpage, date);
   }
   @Get('getcoin/status/:status')
   fetchCoinStatus(@Param('status') status: any) {
@@ -61,9 +73,7 @@ export class GoldsController {
   }
 
   @Get('user-history/:id')
-  userHistoryMobile(@Param('id') id: any,@Query() {page,perpage}) {
-
-    return this.goldsService.userHistoryMobile(id,page, perpage);
+  userHistoryMobile(@Param('id') id: any, @Query() { page, perpage }) {
+    return this.goldsService.userHistoryMobile(id, page, perpage);
   }
-
 }

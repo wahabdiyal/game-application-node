@@ -35,24 +35,23 @@ import { UserCryptoWalletsModule } from './user_crypto_wallets/user_crypto_walle
 import { AdminAccountsModule } from './admin_accounts/admin_accounts.module';
 import { BankCryptoModule } from './bank_crypto/bank_crypto.module';
 import { WithdrawLimitsModule } from './withdraw_limits/withdraw_limits.module';
-import { PackagesModule } from './packages/packages.module'; 
-import { ChallengesModule } from './challenges/challenges.module'; 
+import { PackagesModule } from './packages/packages.module';
+import { ChallengesModule } from './challenges/challenges.module';
 import { AllowedIpsModule } from './allowed_ips/allowed_ips.module';
 import { BorrowModule } from './borrow/borrow.module';
 import { BorrowStatusModule } from './borrow_status/borrow_status.module';
 import { AuthMiddleware } from './auth/middlewares/auth.middleware';
 // import * as AutoIncrementFactory from 'mongoose-sequence';
 // import { Connection } from 'mongoose';
- 
+
 import { PurchaseRequestsModule } from './purchase_requests/purchase_requests.module';
- 
+
 import { RechargeAdminWalletsModule } from './recharge-admin-wallets/recharge-admin-wallets.module';
- 
 
 import { LoginLogsModule } from './login_logs/login_logs.module';
 
 import { BetsModule } from './bets/bets.module';
- 
+
 import { UserMenusModule } from './user_menus/user_menus.module';
 import { CreateLogsModule } from './create-logs/create-logs.module';
 import { UserRightsModule } from './user-rights/user-rights.module';
@@ -64,14 +63,12 @@ import { RoomModule } from './room/room.module';
       envFilePath: '.env',
       isGlobal: true,
     }),
-    
 
     MongooseModule.forRoot(process.env.DB_CONNECTION, {
       // connectionFactory: (connection) => {
       //   connection.plugin(require('mongoose-autopopulate'));
       //   return connection;
       // }
-
     }),
     // MongooseModule.forFeatureAsync([
     //   {
@@ -121,7 +118,7 @@ import { RoomModule } from './room/room.module';
     BorrowStatusModule,
     BetsModule,
     PurchaseRequestsModule,
- 
+
     RechargeAdminWalletsModule,
     LoginLogsModule,
     BetsModule,
@@ -129,13 +126,12 @@ import { RoomModule } from './room/room.module';
     CreateLogsModule,
     UserRightsModule,
     CryptoValuesModule,
-    RoomModule
+    RoomModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
-  
   ///////middleware which proccess without token /////////////
   configure(consumer: MiddlewareConsumer) {
     consumer
@@ -147,7 +143,7 @@ export class AppModule implements NestModule {
         'auth/login/admin',
         'auth/login/phone',
         'auth/forgot-password/:phone_no',
-        'auth/update-password'
+        'auth/update-password',
       )
       .forRoutes('*');
   }

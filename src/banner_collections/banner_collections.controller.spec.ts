@@ -11,7 +11,9 @@ describe('BannerCollectionsController', () => {
       providers: [BannerCollectionsService],
     }).compile();
 
-    controller = module.get<BannerCollectionsController>(BannerCollectionsController);
+    controller = module.get<BannerCollectionsController>(
+      BannerCollectionsController,
+    );
   });
 
   it('should be defined', () => {

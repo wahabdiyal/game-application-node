@@ -5,10 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BannerSchema } from './schemas/banner.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Banner', schema: BannerSchema }
-])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Banner', schema: BannerSchema }]),
+  ],
   controllers: [BannersController],
   providers: [BannersService],
-  exports: [BannersService]
+  exports: [BannersService],
 })
 export class BannersModule {}

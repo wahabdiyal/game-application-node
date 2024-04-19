@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ReferralRewardsService } from './referral_rewards.service';
 import { CreateReferralRewardDto } from './dto/create-referral_reward.dto';
 import { UpdateReferralRewardDto } from './dto/update-referral_reward.dto';
@@ -7,7 +17,9 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @Controller('referral-rewards')
 @UseGuards(AuthGuard)
 export class ReferralRewardsController {
-  constructor(private readonly referralRewardsService: ReferralRewardsService) {}
+  constructor(
+    private readonly referralRewardsService: ReferralRewardsService,
+  ) {}
 
   @Post()
   create(@Body() createReferralRewardDto: CreateReferralRewardDto) {
@@ -16,7 +28,7 @@ export class ReferralRewardsController {
 
   @Get()
   findAll(@Request() req) {
-    return this.referralRewardsService.findAll(req.user.role,req.user.country);
+    return this.referralRewardsService.findAll(req.user.role, req.user.country);
   }
 
   @Get(':id')
@@ -25,7 +37,10 @@ export class ReferralRewardsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReferralRewardDto: UpdateReferralRewardDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateReferralRewardDto: UpdateReferralRewardDto,
+  ) {
     return this.referralRewardsService.update(id, updateReferralRewardDto);
   }
 

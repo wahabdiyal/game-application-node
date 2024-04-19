@@ -32,14 +32,15 @@ import { NotificationService } from 'src/gerenal-notification/notification.servi
     }),
     JwtModule.register({
       global: true,
-      secret: "DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.",
+      secret:
+        'DO NOT USE THIS VALUE. INSTEAD, CREATE A COMPLEX SECRET AND KEEP IT SAFE OUTSIDE OF THE SOURCE CODE.',
       signOptions: { expiresIn: '7d' },
     }),
     AllowedIpsModule,
-    LoginLogsModule
+    LoginLogsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserService, JwtStrategy,NotificationService], // Include LoginLogsService here
+  providers: [AuthService, UserService, JwtStrategy, NotificationService], // Include LoginLogsService here
   exports: [PassportModule, JwtModule],
 })
-export class AuthModule { }
+export class AuthModule {}

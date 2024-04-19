@@ -6,7 +6,12 @@ import { CreateLogsSchema } from './schemas/create-logs.schema';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'CreateLogs', schema: CreateLogsSchema }]),UserModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'CreateLogs', schema: CreateLogsSchema },
+    ]),
+    UserModule,
+  ],
   controllers: [CreateLogsController],
   providers: [CreateLogsService],
 })

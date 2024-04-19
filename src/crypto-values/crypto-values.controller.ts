@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CryptoValuesService } from './crypto-values.service';
 import { CreateCryptoValueDto } from './dto/create-crypto-value.dto';
 import { UpdateCryptoValueDto } from './dto/update-crypto-value.dto';
 
 @Controller('crypto-values')
 export class CryptoValuesController {
-  constructor(private readonly cryptoValuesService: CryptoValuesService) { }
+  constructor(private readonly cryptoValuesService: CryptoValuesService) {}
 
   @Post()
   create() {
@@ -15,5 +23,4 @@ export class CryptoValuesController {
   get(@Param('country') country: any) {
     return this.cryptoValuesService.get(country.toLowerCase());
   }
-
 }

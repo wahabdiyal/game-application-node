@@ -1,22 +1,18 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
- 
- 
+
 @Schema({
-        timestamps: true,
+  timestamps: true,
 })
-export class Contact extends Document{
-    
-    @Prop({required: true,})
-    phone:string;
-    @Prop()
-    country_id:string;
+export class Contact extends Document {
+  @Prop({ required: true })
+  phone: string;
+  @Prop()
+  country_id: string;
 
-    @Prop()
-    created_by: string;
-    @Prop()
-    updated_by: string;
+  @Prop()
+  created_by: string;
+  @Prop()
+  updated_by: string;
 }
-export const ContactSchema = SchemaFactory.createForClass(Contact)
-
-
+export const ContactSchema = SchemaFactory.createForClass(Contact);

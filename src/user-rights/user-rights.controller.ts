@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { UserRightsService } from './user-rights.service';
 import { CreateUserRightDto } from './dto/create-user-right.dto';
 import { UpdateUserRightDto } from './dto/update-user-right.dto';
@@ -23,15 +32,18 @@ export class UserRightsController {
   @Get('role/:id')
   findByRole(@Param('id') id: string) {
     return this.userRightsService.findByRole(id);
-  } 
-  
+  }
+
   @Get('find-access/roles')
-  findByRoleByController(@Query() { controller, role}) {
-    return this.userRightsService.findByRoleByController(controller,role);
-  }  
+  findByRoleByController(@Query() { controller, role }) {
+    return this.userRightsService.findByRoleByController(controller, role);
+  }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserRightDto: UpdateUserRightDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserRightDto: UpdateUserRightDto,
+  ) {
     return this.userRightsService.update(id, updateUserRightDto);
   }
 

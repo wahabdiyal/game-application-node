@@ -10,7 +10,7 @@ export class DailyRewardsService {
   constructor(
     @InjectModel(DailyReward.name)
     private dailyReward: mongoose.Model<DailyReward>,
-  ) { }
+  ) {}
 
   async create(createDailyRewardDto: CreateDailyRewardDto) {
     let collection = await this.dailyReward.find({});
@@ -21,12 +21,9 @@ export class DailyRewardsService {
       const startdb = new Date(item['start_date']).getTime();
       const enddb = new Date(item['end_date']).getTime();
       if (
-        (startinput >= startdb && startinput <= enddb)
-        ||
-        (endinput >= startdb && endinput <= enddb)
-        ||
-        (startinput <= startdb && endinput >= startdb)
-        ||
+        (startinput >= startdb && startinput <= enddb) ||
+        (endinput >= startdb && endinput <= enddb) ||
+        (startinput <= startdb && endinput >= startdb) ||
         (startinput <= enddb && endinput >= enddb)
       ) {
         matchedCollection.push(item);
@@ -53,40 +50,50 @@ export class DailyRewardsService {
     }
     const inputArray = createDailyRewardDto['country'];
 
-    const uniqueLowerCaseArray = [...new Set(inputArray.map(item => item.toLowerCase()))];
+    const uniqueLowerCaseArray = [
+      ...new Set(inputArray.map((item) => item.toLowerCase())),
+    ];
 
-
-    const searchCriteria = [uniqueLowerCaseArray, createDailyRewardDto['start_date'], createDailyRewardDto['end_date']];
+    const searchCriteria = [
+      uniqueLowerCaseArray,
+      createDailyRewardDto['start_date'],
+      createDailyRewardDto['end_date'],
+    ];
     const val = checkRecordExists(matchedCollection, searchCriteria);
     if (!val) {
       var res = await this.dailyReward.create({
         ...createDailyRewardDto,
         start_date: new Date(createDailyRewardDto['start_date']),
         end_date: new Date(createDailyRewardDto['end_date']),
-        country: uniqueLowerCaseArray
+        country: uniqueLowerCaseArray,
       });
       return res;
     } else {
-      return { "status": false, "message": "Please select unique country" }
+      return { status: false, message: 'Please select unique country' };
     }
   }
 
-  async findAll(type,myRole = "", myCountries = "") {
-
+  async findAll(type, myRole = '', myCountries = '') {
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ") };
-    if (type == "silver") {
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = { $in: myCountries.split(', ') };
+    if (type == 'silver') {
       return await this.dailyReward.find({ silver_coin: { $ne: 0 } }).exec();
-    } if (type == "gold") {
+    }
+    if (type == 'gold') {
       return await this.dailyReward.find({ gold_coin: { $ne: 0 } }).exec();
     }
     return [];
-
   }
 
-  async findAllTypes(myRole = "", myCountries = "") {
+  async findAllTypes(myRole = '', myCountries = '') {
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = {
+        $in: myCountries
+          .split(', ')
+          .map((country) => country.trim().toLowerCase()),
+      };
     return await this.dailyReward.find(query).sort({ createdAt: -1 }).exec();
   }
 
@@ -95,14 +102,21 @@ export class DailyRewardsService {
   }
 
   async update(id: any, updateDailyRewardDto: UpdateDailyRewardDto) {
-    const dailyreward = await this.dailyReward.findByIdAndUpdate(id, updateDailyRewardDto);
+    const dailyreward = await this.dailyReward.findByIdAndUpdate(
+      id,
+      updateDailyRewardDto,
+    );
 
     if (!dailyreward) {
       throw new NotFoundException('daily reward not found.');
     }
     const data = await this.dailyReward.findOne({ _id: id });
 
-    return { status: true, data: data, message: "daily reward updated successfully" };
+    return {
+      status: true,
+      data: data,
+      message: 'daily reward updated successfully',
+    };
   }
 
   async remove(id: any) {
@@ -111,14 +125,14 @@ export class DailyRewardsService {
       throw new NotFoundException('daily reward not found.');
     }
 
-    return { status: true, message: "daily reward delete successfully" };
+    return { status: true, message: 'daily reward delete successfully' };
   }
 
   async findByCountry(country) {
     return await this.dailyReward.findOne({
       country: {
-        $in: [country]
-      }
+        $in: [country],
+      },
     });
   }
   async findUserCountry(country) {
@@ -135,12 +149,12 @@ export class DailyRewardsService {
     const reward = await this.dailyReward.findOne({
       country: country,
       start_date: { $lte: currentDate }, // start_date is  than or equal to the current date
-      end_date: { $gte: currentDate } // Check if end_date is greater than or equal to the current date
+      end_date: { $gte: currentDate }, // Check if end_date is greater than or equal to the current date
     });
     if (reward)
       return {
         status: true,
-        message: "daily reward found",
+        message: 'daily reward found',
         title: reward['title'],
         dailyRewardStatus: reward['status'],
         silver: reward['silver_coin'],
@@ -148,21 +162,18 @@ export class DailyRewardsService {
         inactive_day: reward['inactive_day'],
         description: reward['description'],
         country: country,
-
-      }
+      };
     else
       return {
         status: false,
-        message: "daily reward not found",
-        title: "",
-        dailyRewardStatus: "",
-        silver: "",
-        gold: "",
-        inactive_day: "",
-        description: "",
+        message: 'daily reward not found',
+        title: '',
+        dailyRewardStatus: '',
+        silver: '',
+        gold: '',
+        inactive_day: '',
+        description: '',
         country: country,
-
-      }
+      };
   }
-
 }

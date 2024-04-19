@@ -5,17 +5,13 @@ import { Games } from './schemas/games.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose from 'mongoose';
 import * as admin from 'firebase-admin';
-import firebase from 'firebase/app'
+import firebase from 'firebase/app';
 @Injectable()
 export class GamesService {
-
   constructor(
     @InjectModel(Games.name)
     private gameModel: mongoose.Model<Games>,
-
-  ) {
-
-  }
+  ) {}
 
   async create(createGameDto: CreateGameDto) {
     try {
@@ -25,25 +21,23 @@ export class GamesService {
         return {
           data: null,
           status: false,
-          message: "game title already exist"
-        }
+          message: 'game title already exist',
+        };
         return ''; // Return a custom error message
       }
       throw error;
     }
   }
 
-
-
   async findAll() {
     return await this.gameModel.find().sort({ createdAt: -1 });
   }
-  async findAllMobile(){
-    const games =  await this.gameModel.find().sort({ createdAt: -1 });
-    if(games.length){
-      return {status:true,message:"All Game detail", game_detail:games}
-    }else{ 
-      return {status:false,message:"Not Game found"};
+  async findAllMobile() {
+    const games = await this.gameModel.find().sort({ createdAt: -1 });
+    if (games.length) {
+      return { status: true, message: 'All Game detail', game_detail: games };
+    } else {
+      return { status: false, message: 'Not Game found' };
     }
   }
   async getActiveGamesCount() {
@@ -64,7 +58,7 @@ export class GamesService {
       throw new NotFoundException('game not found.');
     }
     const data = await this.gameModel.findOne({ _id: id });
-    return { status: true, data: data, message: "game updated successfully" };
+    return { status: true, data: data, message: 'game updated successfully' };
   }
 
   async remove(id: string) {
@@ -74,6 +68,6 @@ export class GamesService {
       throw new NotFoundException('game not found.');
     }
 
-    return { status: true, message: "game Delete successfully" };
+    return { status: true, message: 'game Delete successfully' };
   }
 }

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Request } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { BannerCollectionsService } from './banner_collections.service';
 import { CreateBannerCollectionDto } from './dto/create-banner_collection.dto';
 import { UpdateBannerCollectionDto } from './dto/update-banner_collection.dto';
@@ -7,7 +17,9 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @Controller('banner-collections')
 @UseGuards(AuthGuard)
 export class BannerCollectionsController {
-  constructor(private readonly bannerCollectionsService: BannerCollectionsService) {}
+  constructor(
+    private readonly bannerCollectionsService: BannerCollectionsService,
+  ) {}
 
   @Post()
   create(@Body() createBannerCollectionDto: CreateBannerCollectionDto) {
@@ -16,7 +28,7 @@ export class BannerCollectionsController {
 
   @Get()
   findAll(@Request() req) {
-    return this.bannerCollectionsService.find(req.user.role,req.user.country);
+    return this.bannerCollectionsService.find(req.user.role, req.user.country);
   }
 
   @Get('/getbannerwithid/:id')
@@ -30,7 +42,10 @@ export class BannerCollectionsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBannerCollectionDto: UpdateBannerCollectionDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateBannerCollectionDto: UpdateBannerCollectionDto,
+  ) {
     return this.bannerCollectionsService.update(id, updateBannerCollectionDto);
   }
 

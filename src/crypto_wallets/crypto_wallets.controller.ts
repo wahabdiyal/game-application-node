@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { CryptoWalletsService } from './crypto_wallets.service';
 import { CreateCryptoWalletDto } from './dto/create-crypto_wallet.dto';
 import { UpdateCryptoWalletDto } from './dto/update-crypto_wallet.dto';
@@ -16,7 +26,7 @@ export class CryptoWalletsController {
 
   @Get()
   findAll(@Request() req) {
-    return this.cryptoWalletsService.findAll(req.user.role,req.user.country);
+    return this.cryptoWalletsService.findAll(req.user.role, req.user.country);
   }
 
   @Get(':id')
@@ -30,7 +40,10 @@ export class CryptoWalletsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCryptoWalletDto: UpdateCryptoWalletDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCryptoWalletDto: UpdateCryptoWalletDto,
+  ) {
     return this.cryptoWalletsService.update(id, updateCryptoWalletDto);
   }
 
@@ -40,7 +53,8 @@ export class CryptoWalletsController {
   }
   @Get('/country/mobile/:country')
   findByCountryForMobile(@Param('country') country: string) {
-    return this.cryptoWalletsService.findByCountryForMobile(country.toLowerCase());
+    return this.cryptoWalletsService.findByCountryForMobile(
+      country.toLowerCase(),
+    );
   }
-
 }

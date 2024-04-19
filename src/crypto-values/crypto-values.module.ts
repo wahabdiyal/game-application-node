@@ -7,13 +7,15 @@ import { HttpModule } from '@nestjs/axios';
 import { CryptoWalletSchema } from 'src/crypto_wallets/schemas/crypto_wallets.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([
-    { name: 'CryptoValues', schema: CryptoValuesScheme },
-    { name: "CryptoWallet", schema: CryptoWalletSchema }
-  ]), HttpModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'CryptoValues', schema: CryptoValuesScheme },
+      { name: 'CryptoWallet', schema: CryptoWalletSchema },
+    ]),
+    HttpModule,
+  ],
   controllers: [CryptoValuesController],
   providers: [CryptoValuesService],
   exports: [CryptoValuesService],
 })
-
-export class CryptoValuesModule { }
+export class CryptoValuesModule {}

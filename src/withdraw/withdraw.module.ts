@@ -9,10 +9,15 @@ import { AdminAccountsModule } from 'src/admin_accounts/admin_accounts.module';
 import { WithdrawLimitsModule } from 'src/withdraw_limits/withdraw_limits.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Withdraw', schema:WithdrawSchema  }
-]) ,UserModule,GoldsModule,AdminAccountsModule,WithdrawLimitsModule ],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Withdraw', schema: WithdrawSchema }]),
+    UserModule,
+    GoldsModule,
+    AdminAccountsModule,
+    WithdrawLimitsModule,
+  ],
   controllers: [WithdrawController],
   providers: [WithdrawService],
-  exports:[WithdrawService]
+  exports: [WithdrawService],
 })
 export class WithdrawModule {}

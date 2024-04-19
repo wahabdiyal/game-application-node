@@ -7,7 +7,11 @@ import { UserModule } from 'src/user/user.module';
 import { AdminAccountsModule } from 'src/admin_accounts/admin_accounts.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Gold', schema: GoldSchema }]),UserModule,AdminAccountsModule],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Gold', schema: GoldSchema }]),
+    UserModule,
+    AdminAccountsModule,
+  ],
   controllers: [GoldsController],
   providers: [GoldsService],
   exports: [GoldsService],

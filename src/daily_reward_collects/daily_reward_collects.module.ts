@@ -9,13 +9,15 @@ import { SilversModule } from 'src/silvers/silvers.module';
 import { GoldsModule } from 'src/golds/golds.module';
 
 @Module({
-  imports:[MongooseModule.forFeature([{ name: 'DailyRewardCollects', schema: DailyRewardCollectsSchema }
-]),
-UserModule,
-DailyRewardsModule,
-SilversModule,
-GoldsModule
-],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'DailyRewardCollects', schema: DailyRewardCollectsSchema },
+    ]),
+    UserModule,
+    DailyRewardsModule,
+    SilversModule,
+    GoldsModule,
+  ],
   controllers: [DailyRewardCollectsController],
   providers: [DailyRewardCollectsService],
   exports: [DailyRewardCollectsService],

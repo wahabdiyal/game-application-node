@@ -1,4 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards,Request, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  Request,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { BetsService } from './bets.service';
 import { CreateBetDto } from './dto/create-bet.dto';
 import { UpdateBetDto } from './dto/update-bet.dto';
@@ -8,26 +21,38 @@ import { FileInterceptor } from '@nestjs/platform-express';
 @Controller('bets')
 //  @UseGuards(AuthGuard)
 export class BetsController {
-  constructor(private readonly betsService: BetsService) { }
+  constructor(private readonly betsService: BetsService) {}
 
-  @Post("mobile")
+  @Post('mobile')
   create(@Body() createBetDto: CreateBetDto) {
     return this.betsService.create(createBetDto);
   }
 
-  @Post("mobile/new")
+  @Post('mobile/new')
   createNew(@Body() createBetDto: CreateBetDto) {
     return this.betsService.createBetNew(createBetDto);
   }
-  @Post("first/second/player")
+  @Post('first/second/player')
   createBetForFirstAndSecondUser(@Body() createBetDto: CreateBetDto) {
     return this.betsService.createBetForFirstAndSecondUser(createBetDto);
   }
 
   @Get()
-  findAll(@Request() req,@Query() { page, perpage, status, start_date, end_date, key }) {
-    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
-    return this.betsService.findAll(page, perpage, status, date, key,req.user.role,req.user.country);
+  findAll(
+    @Request() req,
+    @Query() { page, perpage, status, start_date, end_date, key },
+  ) {
+    let date =
+      start_date && end_date ? [{ start: start_date, end: end_date }] : [];
+    return this.betsService.findAll(
+      page,
+      perpage,
+      status,
+      date,
+      key,
+      req.user.role,
+      req.user.country,
+    );
   }
 
   @Get(':id')
@@ -46,63 +71,65 @@ export class BetsController {
   }
 
   @Post('/user/betstatus/:id')
-  async betUpdateLoseWin(@Param('id') id: string, @Body() updateBetDto: UpdateBetDto) {
-     
+  async betUpdateLoseWin(
+    @Param('id') id: string,
+    @Body() updateBetDto: UpdateBetDto,
+  ) {
     return await this.betsService.betUpdateLoseWin(id, updateBetDto['status']);
   }
 
   @Post('/silver/bet/:id/seconduser/:user_id')
-  @UseInterceptors(
-    FileInterceptor(
-      "file",
-    )
-  )
-  async betSecondSilverUser(@UploadedFile() file: Express.Multer.File,
-  @Body() body,
+  @UseInterceptors(FileInterceptor('file'))
+  async betSecondSilverUser(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body,
     @Param('id') id: string,
-     @Param('user_id') user_id: string,
-    ) {
-     
-    return await this.betsService.betSecondSilverUser(id,user_id,body);
+    @Param('user_id') user_id: string,
+  ) {
+    return await this.betsService.betSecondSilverUser(id, user_id, body);
   }
   @Post('/winner/bet/:id/user/:userid')
-  async betUpdateWinUser(@Param('id') id: string, @Param('userid') userid: string) {
-    return await this.betsService.betUpdateWinUser(id,userid);
+  async betUpdateWinUser(
+    @Param('id') id: string,
+    @Param('userid') userid: string,
+  ) {
+    return await this.betsService.betUpdateWinUser(id, userid);
   }
 
   @Post('/lose/bet/:id/user/:userid')
-  async betUpdateLoseUser(@Param('id') id: string, @Param('userid') userid: string) {
+  async betUpdateLoseUser(
+    @Param('id') id: string,
+    @Param('userid') userid: string,
+  ) {
     return await this.betsService.betUpdateLoseUser(id, userid);
   }
 
-
   @Post('/gold/bet/:id/seconduser/:user_id')
-  @UseInterceptors(
-    FileInterceptor(
-      "file",
-    )
-  )
-  async betSecondGoldUser(@UploadedFile() file: Express.Multer.File,
-  @Body() body,
+  @UseInterceptors(FileInterceptor('file'))
+  async betSecondGoldUser(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body,
     @Param('id') id: string,
-     @Param('user_id') user_id: string,
-      
-       ) {
-
-    return await this.betsService.betSecondGoldUser(id,user_id,body);
+    @Param('user_id') user_id: string,
+  ) {
+    return await this.betsService.betSecondGoldUser(id, user_id, body);
   }
 
   @Post('gold/winner/bet/:id/user/:userid')
-  async betUpdateWinUserGold(@Param('id') id: string, @Param('userid') user_id: string) {
+  async betUpdateWinUserGold(
+    @Param('id') id: string,
+    @Param('userid') user_id: string,
+  ) {
     return await this.betsService.betUpdateWinUserGold(id, user_id);
   }
 
-  
   @Post('gold/lose/bet/:id/user/:userid')
-  async betUpdateLoseUserGold(@Param('id') id: string, @Param('userid') user_id: string) {
+  async betUpdateLoseUserGold(
+    @Param('id') id: string,
+    @Param('userid') user_id: string,
+  ) {
     return await this.betsService.betUpdateLoseUserGold(id, user_id);
   }
-
 
   @Post('/ignore/update/:id')
   async ignoreUpdate(@Param('id') id: string) {
@@ -140,23 +167,21 @@ export class BetsController {
   }
 
   @Get('/game/history')
-  game_history(@Query() { page, perpage,player_id, game_id }) {
-    return this.betsService.game_history(page, perpage,player_id, game_id);
+  game_history(@Query() { page, perpage, player_id, game_id }) {
+    return this.betsService.game_history(page, perpage, player_id, game_id);
   }
   @Post('send/notification')
-  @UseInterceptors(
-    FileInterceptor('')
-  )
-  sendNotification( @Body() req) {
-   
-    return this.betsService.sendNotificationToUser(req['userid'],req['message'],req['title']);
+  @UseInterceptors(FileInterceptor(''))
+  sendNotification(@Body() req) {
+    return this.betsService.sendNotificationToUser(
+      req['userid'],
+      req['message'],
+      req['title'],
+    );
   }
 
   @Get('game/all_bets')
   get_games_bets() {
     return this.betsService.get_games_bets();
   }
-
- 
-
 }

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete,Request, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
@@ -16,7 +26,7 @@ export class ContactsController {
 
   @Get()
   findAll(@Request() req) {
-    return this.contactsService.findAll(req.user.role,req.user.country);
+    return this.contactsService.findAll(req.user.role, req.user.country);
   }
 
   @Get(':id')

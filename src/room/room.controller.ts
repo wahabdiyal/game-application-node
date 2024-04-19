@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { RoomService } from './room.service';
 import { CreateRoomDto } from './dto/create-room.dto';
 import { UpdateRoomDto } from './dto/update-room.dto';
@@ -18,11 +26,9 @@ export class RoomController {
     return this.roomService.create(createRoomDto);
   }
 
-
   @Get(':collectionName')
   async getAllDocuments(@Param('collectionName') collectionName: string) {
-    const app_id = 'ec3b1b5e-633b-42f0-969f-21b1f11ad033'
-
+    const app_id = 'ec3b1b5e-633b-42f0-969f-21b1f11ad033';
 
     const db = this.client.db(this.dbName);
     const collection = db.collection(collectionName);

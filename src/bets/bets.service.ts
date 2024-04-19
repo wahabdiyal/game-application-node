@@ -27,10 +27,10 @@ export class BetsService {
     private silverService: SilversService,
     private readonly eventEmitter: EventEmitter2,
     private readonly notificationService: NotificationService,
-  ) { }
-  async createBetNew(createbetDto:CreateBetDto){
+  ) {}
+  async createBetNew(createbetDto: CreateBetDto) {
     const res = await this.betsModel.create({
-      screenstatus:createbetDto['screenstatus'],
+      screenstatus: createbetDto['screenstatus'],
       status: 'inactive',
       first_player: createbetDto['first_player'],
       game_id: createbetDto['game_id'],
@@ -48,7 +48,6 @@ export class BetsService {
     return {
       ...(await this.userService.fetchUserProfile(createbetDto['email'])),
       bet: res,
-      
     };
   }
   async create(createbetDto: CreateBetDto) {
@@ -81,7 +80,7 @@ export class BetsService {
     const userBet = await this.betsModel
       .find({
         first_player: createbetDto['first_player'],
-        status:"inactive"
+        status: 'inactive',
         // createdAt: {
         //   $gte: new Date(
         //     today.getFullYear(),
@@ -116,7 +115,8 @@ export class BetsService {
     createbetDto['game_id'] = game._id;
     if (createbetDto['second_player'] === 'ai') {
       if (
-        Number(first_user['silver_balance']) >= Number(createbetDto['silver']) &&
+        Number(first_user['silver_balance']) >=
+          Number(createbetDto['silver']) &&
         createbetDto['second_player'] === 'ai'
       ) {
         await this.userService.UpdateUser(
@@ -125,7 +125,6 @@ export class BetsService {
           'silver',
         );
         const res = await this.betsModel.create({
-          
           status: 'active',
           first_player: createbetDto['first_player'],
           game_id: createbetDto['game_id'],
@@ -183,7 +182,7 @@ export class BetsService {
           'silver',
         );
         const res = await this.betsModel.create({
-          screenstatus:createbetDto['screenstatus'],
+          screenstatus: createbetDto['screenstatus'],
           status: 'inactive',
           first_player: createbetDto['first_player'],
           game_id: createbetDto['game_id'],
@@ -249,7 +248,7 @@ export class BetsService {
           'gold',
         );
         const res = await this.betsModel.create({
-          screenstatus:createbetDto['screenstatus'],
+          screenstatus: createbetDto['screenstatus'],
           status: 'inactive',
           first_player: createbetDto['first_player'],
           game_id: createbetDto['game_id'],
@@ -351,7 +350,8 @@ export class BetsService {
     }
     createbetDto['game_id'] = game._id;
 
-    if (Number(createbetDto['silver']) &&
+    if (
+      Number(createbetDto['silver']) &&
       Number(first_user['silver_balance']) >= Number(createbetDto['silver']) &&
       Number(second_user['silver_balance']) >= Number(createbetDto['silver'])
     ) {
@@ -385,9 +385,18 @@ export class BetsService {
       await this.sendNotificationToUser(
         second_user['userId'],
         first_user['first_name'] +
-        ' ' +
-        first_user['last_name'] +
-        ' '+first_user['userId']+" has sent a challenge for the game name with a silver bet of " + createbetDto['silver'] + createbetDto['silver'] + " coins, and it has been accepted. Bet ID: " + res._id + ". Acceptance time is " + game.bet_expires_sec + " seconds.",
+          ' ' +
+          first_user['last_name'] +
+          ' ' +
+          first_user['userId'] +
+          ' has sent a challenge for the game name with a silver bet of ' +
+          createbetDto['silver'] +
+          createbetDto['silver'] +
+          ' coins, and it has been accepted. Bet ID: ' +
+          res._id +
+          '. Acceptance time is ' +
+          game.bet_expires_sec +
+          ' seconds.',
         'Invited challenge',
       );
       return {
@@ -395,7 +404,11 @@ export class BetsService {
         bet: res,
         game: game,
       };
-    } else if (Number(createbetDto['gold']) && Number(first_user['gold_balance']) >= Number(createbetDto['gold']) &&Number(second_user['gold_balance']) >= Number(createbetDto['gold'])){
+    } else if (
+      Number(createbetDto['gold']) &&
+      Number(first_user['gold_balance']) >= Number(createbetDto['gold']) &&
+      Number(second_user['gold_balance']) >= Number(createbetDto['gold'])
+    ) {
       await this.userService.UpdateUser(
         first_user['_id'],
         Number(first_user['gold_balance']) - Number(createbetDto['gold']),
@@ -424,9 +437,18 @@ export class BetsService {
       await this.sendNotificationToUser(
         second_user['userId'],
         first_user['first_name'] +
-        ' ' +
-        first_user['last_name'] +
-        ' '+first_user['userId']+" has sent a challenge for the game name with a gold bet of " + createbetDto['gold'] + createbetDto['gold'] + " coins, and it has been accepted. Bet ID: " + res._id + ". Acceptance time is " + game.bet_expires_sec + " seconds.",
+          ' ' +
+          first_user['last_name'] +
+          ' ' +
+          first_user['userId'] +
+          ' has sent a challenge for the game name with a gold bet of ' +
+          createbetDto['gold'] +
+          createbetDto['gold'] +
+          ' coins, and it has been accepted. Bet ID: ' +
+          res._id +
+          '. Acceptance time is ' +
+          game.bet_expires_sec +
+          ' seconds.',
         'Invited challenge',
       );
       return {
@@ -459,34 +481,39 @@ export class BetsService {
         .findOne({ _id: id })
         .populate('game_id')
         .populate('first_player');
-        if(betDetail.status=='inprocess'){
-          if (Number(betDetail.silver)){
-            await this.sendNotificationToUser(
-              betDetail.first_player['userId'],
-              ' Sorry No Challengers Available, '+betDetail.silver+' Silver Coins added back to your account.',
-              'coinsback',
-            );
-            console.log('notification::::', betDetail.first_player['userId']);
-            await this.userService.UpdateUser(
-              betDetail.first_player['_id'],
-              Number(betDetail.first_player['silver_balance']) +
+      if (betDetail.status == 'inprocess') {
+        if (Number(betDetail.silver)) {
+          await this.sendNotificationToUser(
+            betDetail.first_player['userId'],
+            ' Sorry No Challengers Available, ' +
+              betDetail.silver +
+              ' Silver Coins added back to your account.',
+            'coinsback',
+          );
+          console.log('notification::::', betDetail.first_player['userId']);
+          await this.userService.UpdateUser(
+            betDetail.first_player['_id'],
+            Number(betDetail.first_player['silver_balance']) +
               Number(betDetail.silver),
-              'silver',
-            );
-          }
-          if (Number(betDetail.gold)) {
-            await this.userService.UpdateUser(
-              betDetail.first_player['_id'],
-              Number(betDetail.first_player['gold_balance']) + Number(betDetail.gold),
-              'gold',
-            );
-            await this.sendNotificationToUser(
-              betDetail.first_player['userId'],
-              ' Sorry No Challengers Available, '+betDetail.gold+'  Gold Coins added back to your account.',
-              'coinsback',
-            );
-          }
+            'silver',
+          );
         }
+        if (Number(betDetail.gold)) {
+          await this.userService.UpdateUser(
+            betDetail.first_player['_id'],
+            Number(betDetail.first_player['gold_balance']) +
+              Number(betDetail.gold),
+            'gold',
+          );
+          await this.sendNotificationToUser(
+            betDetail.first_player['userId'],
+            ' Sorry No Challengers Available, ' +
+              betDetail.gold +
+              '  Gold Coins added back to your account.',
+            'coinsback',
+          );
+        }
+      }
 
       const bet = await this.betsModel.findByIdAndDelete(id);
       await this.sendNotificationToUser(
@@ -513,10 +540,10 @@ export class BetsService {
   /////actual function to update win & loss
   async betUpdateLoseWin(id: string, status: boolean) {
     await this.update(id, { is_read: '6' });
-  
+
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status != 'complete' && bet.is_read == '6') {
-      console.log(status, "call ai winner and lose");
+      console.log(status, 'call ai winner and lose');
       const user = await this.userService.findUserbyId(bet.first_player);
       await this.update(id, { status: 'complete' });
       if (status) {
@@ -525,7 +552,7 @@ export class BetsService {
           remarks: 'ai silver win game TrD:' + bet['_id'],
           type: 'credit',
           game_id: bet.game_id,
-          coins: (Number(bet['silver']) + Number(bet['silver'])),
+          coins: Number(bet['silver']) + Number(bet['silver']),
         });
         return await this.userService.updateMobile(user['id'], {
           updated_by: '',
@@ -553,19 +580,18 @@ export class BetsService {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == 'active' && bet.is_read == '6') {
       const user = await this.userService.findUserbyId(user_id);
-     
-       await this.update(id, { status: 'complete' });
-     
+
+      await this.update(id, { status: 'complete' });
+
       const silverCoin = await this.silverService.create({
         client_id: user['_id'],
         remarks: 'player silver win game TrD:' + bet['_id'],
         type: 'credit',
         game_id: bet.game_id,
-        coins: Number(bet['silver']) +
-          Number(bet['silver']),
+        coins: Number(bet['silver']) + Number(bet['silver']),
       });
-      console.log("winner silver api called:::::::",silverCoin);
-       return await this.userService.updateMobile(user['id'], {
+      console.log('winner silver api called:::::::', silverCoin);
+      return await this.userService.updateMobile(user['id'], {
         updated_by: '',
       });
     } else {
@@ -582,16 +608,14 @@ export class BetsService {
       } else {
         user = await this.userService.findUserbyId(bet.first_player);
       }
-      console.log("lose api silver::::::::",user);
+      console.log('lose api silver::::::::', user);
       await this.update(id, { status: 'complete' });
       await this.silverService.create({
         client_id: user['_id'],
         remarks: 'player silver win game TrD:' + bet['_id'],
         type: 'credit',
         game_id: bet.game_id,
-        coins:
-          Number(bet['silver']) +
-          Number(bet['silver']),
+        coins: Number(bet['silver']) + Number(bet['silver']),
       });
       return await this.userService.updateMobile(user_id, { updated_by: '' });
     } else {
@@ -607,15 +631,15 @@ export class BetsService {
           game_bets.push({
             _id: element._id,
             game_id: element.game_id,
-            active_silver:await this.betsModel.countDocuments({
+            active_silver: await this.betsModel.countDocuments({
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'active',
-              silver:{ $ne: null }
+              silver: { $ne: null },
             }),
-            active_gold:await this.betsModel.countDocuments({
+            active_gold: await this.betsModel.countDocuments({
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'active',
-              gold:{ $ne: null }
+              gold: { $ne: null },
             }),
             // active_challenge_count: await this.betsModel.countDocuments({
             //   game_id: new mongoose.Types.ObjectId(element._id),
@@ -630,13 +654,13 @@ export class BetsService {
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'inactive',
               remark: { $nin: ['played AI game'] },
-              silver:{ $ne: null }
+              silver: { $ne: null },
             }),
             inactive_gold: await this.betsModel.countDocuments({
               game_id: new mongoose.Types.ObjectId(element._id),
               status: 'inactive',
               remark: { $nin: ['played AI game'] },
-              gold:{ $ne: null }
+              gold: { $ne: null },
             }),
           });
         }),
@@ -672,7 +696,7 @@ export class BetsService {
     }
   }
 
-  async betSecondSilverUser(id, second_user,body) {
+  async betSecondSilverUser(id, second_user, body) {
     const bet = await this.betsModel.findById(id).populate('first_player');
 
     if (bet && bet.status == 'inactive' && Number(bet.silver) > 0) {
@@ -683,15 +707,29 @@ export class BetsService {
         const gamebet = await this.gameService.findOne(updateBet['game_id']);
         await this.sendNotificationToUser(
           bet.first_player['userId'],
-          "Please update notification body on all places. "+user['first_name']+" "+user['last_name']+" ("+user['userId']+") has sent a challenge for the "+gamebet['title']+" with a Silver bet of "+(Number(bet.silver)+Number(bet.silver))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
-        "Other Player Accepted Challenge",
+          'Please update notification body on all places. ' +
+            user['first_name'] +
+            ' ' +
+            user['last_name'] +
+            ' (' +
+            user['userId'] +
+            ') has sent a challenge for the ' +
+            gamebet['title'] +
+            ' with a Silver bet of ' +
+            (Number(bet.silver) + Number(bet.silver)) +
+            ' coins has been accepted. Bet ID: ' +
+            bet._id +
+            '. Acceptance time is ' +
+            gamebet.bet_expires_sec +
+            ' seconds.',
+          'Other Player Accepted Challenge',
         );
 
         // make new api where user coin detect when accept
         // await this.userService.UpdateUser(user['id'], Number(user['silver_balance']) - Number(bet['silver']), 'silver');
         await this.betsModel.findByIdAndUpdate(id, {
           status: 'inprocess',
-          second_player_info:body.second_player_info,
+          second_player_info: body.second_player_info,
           second_player: second_user,
           second_email: user.email,
           second_name: user.first_name,
@@ -699,7 +737,7 @@ export class BetsService {
           second_user_country: user.country,
           second_join_time: new Date().toISOString(),
         });
-         updateBet = await this.betsModel.findById(id);
+        updateBet = await this.betsModel.findById(id);
         return {
           ...(await this.userService.getUserRenewTokenForMobile(user['id'])),
           bet: updateBet,
@@ -715,20 +753,34 @@ export class BetsService {
       return { status: false, message: 'Already bet in progress!!!' };
     }
   }
-  async betSecondGoldUser(id, second_user,body) {
+  async betSecondGoldUser(id, second_user, body) {
     const bet = await this.betsModel.findById(id);
     if (bet && bet.status == 'inactive' && Number(bet.gold) > 0) {
       const user = await this.userService.findUserbyId(second_user);
       const gamebet = await this.gameService.findOne(bet['game_id']);
       await this.sendNotificationToUser(
         bet.first_user_id,
-        "Please update notification body on all places. "+user['first_name']+" "+user['last_name']+" ("+user['userId']+") has sent a challenge for the "+gamebet['title']+" with a Gold bet of "+(Number(bet.gold)+Number(bet.gold))+" coins has been accepted. Bet ID: "+bet._id+". Acceptance time is "+gamebet.bet_expires_sec+" seconds.",
-        "Other Player Accepted Challenge",
+        'Please update notification body on all places. ' +
+          user['first_name'] +
+          ' ' +
+          user['last_name'] +
+          ' (' +
+          user['userId'] +
+          ') has sent a challenge for the ' +
+          gamebet['title'] +
+          ' with a Gold bet of ' +
+          (Number(bet.gold) + Number(bet.gold)) +
+          ' coins has been accepted. Bet ID: ' +
+          bet._id +
+          '. Acceptance time is ' +
+          gamebet.bet_expires_sec +
+          ' seconds.',
+        'Other Player Accepted Challenge',
       );
       if (user && Number(user['gold_balance']) >= Number(bet['gold'])) {
         // await this.userService.UpdateUser(user['id'], Number(user['gold_balance']) - Number(bet['gold']), 'gold');
         await this.betsModel.findByIdAndUpdate(id, {
-          second_player_info:body.second_player_info,
+          second_player_info: body.second_player_info,
           status: 'inprocess',
           second_player: second_user,
           second_email: user.email,
@@ -754,7 +806,7 @@ export class BetsService {
   async betUpdateWinUserGold(id: string, user_id: string) {
     await this.update(id, { is_read: '5' });
     const bet = await this.betsModel.findById(id);
-    if (bet && bet.status == 'active' && bet.is_read=="5") {
+    if (bet && bet.status == 'active' && bet.is_read == '5') {
       const user = await this.userService.findUserbyId(user_id);
       const winprice = Number(bet['gold']) + Number(bet['gold']);
       const game = await this.gameService.findOne(bet.game_id);
@@ -779,7 +831,7 @@ export class BetsService {
 
       // await this.userService.update(admin.id,{gold_balance:Number(admin.gold_balance)+commission});
 
-     const sendGold = await this.goldService.create({
+      const sendGold = await this.goldService.create({
         client_id: user['_id'],
         remarks: 'game win TrD:' + bet['_id'],
         type: 'credit',
@@ -788,13 +840,19 @@ export class BetsService {
         transaction_id: bet['transaction_id'],
         transaction_status: 'game_win',
       });
-    const updateUserCoin =  await this.update(id, {
+      const updateUserCoin = await this.update(id, {
         status: 'complete',
         winner: user['_id'],
         admin_commission: commission,
         user_coins: userprice,
       });
-      console.log(adminCom,"====admin comm:::::::::gold request======",sendGold,"::::::::::::::user update =====",updateUserCoin);
+      console.log(
+        adminCom,
+        '====admin comm:::::::::gold request======',
+        sendGold,
+        '::::::::::::::user update =====',
+        updateUserCoin,
+      );
       ////////////admin commumation///////////////
       return await this.userService.getUserRenewTokenForMobile(user['id']);
     } else {
@@ -805,7 +863,7 @@ export class BetsService {
   async betUpdateLoseUserGold(id: string, user_id: string) {
     await this.update(id, { is_read: '6' });
     const bet = await this.betsModel.findById(id);
-    if (bet && bet.status == 'active' && bet.is_read=="6") {
+    if (bet && bet.status == 'active' && bet.is_read == '6') {
       var user;
       if (user_id == bet.first_player) {
         user = await this.userService.findUserbyId(bet.second_player);
@@ -942,10 +1000,10 @@ export class BetsService {
         await this.sendNotificationToUser(
           bet.second_user_id,
           'Sorry Player ' +
-          bet.first_player['first_name'] +
-          ' ' +
-          bet.first_player['last_name'] +
-          ' is busy playing other challenge.',
+            bet.first_player['first_name'] +
+            ' ' +
+            bet.first_player['last_name'] +
+            ' is busy playing other challenge.',
           'ignorerequest',
         );
 
@@ -981,8 +1039,8 @@ export class BetsService {
         await this.sendNotificationToUser(
           bet.first_player['userId'],
           'Because you have not been responding to Challenge requests, you are blocked  for ' +
-          bet.game_id['time_restrictions'] +
-          'min amount of hours',
+            bet.game_id['time_restrictions'] +
+            'min amount of hours',
           'blockeduser',
         );
         await this.sendNotificationToUser(
@@ -1025,10 +1083,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         bet.second_user_id,
         ':Challenge Accepted! Player  ' +
-        bet.first_player['first_name'] +
-        ' ' +
-        bet.first_player['last_name'] +
-        ' has accepted your challenge.',
+          bet.first_player['first_name'] +
+          ' ' +
+          bet.first_player['last_name'] +
+          ' has accepted your challenge.',
         'accepted',
       );
       return {
@@ -1073,14 +1131,14 @@ export class BetsService {
           main_player_info: bet.main_player_info.replace(
             ';;;;',
             ';' +
-            gameObj.game_id +
-            ';' +
-            bet.first_user_id +
-            ';' +
-            bet._id +
-            ';'+
-            Number(gameObj.leaving_time_sec)*1000 +
-            ';'
+              gameObj.game_id +
+              ';' +
+              bet.first_user_id +
+              ';' +
+              bet._id +
+              ';' +
+              Number(gameObj.leaving_time_sec) * 1000 +
+              ';',
           ),
         },
       );
@@ -1088,10 +1146,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         bet.first_user_id,
         'Challenge Accepted! Player  ' +
-        bet.second_player['first_name'] +
-        ' ' +
-        bet.second_player['last_name'] +
-        ' has accepted your challenge.',
+          bet.second_player['first_name'] +
+          ' ' +
+          bet.second_player['last_name'] +
+          ' has accepted your challenge.',
         'Accepted invited challenge',
       );
       return {
@@ -1116,10 +1174,10 @@ export class BetsService {
         await this.sendNotificationToUser(
           bet.second_user_id,
           'Sorry Challenge was declined by player ' +
-          bet.first_player['first_name'] +
-          ' ' +
-          bet.first_player['last_name'] +
-          ' .',
+            bet.first_player['first_name'] +
+            ' ' +
+            bet.first_player['last_name'] +
+            ' .',
           'Rejected Challange',
         );
         await this.betsModel.updateOne(
@@ -1168,10 +1226,10 @@ export class BetsService {
       await this.sendNotificationToUser(
         bet.first_user_id,
         'Sorry Challenge was declined by player ' +
-        bet.second_player['first_name'] +
-        ' ' +
-        bet.second_player['last_name'] +
-        ' .',
+          bet.second_player['first_name'] +
+          ' ' +
+          bet.second_player['last_name'] +
+          ' .',
         'Rejected Invited Challenge',
       );
       await this.betsModel.updateOne(
@@ -1319,15 +1377,15 @@ export class BetsService {
         .findOne({ _id: bet_id })
         .populate('game_id')
         .populate('second_player');
-    } catch (error) { }
+    } catch (error) {}
 
     if (bet && bet.status == 'inprocess') {
       await this.sendNotificationToUser(
         bet.first_player,
         bet.second_player['first_name'] +
-        ' ' +
-        bet.second_player['last_name'] +
-        ' has left your challenge.',
+          ' ' +
+          bet.second_player['last_name'] +
+          ' has left your challenge.',
         'secondplayerleaved',
       );
       await this.betsModel.updateOne(
@@ -1382,7 +1440,7 @@ export class BetsService {
           await this.userService.UpdateUser(
             bets[c].first_player._id,
             Number(bets[c].first_player.silver_balance) +
-            Number(bets[c].silver),
+              Number(bets[c].silver),
             'silver',
           );
         }

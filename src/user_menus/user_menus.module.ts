@@ -5,8 +5,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserMenuSchema } from './schemas/user_menu.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'UserMenu', schema: UserMenuSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'UserMenu', schema: UserMenuSchema }]),
+  ],
   controllers: [UserMenusController],
   providers: [UserMenusService],
 })
-export class UserMenusModule { }
+export class UserMenusModule {}

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+} from '@nestjs/common';
 import { RewardService } from './reward.service';
 import { CreateRewardDto } from './dto/create-reward.dto';
 import { UpdateRewardDto } from './dto/update-reward.dto';
@@ -33,9 +42,7 @@ export class RewardController {
   }
 
   @Delete(':id')
-    remove(@Param('id') id: string) {
-      
-      return this.rewardService.remove(id);
-
+  remove(@Param('id') id: string) {
+    return this.rewardService.remove(id);
   }
 }

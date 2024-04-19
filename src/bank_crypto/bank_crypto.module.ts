@@ -7,7 +7,12 @@ import { AdminBankModule } from 'src/admin_bank/admin_bank.module';
 import { CryptoWalletsModule } from 'src/crypto_wallets/crypto_wallets.module';
 
 @Module({
-  imports:[UserBanksModule,UserCryptoWalletsModule,AdminBankModule,CryptoWalletsModule],
+  imports: [
+    UserBanksModule,
+    UserCryptoWalletsModule,
+    AdminBankModule,
+    CryptoWalletsModule,
+  ],
   controllers: [BankCryptoController],
   providers: [BankCryptoService],
   exports: [BankCryptoService],

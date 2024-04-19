@@ -8,12 +8,14 @@ import { UserCryptoWalletSchema } from 'src/user_crypto_wallets/schemas/user_cry
 import { UserBankMobileController } from './user_bank_mobile.controller';
 
 @Module({
-  imports: [MongooseModule.forFeature([
-    { name: 'UserBank', schema: UserBankSchema },
-    { name: "UserCryptoWallet", schema: UserCryptoWalletSchema }
-  ])],
-  controllers: [UserBanksController,UserBankMobileController],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'UserBank', schema: UserBankSchema },
+      { name: 'UserCryptoWallet', schema: UserCryptoWalletSchema },
+    ]),
+  ],
+  controllers: [UserBanksController, UserBankMobileController],
   providers: [UserBanksService],
   exports: [UserBanksService],
 })
-export class UserBanksModule { }
+export class UserBanksModule {}

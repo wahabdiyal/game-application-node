@@ -11,7 +11,9 @@ describe('UserCryptoWalletsController', () => {
       providers: [UserCryptoWalletsService],
     }).compile();
 
-    controller = module.get<UserCryptoWalletsController>(UserCryptoWalletsController);
+    controller = module.get<UserCryptoWalletsController>(
+      UserCryptoWalletsController,
+    );
   });
 
   it('should be defined', () => {

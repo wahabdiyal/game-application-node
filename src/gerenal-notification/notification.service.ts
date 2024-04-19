@@ -10,13 +10,13 @@ export class NotificationService {
   }
 
   async sendNotification(deviceToken: string, payload): Promise<void> {
-   console.log(payload,deviceToken);
-       await this.messaging.send({
-        notification: payload,
-        android: {
-          priority: 'high'
-        }, //{ title: "withdraw", body: "Withdraw requested" },
-        token:deviceToken //"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
-      });
+    console.log(payload, deviceToken);
+    await this.messaging.send({
+      notification: payload,
+      android: {
+        priority: 'high',
+      }, //{ title: "withdraw", body: "Withdraw requested" },
+      token: deviceToken, //"d1asJgYt-MecbukBo_UOeJ:APA91bGFJAc6BgGcWWubjUa4WdrV6t1J0gDIDvrCos-nA0FzajoSbiQcM_tdAHD3MHJ-NReWzlnZ0bmr45s9a3jhps_rJmO9a0TnVZeWJ88zmllt7GI4Ouk18NAzq672-xR4E6KnrNX5", // Use the registration token of the web browser
+    });
   }
 }

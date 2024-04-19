@@ -5,7 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserRightSchema } from './schemas/user-rights.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'UserRights', schema: UserRightSchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'UserRights', schema: UserRightSchema },
+    ]),
+  ],
   controllers: [UserRightsController],
   providers: [UserRightsService],
 })

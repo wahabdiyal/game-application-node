@@ -14,16 +14,17 @@ export class PackagesService {
     private packagesModel: mongoose.Model<Package>,
     private currencyService: CurrencyService,
     private countryService: CountriesService,
-  ) { }
+  ) {}
   async create(createPackageDto: CreatePackageDto) {
-    createPackageDto['country']=createPackageDto['country'].split(',')
+    createPackageDto['country'] = createPackageDto['country'].split(',');
     var res = await this.packagesModel.create(createPackageDto);
     return res;
   }
 
-  async findAll(myRole = "", myCountries = "") {
+  async findAll(myRole = '', myCountries = '') {
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ")};
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = { $in: myCountries.split(', ') };
     return await this.packagesModel.find(query).sort({ createdAt: -1 });
   }
 
@@ -32,9 +33,11 @@ export class PackagesService {
   }
 
   async findbyCountry(country: any) {
-    let packageValue = await this.packagesModel.find({country: country});
-    
-     const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
+    let packageValue = await this.packagesModel.find({ country: country });
+
+    const getcountry = await this.countryService.findOneByCountry(
+      country.charAt(0).toUpperCase() + country.slice(1),
+    );
 
     if (getcountry) {
       let countryCurrency = await this.currencyService.findAll(getcountry.code);
@@ -45,7 +48,6 @@ export class PackagesService {
       const updatedPackageValue = [];
 
       for (const item of packageValue) {
-
         const newAmount = parseFloat(item.amount_usd) * exchangeRate;
 
         const updatedItem = {
@@ -61,15 +63,16 @@ export class PackagesService {
         updatedPackageValue.push(updatedItem);
       }
       return updatedPackageValue;
-   
-
     } else {
       return 0;
     }
   }
   async update(id: string, updatePackageDto: UpdatePackageDto) {
-    updatePackageDto['country']=updatePackageDto['country'].split(',')
-    const pakcage = await this.packagesModel.findByIdAndUpdate(id, updatePackageDto);
+    updatePackageDto['country'] = updatePackageDto['country'].split(',');
+    const pakcage = await this.packagesModel.findByIdAndUpdate(
+      id,
+      updatePackageDto,
+    );
 
     if (!pakcage) {
       throw new NotFoundException('Package not found.');
@@ -77,7 +80,11 @@ export class PackagesService {
 
     const data = await this.packagesModel.findOne({ _id: id });
 
-    return { status: true, data: data, message: "Package updated successfully" };
+    return {
+      status: true,
+      data: data,
+      message: 'Package updated successfully',
+    };
   }
 
   async remove(id: string) {
@@ -87,27 +94,29 @@ export class PackagesService {
       throw new NotFoundException('Package not found.');
     }
 
-    return { status: true, message: "Package Delete successfully" };
+    return { status: true, message: 'Package Delete successfully' };
   }
 
   async findbyCountryForMobile(country: any) {
-    let packageValue = await this.packagesModel.find({country:  { "$regex": country, "$options": "i" }});
- 
-    
-     const getcountry = await this.countryService.findOneByCountry(country.charAt(0).toUpperCase() + country.slice(1));
+    let packageValue = await this.packagesModel.find({
+      country: { $regex: country, $options: 'i' },
+    });
+
+    const getcountry = await this.countryService.findOneByCountry(
+      country.charAt(0).toUpperCase() + country.slice(1),
+    );
 
     if (getcountry) {
       let countryCurrency = await this.currencyService.findAll(getcountry.code);
       const crnc = getcountry.code;
-      if(!countryCurrency){
-        return {status:false,message:"Currency not found"};
+      if (!countryCurrency) {
+        return { status: false, message: 'Currency not found' };
       }
-       const exchangeRate = countryCurrency[0].data[crnc].value;
+      const exchangeRate = countryCurrency[0].data[crnc].value;
 
       const updatedPackageValue = [];
 
       for (const item of packageValue) {
-
         const newAmount = parseFloat(item.amount_usd) * exchangeRate;
 
         const updatedItem = {
@@ -122,11 +131,13 @@ export class PackagesService {
 
         updatedPackageValue.push(updatedItem);
       }
-      return {status:true,message:"Shop detail country",shopdata:updatedPackageValue};
-   
-
+      return {
+        status: true,
+        message: 'Shop detail country',
+        shopdata: updatedPackageValue,
+      };
     } else {
-      return {status:false,message:"Country shop not found"};
+      return { status: false, message: 'Country shop not found' };
     }
   }
 }

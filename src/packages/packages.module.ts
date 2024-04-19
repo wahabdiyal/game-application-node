@@ -7,7 +7,11 @@ import { CurrencyModule } from 'src/currency/currency.module';
 import { CountriesModule } from 'src/countries/countries.module';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"Package",schema:PackageSchema}]),CurrencyModule,CountriesModule],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Package', schema: PackageSchema }]),
+    CurrencyModule,
+    CountriesModule,
+  ],
   controllers: [PackagesController],
   providers: [PackagesService],
 })

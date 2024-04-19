@@ -10,13 +10,14 @@ export class BorrowStatusService {
   constructor(
     @InjectModel(BorrowStatus.name)
     private borrowStatusModel: mongoose.Model<BorrowStatus>,
-  ){}
+  ) {}
   async create(createBorrowStatusDto: CreateBorrowStatusDto) {
     var res = await this.borrowStatusModel.create(createBorrowStatusDto);
     return res;
   }
   async findLastTransaction() {
-    return await this.borrowStatusModel.findOne()
+    return await this.borrowStatusModel
+      .findOne()
       .sort({ createdAt: -1 }) // Replace "timestampField" with the actual field you want to sort by
       .limit(1)
       .exec();
@@ -31,16 +32,22 @@ export class BorrowStatusService {
   }
 
   async update(id: any, updateborrowDto: UpdateBorrowStatusDto) {
-    const borrow = await this.borrowStatusModel.findByIdAndUpdate(id, updateborrowDto);
+    const borrow = await this.borrowStatusModel.findByIdAndUpdate(
+      id,
+      updateborrowDto,
+    );
 
-   
     if (!borrow) {
       throw new NotFoundException('borrow request not found.');
     }
 
     const object = await this.borrowStatusModel.findOne(borrow._id);
-   
-    return { status: true, data: object, message: "borrow request updated successfully" };
+
+    return {
+      status: true,
+      data: object,
+      message: 'borrow request updated successfully',
+    };
   }
 
   async remove(id: any) {
@@ -50,6 +57,6 @@ export class BorrowStatusService {
       throw new NotFoundException('borrow request not found.');
     }
 
-    return { status: true, message: "borrow Delete successfully" };
+    return { status: true, message: 'borrow Delete successfully' };
   }
 }

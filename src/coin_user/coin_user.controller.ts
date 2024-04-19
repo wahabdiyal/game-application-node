@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CoinUserService } from './coin_user.service';
 import { CreateCoinUserDto } from './dto/create-coin_user.dto';
 import { UpdateCoinUserDto } from './dto/update-coin_user.dto';
@@ -23,7 +31,10 @@ export class CoinUserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCoinUserDto: UpdateCoinUserDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateCoinUserDto: UpdateCoinUserDto,
+  ) {
     return this.coinUserService.update(+id, updateCoinUserDto);
   }
 

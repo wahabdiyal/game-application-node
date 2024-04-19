@@ -11,7 +11,9 @@ describe('DailyRewardCollectsController', () => {
       providers: [DailyRewardCollectsService],
     }).compile();
 
-    controller = module.get<DailyRewardCollectsController>(DailyRewardCollectsController);
+    controller = module.get<DailyRewardCollectsController>(
+      DailyRewardCollectsController,
+    );
   });
 
   it('should be defined', () => {

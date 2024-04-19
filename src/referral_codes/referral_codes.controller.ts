@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards,Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ReferralCodesService } from './referral_codes.service';
 import { CreateReferralCodeDto } from './dto/create-referral_code.dto';
 import { UpdateReferralCodeDto } from './dto/update-referral_code.dto';
@@ -25,7 +35,10 @@ export class ReferralCodesController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReferralCodeDto: UpdateReferralCodeDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateReferralCodeDto: UpdateReferralCodeDto,
+  ) {
     return this.referralCodesService.update(+id, updateReferralCodeDto);
   }
 
@@ -34,11 +47,12 @@ export class ReferralCodesController {
     return this.referralCodesService.remove(+id);
   }
   @Post('user_share')
-  userShare(@Req() req){
-    const referral_sharable_code = this.referralCodesService.user_share(req.user);
+  userShare(@Req() req) {
+    const referral_sharable_code = this.referralCodesService.user_share(
+      req.user,
+    );
     return referral_sharable_code;
 
-////////// add mobile api for create user share able link///////////
-
+    ////////// add mobile api for create user share able link///////////
   }
 }

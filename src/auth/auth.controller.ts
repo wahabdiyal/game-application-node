@@ -1,4 +1,3 @@
-
 import {
   Body,
   Controller,
@@ -7,21 +6,22 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards, Ip, Query, Param
+  UseGuards,
+  Ip,
+  Query,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { User } from 'src/user/schemas/user.schema';
 import { UserService } from 'src/user/user.service';
 
-
 @Controller('auth')
 export class AuthController {
   constructor(
     private userService: UserService,
     private authService: AuthService,
-
-  ) { }
+  ) {}
   @UseGuards(AuthGuard)
   @Get('/login')
   async getUser(@Query() { skip, limit }) {
@@ -32,11 +32,11 @@ export class AuthController {
   async sendOtp(@Body() data) {
     const user = await this.userService.findByPhoneForOtp(data.phone);
     if (user) {
-      return { status: false, message: "User found try with an other number." };
+      return { status: false, message: 'User found try with an other number.' };
     }
     const email = await this.userService.findByEmailForOtp(data.email);
     if (email) {
-      return { status: false, message: "User found try with an other email." };
+      return { status: false, message: 'User found try with an other email.' };
     }
     // const OTP_LENGTH = 4;
     // const otp = Math.floor(Math.random() * 10000) + 1000;
@@ -61,16 +61,14 @@ export class AuthController {
     if (true) {
       return {
         status: true,
-        otp: 9999
-      }
+        otp: 9999,
+      };
     } else {
       return {
         status: false,
-        Message: "Something went wrong"
-      }
+        Message: 'Something went wrong',
+      };
     }
-
-
   }
 
   @Post('/google/token')
@@ -82,7 +80,7 @@ export class AuthController {
   @Post('register')
   async createBook(
     @Body()
-    user
+    user,
   ): Promise<User> {
     return this.userService.create(user);
   }
@@ -90,15 +88,21 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: Record<string, any>) {
-
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login/admin')
-  loginadmin(@Body()
-  user) {
-    return this.authService.loginAdmin(user.email, user.password, user.ip, user.deviceToken);
+  loginadmin(
+    @Body()
+    user,
+  ) {
+    return this.authService.loginAdmin(
+      user.email,
+      user.password,
+      user.ip,
+      user.deviceToken,
+    );
   }
 
   @HttpCode(HttpStatus.OK)
@@ -117,10 +121,7 @@ export class AuthController {
   @Get('profile')
   getProfile(@Request() req) {
     return this.userService.fetchUserProfile(req.user.email);
-
   }
-
-
 
   // @UseGuards(AuthGuard)
   @Get('forgot-password/:phone_no')
@@ -131,9 +132,9 @@ export class AuthController {
   // @UseGuards(AuthGuard)
   @Post('update-password')
   updatePasswordMobile(@Body() details) {
-    return this.userService.updatePasswordMobile(details.phone_no, details.new_password);
+    return this.userService.updatePasswordMobile(
+      details.phone_no,
+      details.new_password,
+    );
   }
-
-
-
 }

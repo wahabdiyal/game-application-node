@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UserMenusService } from './user_menus.service';
 import { CreateUserMenuDto } from './dto/create-user_menu.dto';
 import { UpdateUserMenuDto } from './dto/update-user_menu.dto';
 
 @Controller('user-menus')
 export class UserMenusController {
-  constructor(private readonly userMenusService: UserMenusService) { }
+  constructor(private readonly userMenusService: UserMenusService) {}
 
   @Post()
   create(@Body() createUserMenuDto: CreateUserMenuDto) {
@@ -25,10 +33,12 @@ export class UserMenusController {
   findByRole(@Param('id') id: string) {
     return this.userMenusService.findByRole(id);
   }
-  
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserMenuDto: UpdateUserMenuDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserMenuDto: UpdateUserMenuDto,
+  ) {
     return this.userMenusService.update(id, updateUserMenuDto);
   }
 

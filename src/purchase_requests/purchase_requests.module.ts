@@ -9,7 +9,15 @@ import { SilversModule } from 'src/silvers/silvers.module';
 import { UserModule } from 'src/user/user.module';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"PurchaseRequests",schema:PurchaseRequestsSchema}]),AdminAccountsModule,GoldsModule,SilversModule,UserModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'PurchaseRequests', schema: PurchaseRequestsSchema },
+    ]),
+    AdminAccountsModule,
+    GoldsModule,
+    SilversModule,
+    UserModule,
+  ],
   controllers: [PurchaseRequestsController],
   providers: [PurchaseRequestsService],
   exports: [PurchaseRequestsService],

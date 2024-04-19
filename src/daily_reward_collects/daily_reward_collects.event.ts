@@ -1,8 +1,7 @@
+export class DailyRewardCollect {
+  constructor() {}
 
-export class DailyRewardCollect{
-    constructor(  ){}
-
-    getUserDailyReward(){
-        console.log('Your Action is finished');
-    }
+  getUserDailyReward() {
+    console.log('Your Action is finished');
+  }
 }

@@ -9,10 +9,13 @@ import { UserMenu } from './schemas/user_menu.schema';
 export class UserMenusService {
   constructor(
     @InjectModel(UserMenu.name)
-    private userMenuModel: mongoose.Model<UserMenu>
-  ) { }
+    private userMenuModel: mongoose.Model<UserMenu>,
+  ) {}
   async create(createUserMenuDto: CreateUserMenuDto) {
-    await this.userMenuModel.deleteMany({ menu: createUserMenuDto['menu'].toString(), role: createUserMenuDto['role'].toString() })
+    await this.userMenuModel.deleteMany({
+      menu: createUserMenuDto['menu'].toString(),
+      role: createUserMenuDto['role'].toString(),
+    });
     return await this.userMenuModel.create(createUserMenuDto);
   }
 
@@ -27,7 +30,6 @@ export class UserMenusService {
     return await this.userMenuModel.find({ role: role });
   }
 
-
   async update(id: any, body: UpdateUserMenuDto) {
     const userright = await this.userMenuModel.findByIdAndUpdate(id, body);
 
@@ -35,7 +37,7 @@ export class UserMenusService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "updated" };
+    return { status: true, message: 'updated' };
   }
 
   async remove(id: any) {
@@ -45,6 +47,6 @@ export class UserMenusService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "removed" };
+    return { status: true, message: 'removed' };
   }
 }

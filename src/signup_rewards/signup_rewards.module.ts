@@ -4,12 +4,15 @@ import { SignupRewardsController } from './signup_rewards.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SignupRewardSchema } from './schemas/signup-rewards.schema';
 import { AdminAccountsModule } from 'src/admin_accounts/admin_accounts.module';
- 
 
 @Module({
-  imports:[MongooseModule.forFeature([{ name: 'SignupReward', schema: SignupRewardSchema }])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'SignupReward', schema: SignupRewardSchema },
+    ]),
+  ],
   controllers: [SignupRewardsController],
   providers: [SignupRewardsService],
-  exports: [SignupRewardsService]
+  exports: [SignupRewardsService],
 })
 export class SignupRewardsModule {}

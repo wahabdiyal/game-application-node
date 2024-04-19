@@ -11,7 +11,9 @@ describe('RechargeAdminWalletsController', () => {
       providers: [RechargeAdminWalletsService],
     }).compile();
 
-    controller = module.get<RechargeAdminWalletsController>(RechargeAdminWalletsController);
+    controller = module.get<RechargeAdminWalletsController>(
+      RechargeAdminWalletsController,
+    );
   });
 
   it('should be defined', () => {

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { CurrencyService } from './currency.service';
 import { CreateCurrencyDto } from './dto/create-currency.dto';
 import { UpdateCurrencyDto } from './dto/update-currency.dto';
@@ -16,7 +24,6 @@ export class CurrencyController {
   async findAll(@Param('country') country: string) {
     return await this.currencyService.findAll(country);
   }
- 
 
   @Delete(':id')
   remove(@Param('id') id: string) {

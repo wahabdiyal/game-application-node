@@ -5,7 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BorrowStatusSchema } from './schemas/borrow_status.schema';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"BorrowStatus",schema:BorrowStatusSchema}])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'BorrowStatus', schema: BorrowStatusSchema },
+    ]),
+  ],
   controllers: [BorrowStatusController],
   providers: [BorrowStatusService],
   exports: [BorrowStatusService],

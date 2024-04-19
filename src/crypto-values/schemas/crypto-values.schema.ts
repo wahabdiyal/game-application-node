@@ -1,26 +1,23 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 @Schema({
-    timestamps: true,
+  timestamps: true,
 })
 export class CryptoValues extends Document {
-    @Prop({ required: true })
-    price_usd: "";
+  @Prop({ required: true })
+  price_usd: '';
 
-    @Prop({ default: "" })
-    wallet_no: "";
-    @Prop({ default: "" })
-    wallet_name: "";
-    @Prop({ default: "" })
-    coins_code: "";
-    @Prop({ default: "" })
-    coins_name: "";
+  @Prop({ default: '' })
+  wallet_no: '';
+  @Prop({ default: '' })
+  wallet_name: '';
+  @Prop({ default: '' })
+  coins_code: '';
+  @Prop({ default: '' })
+  coins_name: '';
 
-    @Prop({ default: "" })
-    country: "";
-
+  @Prop({ default: '' })
+  country: '';
 }
-export const CryptoValuesScheme = SchemaFactory.createForClass(CryptoValues)
-
-
+export const CryptoValuesScheme = SchemaFactory.createForClass(CryptoValues);

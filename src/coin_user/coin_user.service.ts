@@ -8,10 +8,10 @@ import { SilversService } from 'src/silvers/silvers.service';
 @Injectable()
 export class CoinUserService {
   constructor(
-      private goldService: GoldsService,
-      private userService: UserService,
-      private silverService: SilversService
-    ){}
+    private goldService: GoldsService,
+    private userService: UserService,
+    private silverService: SilversService,
+  ) {}
   create(createCoinUserDto: CreateCoinUserDto) {
     return 'This action adds a new coinUser';
   }

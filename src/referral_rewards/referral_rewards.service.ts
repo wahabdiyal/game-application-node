@@ -5,30 +5,28 @@ import { InjectModel } from '@nestjs/mongoose';
 import { ReferralReward } from './schemas/referral_reward.schema';
 import mongoose from 'mongoose';
 
-
 @Injectable()
 export class ReferralRewardsService {
   constructor(
     @InjectModel(ReferralReward.name)
     private referralModel: mongoose.Model<ReferralReward>,
-  ) { }
+  ) {}
 
   async create(createReferralRewardDto: CreateReferralRewardDto) {
     const referralReward = await this.referralModel.find();
 
-    const startinput = new Date(createReferralRewardDto['start_date']).getTime();
+    const startinput = new Date(
+      createReferralRewardDto['start_date'],
+    ).getTime();
     const endinput = new Date(createReferralRewardDto['end_date']).getTime();
     const matchedCollection = [];
     for (const item of referralReward) {
       const startdb = new Date(item['start_date']).getTime();
       const enddb = new Date(item['end_date']).getTime();
       if (
-        (startinput >= startdb && startinput <= enddb)
-        ||
-        (endinput >= startdb && endinput <= enddb)
-        ||
-        (startinput <= startdb && endinput >= startdb)
-        ||
+        (startinput >= startdb && startinput <= enddb) ||
+        (endinput >= startdb && endinput <= enddb) ||
+        (startinput <= startdb && endinput >= startdb) ||
         (startinput <= enddb && endinput >= enddb)
       ) {
         matchedCollection.push(item);
@@ -41,15 +39,18 @@ export class ReferralRewardsService {
       const res = await this.referralModel.create(createReferralRewardDto);
       return res;
     } else {
-      return { status: false, message: "Date is already set" };
+      return { status: false, message: 'Date is already set' };
     }
-
-
   }
 
-  async findAll(myRole = "", myCountries = "") {
+  async findAll(myRole = '', myCountries = '') {
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ").map(country => country.trim().toLowerCase()) };
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = {
+        $in: myCountries
+          .split(', ')
+          .map((country) => country.trim().toLowerCase()),
+      };
     const res = await this.referralModel.find(query).sort({ createdAt: -1 });
     return res;
   }
@@ -60,13 +61,16 @@ export class ReferralRewardsService {
   }
 
   async update(id: any, updateReferralRewardDto: UpdateReferralRewardDto) {
-    const res = await this.referralModel.findByIdAndUpdate(id, updateReferralRewardDto);
+    const res = await this.referralModel.findByIdAndUpdate(
+      id,
+      updateReferralRewardDto,
+    );
 
     if (!res) {
       throw new NotFoundException('Referral reward not found.');
     }
 
-    return { status: true, message: "Referral Reward updated successfully" };
+    return { status: true, message: 'Referral Reward updated successfully' };
   }
 
   async remove(id: any) {
@@ -76,17 +80,15 @@ export class ReferralRewardsService {
       throw new NotFoundException('referral Coin  not found.');
     }
 
-    return { status: true, message: "referral Coin Delete successfully" };
+    return { status: true, message: 'referral Coin Delete successfully' };
   }
   async getRefRewardByDate() {
-
     const res = await this.referralModel.findOne({
       end_date: {
-        $gte: new Date().toISOString()
-      }
+        $gte: new Date().toISOString(),
+      },
     });
 
     return res;
-
   }
 }

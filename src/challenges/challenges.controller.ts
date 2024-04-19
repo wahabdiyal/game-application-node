@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { ChallengesService } from './challenges.service';
 import { CreateChallengeDto } from './dto/create-challenge.dto';
 import { UpdateChallengeDto } from './dto/update-challenge.dto';
 
 @Controller('challenges')
 export class ChallengesController {
-  constructor(private readonly challengesService: ChallengesService) { }
+  constructor(private readonly challengesService: ChallengesService) {}
 
   @Post()
   create(@Body() createChallengeDto: CreateChallengeDto) {
@@ -34,20 +42,20 @@ export class ChallengesController {
 
   @Post('remove_expire_challenges') // Remove the leading slash "/"
   removeExpireChallenges() {
-    return this.challengesService.removeExpireChallenges()
+    return this.challengesService.removeExpireChallenges();
   }
 
   // @Patch('remove_expire_challenges:id:mints') // Remove the leading slash "/"
   // restrictUserForChallenges(@Param('id') id: string, @Param('mints') mints: number,) {
   //   return id;
-  //   // 
+  //   //
   // }
 
   @Patch('remove_expire_challenges/:id/:mints') // Define route parameters as /:id/:mints
-  restrictUserForChallenges(@Param('id') id: string, @Param('mints') mints: number) {
+  restrictUserForChallenges(
+    @Param('id') id: string,
+    @Param('mints') mints: number,
+  ) {
     return this.challengesService.restrictUserForChallenges(id, mints);
   }
- 
-
-
 }

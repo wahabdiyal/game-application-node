@@ -9,7 +9,9 @@ describe('RechargeAdminWalletsService', () => {
       providers: [RechargeAdminWalletsService],
     }).compile();
 
-    service = module.get<RechargeAdminWalletsService>(RechargeAdminWalletsService);
+    service = module.get<RechargeAdminWalletsService>(
+      RechargeAdminWalletsService,
+    );
   });
 
   it('should be defined', () => {

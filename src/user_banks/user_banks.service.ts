@@ -14,14 +14,13 @@ export class UserBanksService {
     private userBankService: mongoose.Model<UserBank>,
     @InjectModel(UserCryptoWallet.name)
     private userCryptoWalletService: mongoose.Model<UserCryptoWallet>,
-
-    // private clearSelectedWalletBanksService: ClearSelectedWalletBanksService
-  ) { }
+  ) // private clearSelectedWalletBanksService: ClearSelectedWalletBanksService
+  {}
 
   async create(createUserBankDto: CreateUserBankDto) {
-
     ///clear all selected wallet and banks
-    if (createUserBankDto['is_selected'] === true) await this.clearSelectBankWallet(createUserBankDto['user_id'].toString());
+    if (createUserBankDto['is_selected'] === true)
+      await this.clearSelectBankWallet(createUserBankDto['user_id'].toString());
 
     var res = await this.userBankService.create(createUserBankDto);
     return res;
@@ -37,7 +36,7 @@ export class UserBanksService {
       {
         $addFields: {
           hasSelectedBank: {
-            $in: ["selected", "$bank_detail.status"],
+            $in: ['selected', '$bank_detail.status'],
           },
         },
       },
@@ -47,7 +46,6 @@ export class UserBanksService {
         },
       },
     ]);
-
   }
 
   async findAll() {
@@ -59,28 +57,39 @@ export class UserBanksService {
   }
 
   async findOneUser(user_id: any) {
-    return await this.userBankService.find({ user_id: user_id }).sort({ createdAt: 1 }).exec();
+    return await this.userBankService
+      .find({ user_id: user_id })
+      .sort({ createdAt: 1 })
+      .exec();
   }
 
   async findOneUserSelected(user_id: any) {
-    return await this.userBankService.find({ user_id: user_id, is_selected: 1 }).sort({ createdAt: 1 }).exec();
+    return await this.userBankService
+      .find({ user_id: user_id, is_selected: 1 })
+      .sort({ createdAt: 1 })
+      .exec();
   }
 
   async update(id: any, updateUserBankDto: UpdateUserBankDto) {
-
     ///clear all selected wallet and banks
-    if (updateUserBankDto['is_selected'] === true) await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());
+    if (updateUserBankDto['is_selected'] === true)
+      await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());
 
-    if (updateUserBankDto['is_selected'] == '1') { await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString()); }
+    if (updateUserBankDto['is_selected'] == '1') {
+      await this.clearSelectBankWallet(updateUserBankDto['user_id'].toString());
+    }
 
-    const user_bank = await this.userBankService.findByIdAndUpdate(id, updateUserBankDto);
+    const user_bank = await this.userBankService.findByIdAndUpdate(
+      id,
+      updateUserBankDto,
+    );
 
     if (!user_bank) {
       throw new NotFoundException('Bank not found');
     }
-    const bank = await this.userBankService.findOne({ _id: id })
+    const bank = await this.userBankService.findOne({ _id: id });
 
-    return { status: true, bank: bank, message: "updated" };
+    return { status: true, bank: bank, message: 'updated' };
   }
 
   async remove(id: any) {
@@ -90,19 +99,16 @@ export class UserBanksService {
       throw new NotFoundException('not found');
     }
 
-    return { status: true, message: "removed" };
-
+    return { status: true, message: 'removed' };
   }
   async clearSelectBankWallet(user_id: string) {
     await this.userBankService.updateMany(
       { user_id: user_id },
-      { $set: { is_selected: 0 } }
+      { $set: { is_selected: 0 } },
     );
     await this.userCryptoWalletService.updateMany(
       { user_id: user_id },
-      { $set: { is_selected: 0 } }
+      { $set: { is_selected: 0 } },
     );
-
   }
-
 }

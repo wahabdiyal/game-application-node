@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { BorrowStatusService } from './borrow_status.service';
 import { CreateBorrowStatusDto } from './dto/create-borrow_status.dto';
 import { UpdateBorrowStatusDto } from './dto/update-borrow_status.dto';
@@ -16,7 +24,7 @@ export class BorrowStatusController {
   findAll() {
     return this.borrowStatusService.findAll();
   }
-   @Get('/last')
+  @Get('/last')
   findLastTransaction() {
     return this.borrowStatusService.findLastTransaction();
   }
@@ -27,7 +35,10 @@ export class BorrowStatusController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBorrowStatusDto: UpdateBorrowStatusDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateBorrowStatusDto: UpdateBorrowStatusDto,
+  ) {
     return this.borrowStatusService.update(id, updateBorrowStatusDto);
   }
 

@@ -5,7 +5,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AdminBankSchema } from './schemas/admin_bank.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'AdminBank', schema: AdminBankSchema }]) ],
+  imports: [
+    MongooseModule.forFeature([{ name: 'AdminBank', schema: AdminBankSchema }]),
+  ],
   controllers: [AdminBankController],
   providers: [AdminBankService],
   exports: [AdminBankService],

@@ -14,15 +14,15 @@ export class CoinTrasService {
     private silverModel: mongoose.Model<Silver>,
     @InjectModel(Gold.name)
     private goldModel: mongoose.Model<Gold>,
-    ){}
-    async createGold(createGoldDto: CreateGoldDto) :Promise<any>  {
-       var res = await this.goldModel.create(createGoldDto);
-        return res;
-      }
-      async createSilver(createSilver) :Promise<any>  {
-        var res = await this.silverModel.create(createSilver);
-         return res;
-       }
+  ) {}
+  async createGold(createGoldDto: CreateGoldDto): Promise<any> {
+    var res = await this.goldModel.create(createGoldDto);
+    return res;
+  }
+  async createSilver(createSilver): Promise<any> {
+    var res = await this.silverModel.create(createSilver);
+    return res;
+  }
   findAll() {
     return `This action returns all coinTras`;
   }

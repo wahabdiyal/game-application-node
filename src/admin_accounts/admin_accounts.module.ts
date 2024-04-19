@@ -5,9 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AdminAccountSchema } from './schemas/admin_account.schema';
 import { UserModule } from 'src/user/user.module';
 
-
 @Module({
-  imports:[MongooseModule.forFeature([{name:"AdminAccount",schema:AdminAccountSchema}]),UserModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'AdminAccount', schema: AdminAccountSchema },
+    ]),
+    UserModule,
+  ],
   controllers: [AdminAccountsController],
   providers: [AdminAccountsService],
   exports: [AdminAccountsService],

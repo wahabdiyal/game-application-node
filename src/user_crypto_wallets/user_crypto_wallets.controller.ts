@@ -1,11 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { UserCryptoWalletsService } from './user_crypto_wallets.service';
 import { CreateUserCryptoWalletDto } from './dto/create-user_crypto_wallet.dto';
 import { UpdateUserCryptoWalletDto } from './dto/update-user_crypto_wallet.dto';
 
 @Controller('user-crypto-wallets')
 export class UserCryptoWalletsController {
-  constructor(private readonly userCryptoWalletsService: UserCryptoWalletsService) {}
+  constructor(
+    private readonly userCryptoWalletsService: UserCryptoWalletsService,
+  ) {}
 
   @Post()
   create(@Body() createUserCryptoWalletDto: CreateUserCryptoWalletDto) {
@@ -27,14 +37,16 @@ export class UserCryptoWalletsController {
     return this.userCryptoWalletsService.findOneUser(user_id);
   }
 
-
   @Get('/selectedWallet/:user_id')
   findOneUserSelected(@Param('user_id') user_id: string) {
     return this.userCryptoWalletsService.findOneUserSelected(user_id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserCryptoWalletDto: UpdateUserCryptoWalletDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserCryptoWalletDto: UpdateUserCryptoWalletDto,
+  ) {
     return this.userCryptoWalletsService.update(id, updateUserCryptoWalletDto);
   }
 

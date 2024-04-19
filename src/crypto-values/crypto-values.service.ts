@@ -17,15 +17,12 @@ export class CryptoValuesService {
     @InjectModel(CryptoWallet.name)
     private cryptoWalletService: mongoose.Model<CryptoWallet>,
     private httpService: HttpService,
-    private readonly eventEmitter: EventEmitter2
-  ) { }
-  @Cron(CronExpression.EVERY_9_HOURS, { name: "calculate_crypto_codes.values" })
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
+  @Cron(CronExpression.EVERY_9_HOURS, { name: 'calculate_crypto_codes.values' })
   async sendRequest() {
-
-    this.eventEmitter.emit(
-      'crypto_codes.values',
-    );
-    console.log("cron run successfully");
+    this.eventEmitter.emit('crypto_codes.values');
+    console.log('cron run successfully');
   }
   async create() {
     return this.calculateAllCodesValues();
@@ -33,16 +30,24 @@ export class CryptoValuesService {
   @OnEvent('crypto_codes.values')
   async calculateAllCodesValues() {
     try {
-      const coins_codes = (await this.allCoinsCodes()).join(';')
-      const countryCoinsCodes = (await this.allCountriesCoinsCodes());
-      const response = await this.httpService.get('https://rest.coinapi.io/v1/assets?filter_asset_id=' + coins_codes + '&apikey=73A274D9-99FF-4D04-90D2-7CA74399F555').toPromise();
+      const coins_codes = (await this.allCoinsCodes()).join(';');
+      const countryCoinsCodes = await this.allCountriesCoinsCodes();
+      const response = await this.httpService
+        .get(
+          'https://rest.coinapi.io/v1/assets?filter_asset_id=' +
+            coins_codes +
+            '&apikey=73A274D9-99FF-4D04-90D2-7CA74399F555',
+        )
+        .toPromise();
       const walletDetails = response.data;
 
       ///remove all previous trd;
       await this.cryptoValuesModal.deleteMany({});
       //////create new details
       for (const element of countryCoinsCodes) {
-        const obj = walletDetails.find((asset: any) => asset.asset_id === element.coins_code);
+        const obj = walletDetails.find(
+          (asset: any) => asset.asset_id === element.coins_code,
+        );
         if (obj) {
           await this.cryptoValuesModal.create({
             price_usd: obj.price_usd,
@@ -54,7 +59,7 @@ export class CryptoValuesService {
           });
         }
       }
-      console.log('crypto values calculated')
+      console.log('crypto values calculated');
       return { status: true };
     } catch (error) {
       return { status: false };
@@ -63,11 +68,21 @@ export class CryptoValuesService {
 
   async get(country: string) {
     try {
-      const data = await this.cryptoValuesModal.find({ country:  { $regex: country, $options: 'i' }});
+      const data = await this.cryptoValuesModal.find({
+        country: { $regex: country, $options: 'i' },
+      });
       if (data.length)
-        return { status: true, message: "crypto wallet found for this country", walletList: data };
+        return {
+          status: true,
+          message: 'crypto wallet found for this country',
+          walletList: data,
+        };
       else
-        return { status: false, message: "crypto wallet not found for this country", walletList: [] };
+        return {
+          status: false,
+          message: 'crypto wallet not found for this country',
+          walletList: [],
+        };
     } catch (error) {
       return { status: false, message: error.message, walletList: [] };
     }
@@ -91,7 +106,7 @@ export class CryptoValuesService {
     list.forEach((element: any) => {
       element.country.forEach((region) => {
         element.wallet_detail.forEach((el) => {
-          const obj = region + ',' + el['coins_code']
+          const obj = region + ',' + el['coins_code'];
           if (!coin_codes.includes(obj)) {
             coin_codes.push(obj);
             my_list.push({
@@ -100,14 +115,11 @@ export class CryptoValuesService {
               coins_name: el['coins_name'],
               coins_code: el['coins_code'],
               country: region,
-            })
+            });
           }
         });
       });
-
-
     });
     return my_list;
   }
-
 }

@@ -5,10 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { LoginLogsSchema } from './schemas/login_logs.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'LoginLogs', schema: LoginLogsSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: 'LoginLogs', schema: LoginLogsSchema }]),
+  ],
   controllers: [LoginLogsController],
   providers: [LoginLogsService],
   exports: [LoginLogsService],
-
 })
-export class LoginLogsModule { }
+export class LoginLogsModule {}

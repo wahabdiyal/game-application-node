@@ -4,12 +4,14 @@ import { WithdrawLimitsController } from './withdraw_limits.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Withdraw_limitsSchema } from './schmas/withdraw_limits.schema';
 
-
 @Module({
-  imports: [MongooseModule.forFeature([{ name: 'Withdraw_limits', schema:Withdraw_limitsSchema  }
-]) ],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'Withdraw_limits', schema: Withdraw_limitsSchema },
+    ]),
+  ],
   controllers: [WithdrawLimitsController],
   providers: [WithdrawLimitsService],
-  exports:[WithdrawLimitsService]
+  exports: [WithdrawLimitsService],
 })
 export class WithdrawLimitsModule {}

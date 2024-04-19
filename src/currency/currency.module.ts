@@ -6,7 +6,10 @@ import { CurrencySchema } from './schemas/currency.schema';
 import { HttpModule } from '@nestjs/axios';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"Currency",schema:CurrencySchema}]),HttpModule],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Currency', schema: CurrencySchema }]),
+    HttpModule,
+  ],
   controllers: [CurrencyController],
   providers: [CurrencyService],
   exports: [CurrencyService],

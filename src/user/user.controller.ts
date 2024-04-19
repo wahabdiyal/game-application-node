@@ -22,23 +22,34 @@ import crypto from 'crypto';
 import { LoginLogsService } from 'src/login_logs/login_logs.service';
 
 @Controller('user')
-@UseGuards(AuthGuard)///////// for bearer token authentication/////// for all controller
+@UseGuards(AuthGuard) ///////// for bearer token authentication/////// for all controller
 export class UserController {
   constructor(
     private userService: UserService,
     private loginLogsService: LoginLogsService,
-
-  ) { }
+  ) {}
 
   @Get('/')
-  async getUser(@Request() req, @Query() { page, perpage, search, start_date, end_date, role }) {
-    let date = (start_date && end_date) ? [{ start: start_date, end: end_date }] : [];
+  async getUser(
+    @Request() req,
+    @Query() { page, perpage, search, start_date, end_date, role },
+  ) {
+    let date =
+      start_date && end_date ? [{ start: start_date, end: end_date }] : [];
 
-    return this.userService.findAll(page, perpage, search, date, role,req.user.role,req.user.country);
+    return this.userService.findAll(
+      page,
+      perpage,
+      search,
+      date,
+      role,
+      req.user.role,
+      req.user.country,
+    );
     // if (req.user.role == 'operator') {
     //   return this.userService.findAllForOperator(page, perpage, search, date, role, req.user.country);
     // } else if (req.user.role == 'admin') {
-     
+
     // } else {
     //   return {
     //     data: [],
@@ -47,7 +58,6 @@ export class UserController {
     //     message: "user not allowed"
     //   };
     // }
-
   }
 
   @Get(':id')
@@ -62,17 +72,29 @@ export class UserController {
   @Patch(':id')
   @UseInterceptors(
     FileInterceptor(
-      "picture", // name of the field being passed
-      { storage }
-    )
+      'picture', // name of the field being passed
+      { storage },
+    ),
   )
-  update(@Param('id') id: any, @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
-    return this.userService.update(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
+  update(
+    @Param('id') id: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateRewardDto: any,
+  ) {
+    return this.userService.update(id, {
+      ...updateRewardDto,
+      file_url: file
+        ? file.path
+            .replace('public\\', '')
+            .replace('\\', '/')
+            .replace('public/', '')
+        : undefined,
+    });
   }
   @Post('create')
   async createBook(
     @Body()
-    user
+    user,
   ): Promise<User> {
     return this.userService.create(user);
   }
@@ -116,39 +138,49 @@ export class UserController {
     return this.loginLogsService.operatorsVisits();
   }
 
-
   @Get('sign-up-graph/:role') // for chart
   signUpGraph(@Param('role') role: any) {
     return this.userService.signUpGraph(role);
   }
 
-
-
   @Post('mobile/profile/:id')
   @UseInterceptors(
     FileInterceptor(
-      "picture", // name of the field being passed
-      { storage }
-    )
+      'picture', // name of the field being passed
+      { storage },
+    ),
   )
-  updatemobile(@Param('id') id: any, @UploadedFile() file: Express.Multer.File, @Body() updateRewardDto: any) {
-    return this.userService.updateMobile(id, { ...updateRewardDto, file_url: file ? (file.path.replace("public\\", "")).replace("\\", "/").replace("public/", "") : undefined });
-
+  updatemobile(
+    @Param('id') id: any,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateRewardDto: any,
+  ) {
+    return this.userService.updateMobile(id, {
+      ...updateRewardDto,
+      file_url: file
+        ? file.path
+            .replace('public\\', '')
+            .replace('\\', '/')
+            .replace('public/', '')
+        : undefined,
+    });
   }
 
   @Post('mobile/update/password')
-  @UseInterceptors(FileInterceptor("form-data"))
+  @UseInterceptors(FileInterceptor('form-data'))
   async updatepasswordmobile(@Body() body: any, @Request() req) {
     if (!body['newpassword'] || !body['oldpassword']) {
-      return { status: false, message: "Field not found" };
+      return { status: false, message: 'Field not found' };
     }
     const user = await this.userService.findByID(req.user.id);
     if (user && user['password'] === body['oldpassword']) {
-      return this.userService.UpdateUserPassword(req.user.id, body['newpassword']);
+      return this.userService.UpdateUserPassword(
+        req.user.id,
+        body['newpassword'],
+      );
     } else {
-      return { status: false, message: "Password is not valid." }
+      return { status: false, message: 'Password is not valid.' };
     }
-
   }
 
   @Get('mobile/search/emailorid/:role') // for chart

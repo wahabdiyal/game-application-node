@@ -1,2 +1,1 @@
-export class CreateSignupRewardDto {
-  }
+export class CreateSignupRewardDto {}

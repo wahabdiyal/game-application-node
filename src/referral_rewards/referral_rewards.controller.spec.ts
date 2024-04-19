@@ -11,7 +11,9 @@ describe('ReferralRewardsController', () => {
       providers: [ReferralRewardsService],
     }).compile();
 
-    controller = module.get<ReferralRewardsController>(ReferralRewardsController);
+    controller = module.get<ReferralRewardsController>(
+      ReferralRewardsController,
+    );
   });
 
   it('should be defined', () => {

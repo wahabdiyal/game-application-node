@@ -10,20 +10,20 @@ export class CountriesService {
   constructor(
     @InjectModel(Country.name)
     private countryModel: mongoose.Model<Country>,
-  ) { }
+  ) {}
 
   async create(createCountryDto: CreateCountryDto) {
     var res = await this.countryModel.create(createCountryDto);
     return res;
   }
 
-  async findAll(myRole = "", myCountries = ""): Promise<Country[]> {
+  async findAll(myRole = '', myCountries = ''): Promise<Country[]> {
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ") };
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = { $in: myCountries.split(', ') };
 
     return await this.countryModel.find(query).sort('country').exec();
   }
-
 
   async getActiveCountries() {
     return await this.countryModel.countDocuments({ status: 'true' });
@@ -39,13 +39,16 @@ export class CountriesService {
   }
 
   async update(id: any, updateCountryDto: UpdateCountryDto) {
-    const country = await this.countryModel.findByIdAndUpdate(id, updateCountryDto);
+    const country = await this.countryModel.findByIdAndUpdate(
+      id,
+      updateCountryDto,
+    );
 
     if (!country) {
       throw new NotFoundException('Country not found.');
     }
 
-    return { status: true, message: "Country updated successfully" };
+    return { status: true, message: 'Country updated successfully' };
   }
 
   async remove(id: any) {
@@ -55,6 +58,6 @@ export class CountriesService {
       throw new NotFoundException('country not found.');
     }
 
-    return { status: true, message: "country Delete successfully" };
+    return { status: true, message: 'country Delete successfully' };
   }
 }

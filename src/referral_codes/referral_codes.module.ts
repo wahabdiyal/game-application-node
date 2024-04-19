@@ -5,9 +5,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ReferralCodeSchema } from './schemas/referral_code.schema';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"ReferralCode",schema:ReferralCodeSchema}])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'ReferralCode', schema: ReferralCodeSchema },
+    ]),
+  ],
   controllers: [ReferralCodesController],
   providers: [ReferralCodesService],
-  exports: [ReferralCodesService]
+  exports: [ReferralCodesService],
 })
 export class ReferralCodesModule {}

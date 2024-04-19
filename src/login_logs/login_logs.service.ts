@@ -1,4 +1,3 @@
-
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateLoginLogDto } from './dto/create-login_log.dto';
 import { UpdateLoginLogDto } from './dto/update-login_log.dto';
@@ -11,7 +10,7 @@ export class LoginLogsService {
   constructor(
     @InjectModel(LoginLogs.name)
     private loginLogsModal: mongoose.Model<LoginLogs>,
-  ) { }
+  ) {}
 
   async create(createLoginLogDto: CreateLoginLogDto) {
     var res = await this.loginLogsModal.create(createLoginLogDto);
@@ -21,20 +20,28 @@ export class LoginLogsService {
     return await this.loginLogsModal.find({ country: country });
   }
   async findAll() {
-    return await this.loginLogsModal.find().populate('user').sort({ createdAt: -1 });
+    return await this.loginLogsModal
+      .find()
+      .populate('user')
+      .sort({ createdAt: -1 });
   }
   async findOne(id: any) {
     return await this.loginLogsModal.findOne({ _id: id });
   }
   async update(id: any, updateLoginLogDto: UpdateLoginLogDto) {
-    const log = await this.loginLogsModal.findByIdAndUpdate(id, updateLoginLogDto);
+    const log = await this.loginLogsModal.findByIdAndUpdate(
+      id,
+      updateLoginLogDto,
+    );
 
     if (!log) {
       throw new NotFoundException('not found.');
     }
-    const data = await this.loginLogsModal.findOne({ _id: id }).populate('user');;
+    const data = await this.loginLogsModal
+      .findOne({ _id: id })
+      .populate('user');
 
-    return { status: true, data: data, message: "updated" };
+    return { status: true, data: data, message: 'updated' };
   }
 
   async remove(id: any) {
@@ -44,35 +51,32 @@ export class LoginLogsService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "removed" };
-
+    return { status: true, message: 'removed' };
   }
   async operatorsVisits() {
-    return await this.loginLogsModal.aggregate([
-      {
-        $lookup: {
-          from: 'users', // Assuming your User collection is named 'users'
-          localField: 'user',
-          foreignField: '_id',
-          as: 'user',
+    return await this.loginLogsModal
+      .aggregate([
+        {
+          $lookup: {
+            from: 'users', // Assuming your User collection is named 'users'
+            localField: 'user',
+            foreignField: '_id',
+            as: 'user',
+          },
         },
-      },
-      {
-        $unwind: '$user',
-      },
-      {
-        $group: {
-          _id: '$user.country',
-          count: { $sum: 1 },
+        {
+          $unwind: '$user',
         },
-      },
-      {
-        $sort: { count: -1 }, // Sort by count in descending order
-      },
-    ])
-      .exec()
+        {
+          $group: {
+            _id: '$user.country',
+            count: { $sum: 1 },
+          },
+        },
+        {
+          $sort: { count: -1 }, // Sort by count in descending order
+        },
+      ])
+      .exec();
   }
-
-
 }
-

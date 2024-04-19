@@ -17,30 +17,42 @@ export class CreateLogsService {
     @InjectModel(CreateLogs.name)
     private createLogsModal: mongoose.Model<CreateLogs>,
     private userService: UserService,
-    private readonly eventEmitter: EventEmitter2
-  ) { }
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
   async create(createCreateLogDto: CreateCreateLogDto) {
-    const user = await this.userService.findUserbyId(createCreateLogDto['user']);
+    const user = await this.userService.findUserbyId(
+      createCreateLogDto['user'],
+    );
     if (!user) {
-      return new NotFoundException("User not found");
+      return new NotFoundException('User not found');
     }
 
-    createCreateLogDto['operator_name'] = user.first_name + ' ' + user.last_name;
+    createCreateLogDto['operator_name'] =
+      user.first_name + ' ' + user.last_name;
     createCreateLogDto['operator_email'] = user.email;
-    createCreateLogDto['country'] = user.country.split(', ')
+    createCreateLogDto['country'] = user.country.split(', ');
     return await this.createLogsModal.create(createCreateLogDto);
   }
-  async findAll(page = 0, perPage = 20, date = [], search = false, countryName = false, myRole = "", myCountries = "") {
-    let totalCount = 0
+  async findAll(
+    page = 0,
+    perPage = 20,
+    date = [],
+    search = false,
+    countryName = false,
+    myRole = '',
+    myCountries = '',
+  ) {
+    let totalCount = 0;
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['country'] = { $in: myCountries.split(", ") };
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['country'] = { $in: myCountries.split(', ') };
     if (date.length > 0) {
       let parsedStartDate = new Date(date[0].start);
       let parsedEndDate = new Date(date[0].end);
       query['createdAt'] = { $gte: parsedStartDate, $lte: parsedEndDate };
     }
     if (search) {
-      if (myRole != "Admin" && myRole != "admin")
+      if (myRole != 'Admin' && myRole != 'admin')
         query['$or'] = [
           { operator_name: { $regex: search, $options: 'i' } },
           { operator_email: { $regex: search, $options: 'i' } },
@@ -52,15 +64,13 @@ export class CreateLogsService {
           { operator_name: { $regex: search, $options: 'i' } },
           { operator_email: { $regex: search, $options: 'i' } },
           { url: { $regex: search, $options: 'i' } },
-          { country: { $regex: search, $options: 'i' } }
+          { country: { $regex: search, $options: 'i' } },
         ];
     }
 
     if (countryName) {
       query['country'] = countryName;
     }
-
-
 
     totalCount = await this.createLogsModal.find(query).countDocuments().exec();
 
@@ -76,9 +86,13 @@ export class CreateLogsService {
     if (skip > 0) skip = 0;
     let data = [];
     try {
-
-      data = await this.createLogsModal.find(query).populate('user').sort({ createdAt: -1 }).skip(skip).limit(perPage).exec();
-
+      data = await this.createLogsModal
+        .find(query)
+        .populate('user')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(perPage)
+        .exec();
     } catch (error) {
       date = [];
     }
@@ -91,24 +105,24 @@ export class CreateLogsService {
     };
   }
 
-
-
   async findOne(id: any) {
     return await this.createLogsModal.findById(id);
-
   }
   async findOneByCountry(country: string) {
     return await this.createLogsModal.findOne({ country: country });
   }
 
   async update(id: any, updateCreateLogDto: UpdateCreateLogDto) {
-    const country = await this.createLogsModal.findByIdAndUpdate(id, updateCreateLogDto);
+    const country = await this.createLogsModal.findByIdAndUpdate(
+      id,
+      updateCreateLogDto,
+    );
 
     if (!country) {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "updated" };
+    return { status: true, message: 'updated' };
   }
 
   async remove(id: any) {
@@ -118,13 +132,12 @@ export class CreateLogsService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "Delete" };
+    return { status: true, message: 'Delete' };
   }
   async verifyOperatorsHourEvents(id: any) {
     const logs = await this.createLogsModal
       .findOne({ user: id })
       .sort({ createdAt: -1 });
-
 
     if (logs && logs['createdAt']) {
       const createdAt: any = new Date(logs['createdAt']);
@@ -135,32 +148,29 @@ export class CreateLogsService {
       const oneHourInMilliseconds = 60 * 60 * 1000;
 
       if (timeDifference > oneHourInMilliseconds) {
-        return { status: false, message: "no clicked till last hour" };
+        return { status: false, message: 'no clicked till last hour' };
       } else {
-        return { status: true, message: "Not more than one hour ago" };
+        return { status: true, message: 'Not more than one hour ago' };
       }
     } else {
-      return { status: false, message: "Delete" };
+      return { status: false, message: 'Delete' };
     }
 
     // if (!country) {
     //   throw new NotFoundException('not found.');
     // }
 
-    return { status: true, message: "Delete" };
+    return { status: true, message: 'Delete' };
   }
 
-
-  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT, { name: "action-log-del" })
+  @Cron(CronExpression.EVERY_1ST_DAY_OF_MONTH_AT_MIDNIGHT, {
+    name: 'action-log-del',
+  })
   async sendRequest() {
-
-    this.eventEmitter.emit(
-      'del.logs',
-      new DailyRewardCollect(),
-    );
-    console.log("Delete logs send request.....");
+    this.eventEmitter.emit('del.logs', new DailyRewardCollect());
+    console.log('Delete logs send request.....');
   }
-  @OnEvent("del.logs")
+  @OnEvent('del.logs')
   async eventDailyReward(payload: DailyRewardCollect) {
     const sixMonthsAgo = new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000); // delete last 6 months records in collection
     const query = { createdAt: { $lt: sixMonthsAgo } };
@@ -169,6 +179,5 @@ export class CreateLogsService {
     ///////this getUserDailyReward belongs to daily_reward_collects.event.ts//////////////
     ///// just print action finished /////////////////
     return payload.getUserDailyReward();
-
   }
 }

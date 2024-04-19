@@ -11,9 +11,16 @@ import { SilversModule } from 'src/silvers/silvers.module';
 import { NotificationService } from 'src/gerenal-notification/notification.service';
 
 @Module({
-  imports:[MongooseModule.forFeature([{name:"Bets",schema:BetsSchema}]),UserModule,GamesModule,AdminAccountsModule,GoldsModule,SilversModule],
+  imports: [
+    MongooseModule.forFeature([{ name: 'Bets', schema: BetsSchema }]),
+    UserModule,
+    GamesModule,
+    AdminAccountsModule,
+    GoldsModule,
+    SilversModule,
+  ],
   controllers: [BetsController],
-  providers: [BetsService,NotificationService],
+  providers: [BetsService, NotificationService],
   exports: [BetsService],
 })
 export class BetsModule {}

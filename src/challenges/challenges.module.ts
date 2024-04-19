@@ -8,11 +8,13 @@ import { GamesSchema } from 'src/games/schemas/games.schema';
 import { UserSchema } from 'src/user/schemas/user.schema';
 
 @Module({
-  imports:[MongooseModule.forFeature([
-    {name: 'Challenges',schema:ChallengesSchema},
-    {name: 'Games',schema:GamesSchema},
-    {name: 'User',schema:UserSchema},
-  ])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'Challenges', schema: ChallengesSchema },
+      { name: 'Games', schema: GamesSchema },
+      { name: 'User', schema: UserSchema },
+    ]),
+  ],
   controllers: [ChallengesController],
   providers: [ChallengesService],
   exports: [ChallengesService],

@@ -9,11 +9,13 @@ import { RechargeAdminWallets } from './schemas/recharge-admin-wallets.schema';
 export class RechargeAdminWalletsService {
   constructor(
     @InjectModel(RechargeAdminWallets.name)
-    private rechargeAdminWalletsModal: mongoose.Model<RechargeAdminWallets>
-  ) { }
+    private rechargeAdminWalletsModal: mongoose.Model<RechargeAdminWallets>,
+  ) {}
 
   async create(createRechargeAdminWalletDto: CreateRechargeAdminWalletDto) {
-    var res = await this.rechargeAdminWalletsModal.create(createRechargeAdminWalletDto);
+    var res = await this.rechargeAdminWalletsModal.create(
+      createRechargeAdminWalletDto,
+    );
     return res;
   }
 
@@ -25,17 +27,24 @@ export class RechargeAdminWalletsService {
     return await this.rechargeAdminWalletsModal.findOne({ _id: id });
   }
   async findOneByCountry(country: string) {
-    return await this.rechargeAdminWalletsModal.findOne({ countries: { $in: [country] } });
+    return await this.rechargeAdminWalletsModal.findOne({
+      countries: { $in: [country] },
+    });
   }
 
-
-  async update(id: string, updateRechargeAdminWalletDto: UpdateRechargeAdminWalletDto) {
-    const withdraw = await this.rechargeAdminWalletsModal.findByIdAndUpdate(id, updateRechargeAdminWalletDto);
+  async update(
+    id: string,
+    updateRechargeAdminWalletDto: UpdateRechargeAdminWalletDto,
+  ) {
+    const withdraw = await this.rechargeAdminWalletsModal.findByIdAndUpdate(
+      id,
+      updateRechargeAdminWalletDto,
+    );
     if (!withdraw) {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "updated" };
+    return { status: true, message: 'updated' };
   }
 
   async remove(id: string) {
@@ -45,6 +54,6 @@ export class RechargeAdminWalletsService {
       throw new NotFoundException('not found.');
     }
 
-    return { status: true, message: "removed" };
+    return { status: true, message: 'removed' };
   }
 }

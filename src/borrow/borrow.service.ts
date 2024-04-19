@@ -10,7 +10,6 @@ import { UserService } from 'src/user/user.service';
 import { BorrowStatusService } from 'src/borrow_status/borrow_status.service';
 import { NotificationService } from 'src/gerenal-notification/notification.service';
 
-
 @Injectable()
 export class BorrowService {
   constructor(
@@ -20,36 +19,75 @@ export class BorrowService {
     private goldService: GoldsService,
     private userService: UserService,
     private borrowStatusSerivcie: BorrowStatusService,
-    private readonly notificationService: NotificationService
-
-  ) { }
+    private readonly notificationService: NotificationService,
+  ) {}
 
   async create(createborrowDto: CreateBorrowDto) {
     const borrowStatus = await this.borrowStatusSerivcie.findLastTransaction();
 
-    if (Number(createborrowDto['gold_coin']) != 0 && borrowStatus.gold_status == "false") {
-      return { check: false, message: "Borrow gold service not available" }
+    if (
+      Number(createborrowDto['gold_coin']) != 0 &&
+      borrowStatus.gold_status == 'false'
+    ) {
+      return { check: false, message: 'Borrow gold service not available' };
     }
     const user = await this.userService.findUserbyId(createborrowDto['sender']);
-    const u = user && (Number(user.silver_balance) >= Number(createborrowDto['silver_coin'])) && (Number(user.gold_balance) >= Number(createborrowDto['gold_coin']));
+    const u =
+      user &&
+      Number(user.silver_balance) >= Number(createborrowDto['silver_coin']) &&
+      Number(user.gold_balance) >= Number(createborrowDto['gold_coin']);
 
     if (!u) {
-      return { check: false, message: "Coin are not match with request" };
+      return { check: false, message: 'Coin are not match with request' };
     }
     if (createborrowDto['status'] != 'pending') {
-      await this.goldService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "debit", status: "success", coins: createborrowDto['gold_coin'], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
+      await this.goldService.create({
+        client_id: createborrowDto['sender'],
+        entry_by: 'admin',
+        remarks: 'borrow request TrD:' + borrowStatus['_id'],
+        type: 'debit',
+        status: 'success',
+        coins: createborrowDto['gold_coin'],
+        transaction_id: createborrowDto['transaction_id'],
+        transaction_status: 'borrowed',
+      });
 
-      await this.goldService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "credit", status: "success", coins: createborrowDto['gold_coin'], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
+      await this.goldService.create({
+        client_id: createborrowDto['receiver'],
+        entry_by: 'admin',
+        remarks: 'borrow request TrD:' + borrowStatus['_id'],
+        type: 'credit',
+        status: 'success',
+        coins: createborrowDto['gold_coin'],
+        transaction_id: createborrowDto['transaction_id'],
+        transaction_status: 'borrowed',
+      });
 
-      await this.silverService.create({ client_id: createborrowDto['sender'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "debit", status: "success", coins: createborrowDto['silver_coin'], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
+      await this.silverService.create({
+        client_id: createborrowDto['sender'],
+        entry_by: 'admin',
+        remarks: 'borrow request TrD:' + borrowStatus['_id'],
+        type: 'debit',
+        status: 'success',
+        coins: createborrowDto['silver_coin'],
+        transaction_id: createborrowDto['transaction_id'],
+        transaction_status: 'borrowed',
+      });
 
-      await this.silverService.create({ client_id: createborrowDto['receiver'], entry_by: "admin", remarks: "borrow request TrD:" + borrowStatus['_id'], type: "credit", status: "success", coins: createborrowDto["silver_coin"], transaction_id: createborrowDto['transaction_id'], transaction_status: "borrowed" });
-
+      await this.silverService.create({
+        client_id: createborrowDto['receiver'],
+        entry_by: 'admin',
+        remarks: 'borrow request TrD:' + borrowStatus['_id'],
+        type: 'credit',
+        status: 'success',
+        coins: createborrowDto['silver_coin'],
+        transaction_id: createborrowDto['transaction_id'],
+        transaction_status: 'borrowed',
+      });
     }
     delete createborrowDto['_id'];
     delete createborrowDto['createdAt'];
     delete createborrowDto['updatedAt'];
-
 
     var res = await this.borrowModel.create({
       ...createborrowDto,
@@ -57,28 +95,54 @@ export class BorrowService {
       ransaction_id: Math.random().toString(36).slice(-5),
     });
 
-    if(Number(createborrowDto['silver_coin'])){
-      console.log("Borrow reqeust create:::::: silver");
-      await this.sendNotificationToUser(user.userId, user.first_name+"  "+user.last_name+" wants to borrow "+createborrowDto['silver_coin']+" amount of silver coins to play.Trx:"+res._id,"Borrow Request");
+    if (Number(createborrowDto['silver_coin'])) {
+      console.log('Borrow reqeust create:::::: silver');
+      await this.sendNotificationToUser(
+        user.userId,
+        user.first_name +
+          '  ' +
+          user.last_name +
+          ' wants to borrow ' +
+          createborrowDto['silver_coin'] +
+          ' amount of silver coins to play.Trx:' +
+          res._id,
+        'Borrow Request',
+      );
     }
-    if(Number(createborrowDto['gold_coin'])){
-      console.log("Borrow reqeust create:::::: gold");
+    if (Number(createborrowDto['gold_coin'])) {
+      console.log('Borrow reqeust create:::::: gold');
 
-      await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" wants to borrow "+createborrowDto['gold_coin']+" amount of gold coins to play.Trx:"+res._id,"Borrow Request");
+      await this.sendNotificationToUser(
+        user.userId,
+        user.first_name +
+          ' ' +
+          user.last_name +
+          ' wants to borrow ' +
+          createborrowDto['gold_coin'] +
+          ' amount of gold coins to play.Trx:' +
+          res._id,
+        'Borrow Request',
+      );
     }
     return { ...res.toObject(), check: true };
   }
 
-  async findAll(page = 0, perPage = 20, date = [], search = false, myRole = "", myCountries = "") {
-
-
+  async findAll(
+    page = 0,
+    perPage = 20,
+    date = [],
+    search = false,
+    myRole = '',
+    myCountries = '',
+  ) {
     let data: any = [];
     let totalCount: number = 0;
     let totalPages: number = 0;
     const query = {};
-    if (myRole != "Admin" && myRole != "admin") query['sender_country'] = { $in: myCountries.split(", ") };
+    if (myRole != 'Admin' && myRole != 'admin')
+      query['sender_country'] = { $in: myCountries.split(', ') };
     if (search) {
-      if (myRole != "Admin" && myRole != "admin")
+      if (myRole != 'Admin' && myRole != 'admin')
         query['$or'] = [
           { type: { $regex: search, $options: 'i' } },
           { status: { $regex: search, $options: 'i' } },
@@ -121,8 +185,6 @@ export class BorrowService {
       .sort({ createdAt: -1 }) // Replace 'receiver' with the actual path in your schema
       .exec();
 
-
-
     return {
       data: data,
       currentPage: page,
@@ -131,66 +193,131 @@ export class BorrowService {
       total_count: totalCount,
     };
 
-    return await this.borrowModel.find()
-
+    return await this.borrowModel.find();
   }
 
-
   async findOne(id: any) {
-
     return await this.borrowModel.findById(id);
   }
 
   async update(id: any, updateborrowDto: UpdateBorrowDto) {
-    
     const borrowReqeust = await this.borrowModel.findById(id);
-     
-    if(borrowReqeust && borrowReqeust.status == "approved"){
-      return {status:false,message:"Request already processed."};
+
+    if (borrowReqeust && borrowReqeust.status == 'approved') {
+      return { status: false, message: 'Request already processed.' };
     }
 
-    const borrow = await this.borrowModel.findByIdAndUpdate(id, updateborrowDto);
-    
+    const borrow = await this.borrowModel.findByIdAndUpdate(
+      id,
+      updateborrowDto,
+    );
 
     if (!borrow) {
-      return {status:false,message:'borrow request not found.'};
+      return { status: false, message: 'borrow request not found.' };
     }
 
     const object = await this.borrowModel.findOne(borrow._id);
-     const user = await this.userService.findUserbyId(object.receiver);
+    const user = await this.userService.findUserbyId(object.receiver);
 
     if (object.status != 'pending' && object.status != 'reject') {
-    
-      if(Number(object.gold_coin )){
-        console.log("Borrow reqeust accept:::::: gold");
-      await this.goldService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
+      if (Number(object.gold_coin)) {
+        console.log('Borrow reqeust accept:::::: gold');
+        await this.goldService.create({
+          client_id: object.sender,
+          entry_by: 'admin',
+          remarks: 'borrow approved, TrD:' + id,
+          type: 'debit',
+          status: 'success',
+          coins: object.gold_coin,
+          transaction_id: object.transaction_id,
+          transaction_status: 'borrowed',
+        });
 
-      await this.goldService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.gold_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
-        if(user && user.userId){
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is approved amount "+object.gold_coin,"Approved Borrow Request");
+        await this.goldService.create({
+          client_id: object.receiver,
+          entry_by: 'admin',
+          remarks: 'borrow approved, TrD:' + id,
+          type: 'credit',
+          status: 'success',
+          coins: object.gold_coin,
+          transaction_id: object.transaction_id,
+          transaction_status: 'borrowed',
+        });
+        if (user && user.userId) {
+          await this.sendNotificationToUser(
+            user.userId,
+            user.first_name +
+              ' ' +
+              user.last_name +
+              ' your gold request is approved amount ' +
+              object.gold_coin,
+            'Approved Borrow Request',
+          );
         }
-    }
-      if(Number(object.silver_coin)){
-      await this.silverService.create({ client_id: object.sender, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "debit", status: "success", coins: object.silver_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
+      }
+      if (Number(object.silver_coin)) {
+        await this.silverService.create({
+          client_id: object.sender,
+          entry_by: 'admin',
+          remarks: 'borrow approved, TrD:' + id,
+          type: 'debit',
+          status: 'success',
+          coins: object.silver_coin,
+          transaction_id: object.transaction_id,
+          transaction_status: 'borrowed',
+        });
 
-      await this.silverService.create({ client_id: object.receiver, entry_by: "admin", remarks: "borrow approved, TrD:" + id, type: "credit", status: "success", coins: object.silver_coin, transaction_id: object.transaction_id, transaction_status: "borrowed" });
-      if(user && user.userId){
-        console.log("Borrow reqeust accept:::::: silver");
+        await this.silverService.create({
+          client_id: object.receiver,
+          entry_by: 'admin',
+          remarks: 'borrow approved, TrD:' + id,
+          type: 'credit',
+          status: 'success',
+          coins: object.silver_coin,
+          transaction_id: object.transaction_id,
+          transaction_status: 'borrowed',
+        });
+        if (user && user.userId) {
+          console.log('Borrow reqeust accept:::::: silver');
 
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is approved amount "+object.silver_coin,"Approved Borrow Request");
+          await this.sendNotificationToUser(
+            user.userId,
+            user.first_name +
+              ' ' +
+              user.last_name +
+              ' your silver request is approved amount ' +
+              object.silver_coin,
+            'Approved Borrow Request',
+          );
         }
-       }
-    }else{
-      if(user && Number(object.silver_coin) ){
-        console.log("Borrow reqeust ignore:::::: silver");
+      }
+    } else {
+      if (user && Number(object.silver_coin)) {
+        console.log('Borrow reqeust ignore:::::: silver');
 
-        await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your silver request is reject amount "+object.silver_coin,"Rejected Borrow Request");
-        }
+        await this.sendNotificationToUser(
+          user.userId,
+          user.first_name +
+            ' ' +
+            user.last_name +
+            ' your silver request is reject amount ' +
+            object.silver_coin,
+          'Rejected Borrow Request',
+        );
+      }
 
-        if(user && Number(object.gold_coin)){
-          console.log("Borrow reqeust ignore:::::: gold");
-          await this.sendNotificationToUser(user.userId, user.first_name+" "+user.last_name+" your gold request is reject amount "+object.gold_coin,"Rejected Borrow Request");
-          }
+      if (user && Number(object.gold_coin)) {
+        console.log('Borrow reqeust ignore:::::: gold');
+        await this.sendNotificationToUser(
+          user.userId,
+          user.first_name +
+            ' ' +
+            user.last_name +
+            ' your gold request is reject amount ' +
+            object.gold_coin,
+          'Rejected Borrow Request',
+        );
+      }
     }
     return this.userService.getUserRenewTokenForMobile(object.sender);
   }
@@ -202,7 +329,7 @@ export class BorrowService {
       throw new NotFoundException('borrow request not found.');
     }
 
-    return { status: true, message: "borrow Delete successfully" };
+    return { status: true, message: 'borrow Delete successfully' };
   }
 
   async borrowReqeustBySender(user_id: any) {
@@ -217,56 +344,92 @@ export class BorrowService {
     const borrow = await this.borrowModel.findOne({ _id: borrow_id });
 
     if (borrow) {
-      if (borrow.status == "pending") {
+      if (borrow.status == 'pending') {
         return {
           status: false,
-          message: "Request in pending"
-        }
+          message: 'Request in pending',
+        };
       }
       if (borrow.is_reverse) {
         return {
           status: false,
-          message: "Request is already in reversed"
-        }
+          message: 'Request is already in reversed',
+        };
       }
-      await this.goldService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.gold_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
+      await this.goldService.create({
+        client_id: borrow.sender,
+        entry_by: 'admin',
+        remarks: 'borrow request reverser',
+        type: 'credit',
+        status: 'success',
+        coins: borrow.gold_coin,
+        transaction_id: borrow.transaction_id,
+        transaction_status: 'borrowed',
+      });
 
-      await this.goldService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.gold_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
+      await this.goldService.create({
+        client_id: borrow.receiver,
+        entry_by: 'admin',
+        remarks: 'borrow request reverser',
+        type: 'debit',
+        status: 'success',
+        coins: borrow.gold_coin,
+        transaction_id: borrow.transaction_id,
+        transaction_status: 'borrowed',
+      });
 
-      await this.silverService.create({ client_id: borrow.sender, entry_by: "admin", remarks: "borrow request reverser", type: "credit", status: "success", coins: borrow.silver_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
+      await this.silverService.create({
+        client_id: borrow.sender,
+        entry_by: 'admin',
+        remarks: 'borrow request reverser',
+        type: 'credit',
+        status: 'success',
+        coins: borrow.silver_coin,
+        transaction_id: borrow.transaction_id,
+        transaction_status: 'borrowed',
+      });
 
-      await this.silverService.create({ client_id: borrow.receiver, entry_by: "admin", remarks: "borrow request reverser", type: "debit", status: "success", coins: borrow.silver_coin, transaction_id: borrow.transaction_id, transaction_status: "borrowed" });
-      await this.borrowModel.findByIdAndUpdate(borrow_id, { is_reverse: true, status: 'reversed' });
+      await this.silverService.create({
+        client_id: borrow.receiver,
+        entry_by: 'admin',
+        remarks: 'borrow request reverser',
+        type: 'debit',
+        status: 'success',
+        coins: borrow.silver_coin,
+        transaction_id: borrow.transaction_id,
+        transaction_status: 'borrowed',
+      });
+      await this.borrowModel.findByIdAndUpdate(borrow_id, {
+        is_reverse: true,
+        status: 'reversed',
+      });
       return {
-        status: "success",
-        message: "borrow request reverse progress",
-      }
+        status: 'success',
+        message: 'borrow request reverse progress',
+      };
     } else {
       return {
         status: false,
-        message: "Borrow request not found",
-      }
+        message: 'Borrow request not found',
+      };
     }
-
   }
 
-  async sendNotificationToUser(userId: string, message: string,title:string) {
+  async sendNotificationToUser(userId: string, message: string, title: string) {
     const user = await this.userService.findByUserId(userId);
-     
+
     const payload = {
-      title:title,
+      title: title,
       body: message,
     };
-    try{
-       await this.notificationService.sendNotification(user.deviceToken, payload);
-       return {status:true,message:'Notification sent.'};
-    }catch (error) {
-      return {status:false,message:error};
+    try {
+      await this.notificationService.sendNotification(
+        user.deviceToken,
+        payload,
+      );
+      return { status: true, message: 'Notification sent.' };
+    } catch (error) {
+      return { status: false, message: error };
     }
-   
   }
-
-
-
 }
-
